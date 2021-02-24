@@ -1,13 +1,20 @@
 <template>
 	<v-app>
-		<v-app-bar app id="UI" clipped-left>
-			<v-avatar :tile="true">
-				<img src="./assets/OiseauBlanc.png" />
-			</v-avatar>
-			<v-toolbar-title class="ml-5"
+		<v-app-bar app id="UI" clipped-left flat>
+			<!-- <v-avatar :tile="true">
+				<img src="./assets/logo_long.svg" />
+			</v-avatar> -->
+
+			<v-img class="mx-2" src="./assets/logo_long.svg" max-height="100" max-width="150" contain></v-img>
+
+			<!-- <v-toolbar-title class="ml-5"
 				><span style="font-family: 'Avenir Next Bold'">telecom</span>
 				<span style="font-family: 'Avenir Next Regular'"> etude</span>
-			</v-toolbar-title>
+			</v-toolbar-title> -->
+			<v-spacer></v-spacer>
+			<v-btn id="gradient" class="ma-2 rounded-lg" depressed>
+				<span style="font-family: 'Avenir Next Regular'">Connexion</span>
+			</v-btn>
 		</v-app-bar>
 
 		<v-main>
@@ -17,7 +24,11 @@
 			</v-container>
 		</v-main>
 		<v-footer id="UI" app>
-			<span class="white--text">&copy; {{ new Date().getFullYear() }}</span>
+			<v-card id="gradient" class="ma-2 rounded-lg" elevation="0" max-height="35">
+				<v-card-text class="mt-n2  " >
+					<span id="gradient" style="font-family: 'Avenir Next Regular'">&copy; {{ new Date().getFullYear() }}</span>
+				</v-card-text>
+			</v-card>
 		</v-footer>
 	</v-app>
 </template>
@@ -34,7 +45,6 @@
 		props: {
 			source: String,
 		},
-
 	}
 </script>
 
@@ -49,6 +59,11 @@
 	}
 
 	#UI {
+		background: rgba(117, 190, 218, 0.0);
+		/* background: linear-gradient(90deg, #fd8334, #d51f48); */
+		color: black;
+	}
+	#gradient {
 		background: linear-gradient(90deg, #fd8334, #d51f48);
 		color: white;
 	}
