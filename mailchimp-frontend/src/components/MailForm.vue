@@ -4,7 +4,7 @@
 			<v-form
 				id="MailForm"
 				action="https://perso.telecom-paristech.fr/croyer/public/response.php"
-				method="post"
+				method="POST"
 				v-model="isValid"
 				style="padding-left: 20px; padding-right: 20px"
 			>
