@@ -24,9 +24,27 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 // The function to create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
 exports.createCampaignAndSendTestEmail = functions.https.onRequest((request, response) => {
 
-    //Retrieve the arguments in request TODO
-    console.log(request)
-    //END TODO
+    //Retrieve the arguments in request
+    const data = request.body
+    
+    //Raw data
+    contentTitle = data.contentTitle
+    contentFirstDescription = data.contentFirstDescription
+    contentDomain = data.contentDomain
+    contentPay = data.contentPay
+    contentDifficulty = data.contentDifficulty
+    contentSkills = data.contentSkills
+    contentSchedule = data.contentSchedule
+    contentDescription = data.contentDescription
+
+    //Data to transform
+    imageDomain = data.imageDomain
+    imagePay = data.imagePay
+    imageDifficulty = data.imageDifficulty
+    formBoolean = data.formBoolean
+    formLink = data.formLink
+    contactList = data.contactList
+
 
     const [
 		imageDomainLink,

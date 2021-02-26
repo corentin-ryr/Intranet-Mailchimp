@@ -2,9 +2,8 @@
 	<div>
 		<v-card class="mx-auto mt-10" width="1000">
 			<v-form
-				id="MailForm"
-				action="https://perso.telecom-paristech.fr/croyer/public/response.php"
-				method="POST"
+				id="mailForm"
+				v-on:submit.prevent="sendForm"
 				v-model="isValid"
 				style="padding-left: 20px; padding-right: 20px"
 			>
@@ -15,21 +14,19 @@
 				<v-text-field
 					type="text"
 					name="contentTitle"
-					v-model="contentTitle"
+					v-model="form.contentTitle"
 					label="Nom de l'étude"
-					:rules="nameRules"
 					required
 					prepend-icon="mdi-account-outline"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-textarea
 					type="text"
 					name="contentFirstDescription"
-					v-model="contentFirstDescription"
+					v-model="form.contentFirstDescription"
 					label="Nous vous proposons aujourd'hui une étude de..."
-					:rules="nameRules"
 					required
 					prepend-icon="mdi-account-outline"
 					auto-grow
@@ -42,74 +39,73 @@
 				<v-text-field
 					type="text"
 					name="contentDomain"
-					v-model="contentDomain"
+					v-model="form.contentDomain"
 					label="Data Science"
-					:rules="numberRules"
 					required
 					prepend-icon="mdi-dialpad"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-select
 					:items="domains"
 					name="imageDomain"
-					v-model="imageDomain"
+					v-model="form.imageDomain"
 					label="Image du domaine"
 					required
 					prepend-icon="mdi-"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-text-field
 					type="text"
 					name="contentPay"
-					v-model="contentPay"
+					v-model="form.contentPay"
 					label="1500-2000€"
 					required
 					prepend-icon="mdi-dialpad"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-select
 					:items="pays"
 					name="imagePay"
-					v-model="imagePay"
+					v-model="form.imagePay"
 					label="Image du prix"
 					required
 					prepend-icon="mdi-"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-text-field
 					type="text"
 					name="contentDifficulty"
-					v-model="contentDifficulty"
+					v-model="form.contentDifficulty"
 					label="Difficile"
 					required
 					prepend-icon="mdi-dialpad"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-select
 					:items="difficulties"
 					name="imageDifficulty"
-					v-model="imageDifficulty"
+					v-model="form.imageDifficulty"
 					label="Image du prix"
 					required
 					prepend-icon="mdi-"
-                    outlined
-                    shaped
+					outlined
+					shaped
 				/>
 
 				<v-textarea
 					type="text"
 					name="contentSkills"
-					v-model="contentSkills"
+					v-model="form.contentSkills"
 					label="Nous recherchons un·e ou plusieurs intervenant·e·s connaissant la Data Science."
 					required
 					prepend-icon="mdi-dialpad"
@@ -123,7 +119,7 @@
 				<v-textarea
 					type="text"
 					name="contentSchedule"
-					v-model="contentSchedule"
+					v-model="form.contentSchedule"
 					label="Le client désire commencer le plus tôt possible."
 					required
 					prepend-icon="mdi-dialpad"
@@ -137,7 +133,7 @@
 				<v-textarea
 					type="text"
 					name="contentDescription"
-					v-model="contentDescription"
+					v-model="form.contentDescription"
 					label="Le but de l'étude est de la finir."
 					required
 					prepend-icon="mdi-dialpad"
@@ -148,32 +144,32 @@
 					shaped
 				/>
 
-				<v-row align="center" class="mx-auto" >
+				<v-row align="center" class="mx-auto">
 					<v-checkbox v-model="enabled" hide-details class="shrink mr-2 mt-0"></v-checkbox>
 					<v-text-field
 						type="text"
 						name="formLink"
-						v-model="formLink"
+						v-model="form.formLink"
 						label="www.link-to-form.fr"
 						:disabled="!enabled"
-                        outlined
-                        shaped
+						outlined
+						shaped
 					/>
 				</v-row>
 
 				<v-divider></v-divider>
 				<v-card-actions>
-					<v-btn type="submit" form="signatureForm" class="mx-auto" :disabled="!isValid" color="secondary">
+					<v-btn type="submit" form="mailForm" class="mx-auto" :disabled="!isValid" color="secondary">
 						Envoyer
 					</v-btn>
 				</v-card-actions>
 			</v-form>
 		</v-card>
-
 	</div>
 </template>
 
 <script>
+	import axios from "axios"
 	export default {
 		name: "MailForm",
 		props: {
@@ -184,8 +180,36 @@
 			pays: ["low", "middle", "high"],
 			difficulties: ["low", "middle", "high"],
 			enabled: false,
+			isValid: true,
+			// Name of the form data
+			form: {
+				contentTitle: "",
+				contentFirstDescription: "",
+				contentDomain: "",
+				imageDomain: "",
+				contentPay: "",
+				imagePay: "",
+				contentDifficulty: "",
+				imageDifficulty: "",
+				contentSkills: "",
+				contentSchedule: "",
+				contentDescription: "",
+				formLink: "",
+			},
 		}),
-		methods: {},
+		methods: {
+			sendForm: function() {
+				console.log("function called")
+				axios
+					.post("https://us-central1-testmailinglist-6b8aa.cloudfunctions.net/helloWorld", this.form)
+					.then((res) => {
+						console.log(res)
+					})
+					.catch((error) => {
+						console.log(error.response.status)
+					})
+			},
+		},
 	}
 </script>
 
@@ -199,8 +223,7 @@
 		width: 60%;
 	}
 
-    .v-textarea {
+	.v-textarea {
 		width: 100%;
 	}
-
 </style>
