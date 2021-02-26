@@ -1,116 +1,177 @@
-const client = require("@mailchimp/mailchimp_marketing");
+const client = require("@mailchimp/mailchimp_marketing")
+const fs = require("fs")
 
 //Mailchimp API Settings
-var apiKey = "API_KEY";
-var server = "SERVER";
-var subscriberListID = "SUBSCRIBER_LIST_ID"; //id de la list Candidature
+const mailchimp_credentials = require("./credentials.json")
+var apiKey = mailchimp_credentials["apiKey"]
+var server = mailchimp_credentials["server"]
+var subscriberListID = mailchimp_credentials["subscriberListID"] //id de la list Candidature
+
+//Debug
+const setHTMLContentBool = true
+const sentTestEmailsBool = true
 
 //Example
-var contentTitle = "Étude de Data Science";
-var contentFirstDescription = "Nous vous proposons aujourd’hui une étude de Data Science.";
-var contentDomain = "Data Science";
-var imageDomain = "data"; // parmi "data", "dev", "cyber", "se", "image", "etude"
-var contentPay = "1500-2000€";
-var imagePay = "middle"; // parmi "low", "middle", "high"
-var contentDifficulty = "Difficile";
-var imageDifficulty = "high"; // parmi "low", "middle", "high"
-var contentSkills = "Nous recherchons un.e ou plusieurs intervenant.e.s connaissant la Data Science.";
-var contentSchedule = "Le client désire commencer le plus tôt possible.";
-var contentDescription = "Le but de l'étude est de la finir.";
-var formBoolean = true; // True ou False selon si on joint un formualaire de candidature ou non
-var formLink = "https://docs.google.com/forms/d/e/1FAIpQLSduG7os1IrYWhV_BDVNz8CA-NSQDPAnBZrZVvXTzyeOshDSwQ/"; // uniquement si formBoolean==True
-var contactList = ["hugo.queinnec@telecom-etude.fr", "corentin.royer@telecom-etude.fr"]; //pas de limite de nombre d'adresses mail, mettre sous la forme prenom.nom@...
+var contentTitle = "Étude de Data Science"
+var contentFirstDescription = "Nous vous proposons aujourd’hui une étude de Data Science."
+var contentDomain = "Data Science"
+var imageDomain = "data" // parmi "data", "dev", "cyber", "se", "image", "etude"
+var contentPay = "1500-2000€"
+var imagePay = "middle" // parmi "low", "middle", "high"
+var contentDifficulty = "Difficile"
+var imageDifficulty = "high" // parmi "low", "middle", "high"
+var contentSkills = "Nous recherchons un.e ou plusieurs intervenant.e.s connaissant la Data Science."
+var contentSchedule = "Le client désire commencer le plus tôt possible."
+var contentDescription = "Le but de l'étude est de la finir."
+var formBoolean = true // True ou False selon si on joint un formualaire de candidature ou non
+var formLink = "https://docs.google.com/forms/d/e/1FAIpQLSduG7os1IrYWhV_BDVNz8CA-NSQDPAnBZrZVvXTzyeOshDSwQ/" // uniquement si formBoolean==True
+var contactList = ["hugo.queinnec@telecom-etude.fr", "corentin.royer@telecom-etude.fr"] //pas de limite de nombre d'adresses mail, mettre sous la forme prenom.nom@...
 
+createCampaignAndSendTestEmail(
+	contentTitle,
+	contentFirstDescription,
+	contentDomain,
+	imageDomain,
+	contentPay,
+	imagePay,
+	contentDifficulty,
+	imageDifficulty,
+	contentSkills,
+	contentSchedule,
+	contentDescription,
+	formBoolean,
+	formLink,
+	contactList
+)
 
-createCampaignAndSendTestEmail(contentTitle, contentFirstDescription, contentDomain, imageDomain, contentPay, imagePay, contentDifficulty, imageDifficulty, contentSkills, contentSchedule, contentDescription, formBoolean, formLink, contactList);
+function createCampaignAndSendTestEmail(
+	contentTitle,
+	contentFirstDescription,
+	contentDomain,
+	imageDomain,
+	contentPay,
+	imagePay,
+	contentDifficulty,
+	imageDifficulty,
+	contentSkills,
+	contentSchedule,
+	contentDescription,
+	formBoolean,
+	formLink,
+	contactList
+) {
+	//Campaign Settings
+	const testEmails = ["corentin.royer@telecom-etude.fr"]
 
+	//Edit HTML Content
+	const [
+		imageDomainLink,
+		imagePayLink,
+		imageDifficultyLink,
+		contentApply,
+		contentMailContact,
+		contentMailTo,
+	] = contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList)
 
-function createCampaignAndSendTestEmail(contentTitle, contentFirstDescription, contentDomain, imageDomain, contentPay, imagePay, contentDifficulty, imageDifficulty, contentSkills, contentSchedule, contentDescription, formBoolean, formLink, contactList){
-  
-  //Campaign Settings
-	const testEmails = ["responsable.commercial@telecom-etude.fr"];
+	const htmlContent = contentEditHTML(
+		contentTitle,
+		contentFirstDescription,
+		contentDomain,
+		imageDomainLink,
+		contentPay,
+		imagePayLink,
+		contentDifficulty,
+		imageDifficultyLink,
+		contentSkills,
+		contentSchedule,
+		contentDescription,
+		contentApply,
+		contentMailContact,
+		contentMailTo
+	)
 
-  //Edit HTML Content
-  const [imageDomainLink, imagePayLink, imageDifficultyLink, contentApply, contentMailContact, contentMailTo] = contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList);
-  const htmlContent = contentEditHTML(contentTitle, contentFirstDescription, contentDomain, imageDomainLink, contentPay, imagePayLink, contentDifficulty, imageDifficultyLink, contentSkills, contentSchedule, contentDescription, contentApply, contentMailContact, contentMailTo);
-
-  //Create Campaign
-  createCampaign(contentTitle, contactList, setAndSendTest);
-
-  function setAndSendTest(campaignID){
-    setHTMLContent(campaignID, htmlContent);
-
-    //Send test emails
-    sendTestEmails(campaignID, testEmails);
-  }
+	//Create Campaign
+	createCampaign(contentTitle, contactList, htmlContent, testEmails)
 
 }
 
+function contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList) {
+	var imageDomainLink = ""
+	var imagePayLink = ""
+	var imageDifficultyLink = ""
+	var contentApply = ""
+	var contentMailContact = ""
+	var contentMailTo = ""
 
-function contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList){
-  var imageDomainLink = "";
-	var imagePayLink = "";
-	var imageDifficultyLink = "";
-	var contentApply = "";
-	var contentMailContact = "";
-  var contentMailTo = "";
+	switch (imageDomain) {
+		case "data":
+			imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
+			break
+		case "dev":
+			imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/458e3a19-7fe7-4471-aad4-8d19e43f2383.png"
+			break
+		case "cyber":
+			imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
+			break
+		case "se":
+			imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/ad81493a-5281-4772-adef-4bcebee00243.png"
+			break
+		case "image":
+			imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/863635c4-6fc0-42d0-add6-7c4b8aa04b9b.png"
+			break
+		case "etude":
+			imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png"
+			break
+		default:
+			console.log("ERROR: the domain name is incorrect")
+			break
+	}
 
-  switch (imageDomain) {
-    case "data":
-      imageDomainLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png";
-      break;
-    case "dev":
-      imageDomainLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/458e3a19-7fe7-4471-aad4-8d19e43f2383.png";
-      break;
-    case "cyber":
-      imageDomainLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png";
-      break;
-    case "se":
-      imageDomainLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/ad81493a-5281-4772-adef-4bcebee00243.png";
-      break;
-    case "image":
-      imageDomainLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/863635c4-6fc0-42d0-add6-7c4b8aa04b9b.png";
-      break;
-    case "etude":
-      imageDomainLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png";
-      break;
-    default:
-      console.log("ERROR: the domain name is incorrect");
-      break;
-  }
+	switch (imagePay) {
+		case "low":
+			imagePayLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/aa0aa2c2-9aaf-46f8-ae91-8c28953b02bc.png"
+			break
+		case "middle":
+			imagePayLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/d790eeff-772d-4aa7-91a0-f1883414b675.png"
+			break
+		case "high":
+			imagePayLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/7781ba0c-a348-4722-ba77-beee6bbb5f51.png"
+			break
+		default:
+			console.log("ERROR: the pay status in incorrect")
+			break
+	}
 
-  switch (imagePay) {
-    case "low":
-      imagePayLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/aa0aa2c2-9aaf-46f8-ae91-8c28953b02bc.png";
-      break;
-    case "middle":
-      imagePayLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/d790eeff-772d-4aa7-91a0-f1883414b675.png";
-      break;
-    case "high":
-      imagePayLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/7781ba0c-a348-4722-ba77-beee6bbb5f51.png";
-      break;
-    default:
-      console.log("ERROR: the pay status in incorrect");
-      break;
-  }
+	switch (imageDifficulty) {
+		case "low":
+			imageDifficultyLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/b30e558d-f0e5-489a-80ba-681d27021c0a.png"
+			break
+		case "middle":
+			imageDifficultyLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/1f020378-3a07-4a5b-892c-62fd7822e9f0.png"
+			break
+		case "high":
+			imageDifficultyLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/93539be4-2afc-4c5f-a34e-f09fa0daa6b1.png"
+			break
+		default:
+			console.log("ERROR: the difficulty status in incorrect")
+			break
+	}
 
-  switch (imageDifficulty) {
-    case "low":
-      imageDifficultyLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/b30e558d-f0e5-489a-80ba-681d27021c0a.png";
-      break;
-    case "middle":
-      imageDifficultyLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/1f020378-3a07-4a5b-892c-62fd7822e9f0.png";
-      break;
-    case "high":
-      imageDifficultyLink = "https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/93539be4-2afc-4c5f-a34e-f09fa0daa6b1.png";
-      break;
-    default:
-      console.log("ERROR: the difficulty status in incorrect");
-      break;
-  }
-
-  if (formBoolean) {
-    contentApply = `
+	if (formBoolean) {
+		contentApply =
+			`
     </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
 		<tbody class="mcnTextBlockOuter">
 			<tr>
@@ -152,7 +213,9 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 						<tbody>
 							<tr>
 								<td align="center" valign="middle" class="mcnButtonContent" style="font-family: Helvetica; font-size: 18px; padding: 18px;">
-									<a class="mcnButton " title="Je répond au formulaire" href="`+formLink+`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Je répond au formulaire</a>
+									<a class="mcnButton " title="Je répond au formulaire" href="` +
+			formLink +
+			`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Je répond au formulaire</a>
 								</td>
 							</tr>
 						</tbody>
@@ -160,10 +223,9 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				</td>
 			</tr>
 		</tbody>
-    `;
-  }
-  else{
-    contentApply =`
+    `
+	} else {
+		contentApply = `
     </table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
 		<tbody class="mcnTextBlockOuter">
 			<tr>
@@ -197,37 +259,50 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				</td>
 			</tr>
 		</tbody>
-    `;
-  }
+    `
+	}
 
-  contentMailTo = "mailto:"
-	for (var i=0; i<contactList.length; i++){
-    var mail = contactList[i];
-    contentMailTo += mail + ",";
-  }
-	contentMailTo += "?subject=Envoi%20du%20CV%20pour%20l'%C3%A9tude%20";
+	contentMailTo = "mailto:"
+	for (var i = 0; i < contactList.length; i++) {
+		var mail = contactList[i]
+		contentMailTo += mail + ","
+	}
+	contentMailTo += "?subject=Envoi%20du%20CV%20pour%20l'%C3%A9tude%20"
 
+	contentMailContact = "N'hésitez pas à demander plus d'informations ou de détails à "
+	for (var i = 0; i < contactList.length; i++) {
+		var mail = contactList[i]
+		var name = mail.charAt(0).toUpperCase() + mail.substring(1, mail.indexOf("."))
+		if (contactList.length == 1) {
+			contentMailContact += name + " (" + mail + ")."
+		} else if (i != contactList.length - 1) {
+			contentMailContact += name + " (" + mail + "), "
+		} else {
+			contentMailContact += "et " + name + " (" + mail + ")."
+		}
+	}
 
-	contentMailContact = "N'hésitez pas à demander plus d'informations ou de détails à ";
-	for (var i = 0; i<contactList.length; i++){
-    var mail = contactList[i];
-		var name = mail.charAt(0).toUpperCase() + mail.substring(1, mail.indexOf("."));
-		if(contactList.length==1){
-      contentMailContact += name + " (" + mail + ").";
-    }
-    else if (i!=(contactList.length-1)){
-      contentMailContact += name + " (" + mail + "), ";
-    }
-    else{
-      contentMailContact += "et " + name + " (" + mail + ").";
-    }
-  }
-
-  return [imageDomainLink, imagePayLink, imageDifficultyLink, contentApply, contentMailContact, contentMailTo];
+	return [imageDomainLink, imagePayLink, imageDifficultyLink, contentApply, contentMailContact, contentMailTo]
 }
 
-function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, imageDomainLink, contentPay, imagePayLink, contentDifficulty, imageDifficultyLink, contentSkills, contentSchedule, contentDescription, contentApply, contentMailContact, contentMailTo){
-  var htmlContent=`
+function contentEditHTML(
+	contentTitle,
+	contentFirstDescription,
+	contentDomain,
+	imageDomainLink,
+	contentPay,
+	imagePayLink,
+	contentDifficulty,
+	imageDifficultyLink,
+	contentSkills,
+	contentSchedule,
+	contentDescription,
+	contentApply,
+	contentMailContact,
+	contentMailTo
+) {
+	var htmlContent =
+		`
 	<!doctype html>
 	<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 		<head>
@@ -771,7 +846,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 							
 							<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 							
-								<h1>`+contentTitle+`</h1>
+								<h1>` +
+		contentTitle +
+		`</h1>
 
 	<div id="gtx-trans" style="position: absolute; left: -41px; top: -8px;">
 	<div class="gtx-trans-icon">&nbsp;</div>
@@ -830,7 +907,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 								<br>
 	Bonjour à toutes et à tous,<br>
 	<br>
-	`+contentFirstDescription+`
+	` +
+		contentFirstDescription +
+		`
 							</td>
 						</tr>
 					</tbody></table>
@@ -857,7 +936,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 			
 				
 
-				<img alt="Domaine" src="`+imageDomainLink+`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
+				<img alt="Domaine" src="` +
+		imageDomainLink +
+		`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
 				
 			
 			</td>
@@ -865,7 +946,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 		<tr>
 			<td class="mcnTextContent" valign="top" style="padding:0 9px 0 9px;" width="100%">
 				<h4 class="null" style="text-align: center; font-size: smaller; font-weight: lighter; color: #757575;">DOMAINE</h4>
-				<h4 class="null" style="text-align: center;">`+contentDomain+`</h4>
+				<h4 class="null" style="text-align: center;">` +
+		contentDomain +
+		`</h4>
 
 			</td>
 		</tr>
@@ -877,7 +960,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 			
 				
 
-				<img alt="Rémunération" src="`+imagePayLink+`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
+				<img alt="Rémunération" src="` +
+		imagePayLink +
+		`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
 				
 			
 			</td>
@@ -885,7 +970,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 		<tr>
 			<td class="mcnTextContent" valign="top" style="padding:0 9px 0 9px;" width="100%">
 				<h4 class="null" style="text-align: center; font-size: smaller; font-weight: lighter; color: #757575;">RÉMUNÉRATION</h4>
-				<h4 class="null" style="text-align: center;">`+contentPay+`</h4>
+				<h4 class="null" style="text-align: center;">` +
+		contentPay +
+		`</h4>
 
 			</td>
 		</tr>
@@ -897,7 +984,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 			
 				
 
-				<img alt="Difficulté" src="`+imageDifficultyLink+`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
+				<img alt="Difficulté" src="` +
+		imageDifficultyLink +
+		`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
 				
 			
 			</td>
@@ -905,7 +994,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 		<tr>
 			<td class="mcnTextContent" valign="top" style="padding:0 9px 0 9px;" width="100%">
 				<h4 class="null" style="text-align: center; font-size: smaller; font-weight: lighter; color: #757575;">DIFFICULTÉ</h4>
-				<h4 class="null" style="text-align: center;">`+contentDifficulty+`</h4>
+				<h4 class="null" style="text-align: center;">` +
+		contentDifficulty +
+		`</h4>
 
 			</td>
 		</tr>
@@ -949,7 +1040,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 							<td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif;">
 							
 								<h3>Compétences :</h3>
-	`+contentSkills+`
+	` +
+		contentSkills +
+		`
 							</td>
 						</tr>
 					</tbody></table>
@@ -982,7 +1075,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 							<td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif;">
 							
 								<h3>Échéances :</h3>
-	`+contentSchedule+`
+	` +
+		contentSchedule +
+		`
 							</td>
 						</tr>
 					</tbody></table>
@@ -1015,7 +1110,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 							<td valign="top" class="mcnTextContent" style="padding: 0px 18px 9px; font-family: Arial, &quot;Helvetica Neue&quot;, Helvetica, sans-serif;">
 							
 								<h3>Description :</h3>
-	`+contentDescription+`
+	` +
+		contentDescription +
+		`
 							</td>
 						</tr>
 					</tbody></table>
@@ -1048,7 +1145,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 				</td>
 			</tr>
 		</tbody>
-	`+contentApply+`
+	` +
+		contentApply +
+		`
 	</table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock" style="min-width:100%;">
 		<tbody class="mcnButtonBlockOuter">
 			<tr>
@@ -1057,7 +1156,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 						<tbody>
 							<tr>
 								<td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 18px; padding: 18px;">
-									<a class="mcnButton " title="J'envoie mon CV" href="`+contentMailTo+`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">J'envoie mon CV</a>
+									<a class="mcnButton " title="J'envoie mon CV" href="` +
+		contentMailTo +
+		`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">J'envoie mon CV</a>
 								</td>
 							</tr>
 						</tbody>
@@ -1082,7 +1183,9 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 							
 							<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 							
-								`+contentMailContact+`<br>
+								` +
+		contentMailContact +
+		`<br>
 	<br>
 	À bientôt,<br>
 	L'équipe Telecom Etude
@@ -1365,72 +1468,43 @@ function contentEditHTML(contentTitle, contentFirstDescription, contentDomain, i
 				</table>
 			</center>
 		</body>
-	</html>`;
+	</html>`
 
-  return htmlContent;
+	return htmlContent
 }
 
-async function createCampaign(contentTitle, contactList, setAndSendTest){
+async function createCampaign(contentTitle, contactList, htmlContent, testEmails) {
+	const campaignName = contentTitle
+	const mailObject = "[Telecom Etude] " + contentTitle
+	const mailFromName = "Telecom Etude"
+	const mailReplyTo = contactList[0]
 
-  const campaignName = contentTitle
-	const mailObject = "[Telecom Etude] " + contentTitle;
-	const mailFromName = "Telecom Etude";
-	const mailReplyTo = contactList[0];
+	client.setConfig({
+		apiKey: apiKey,
+		server: server,
+	})
 
-  client.setConfig({
-    apiKey: apiKey,
-    server: server,
-  });
-  
-  var campaignID = "";
+	var campaignID = ""
 
-  const run = async () => {
-    const response = await client.campaigns.create({
-      type: "regular",
-      recipents:{list_id: subscriberListID},
-      settings: {title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo}
-      });
-    //console.log(response);
-    campaignID = response['id'];
-  };
-  
-  await run();
-  console.log("New campaign created with ID: " + campaignID);
+	const response = await client.campaigns.create({
+		type: "regular",
+		recipents: { list_id: subscriberListID },
+		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
+	})
+	campaignID = response["id"]
 
-  setAndSendTest(campaignID);
-}
+	console.log("New campaign created with ID: " + campaignID)
 
-function setHTMLContent(campaignID, htmlContent){
+	if (setHTMLContentBool) {
+		const response = await client.campaigns.setContent(campaignID, { html: htmlContent })
+		console.log("HTML Content set")
+	}
 
-  client.setConfig({
-    apiKey: apiKey,
-    server: server,
-  });
-
-  const run = async () => {
-    const response = await client.campaigns.setContent(campaignID, {html: htmlContent});
-    //console.log(response);
-  };
-
-  run();
-  console.log("HTML Content set");
-}
-
-function sendTestEmails(campaignID, testEmails){
-
-  client.setConfig({
-    apiKey: apiKey,
-    server: server,
-  });
-
-  const run = async () => {
-    const response = await client.campaigns.sendTestEmail(campaignID, {
-      test_emails: testEmails,
-      send_type: "html",
-    });
-    //console.log(response);
-  };
-
-  console.log("Sending test emails to: "+testEmails);
-  run();
+	if (sentTestEmailsBool) {
+		console.log("Sending test emails to: " + testEmails)
+		const response = await client.campaigns.sendTestEmail(campaignID, {
+			test_emails: testEmails,
+			send_type: "html",
+		})
+	}
 }
