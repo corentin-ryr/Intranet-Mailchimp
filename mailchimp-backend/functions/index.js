@@ -25,7 +25,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 exports.createCampaignAndSendTestEmail = functions.https.onRequest((request, response) => {
 
     //Retrieve the arguments in request TODO
-    debug(request)
+    console.log(request)
     //END TODO
 
     const [

@@ -193,19 +193,6 @@
 <style scoped>
 	div {
 		margin-bottom: 10px;
-		position: relative;
-	}
-
-	.signatureDiv {
-		text-align: left;
-		font-family: Helvetica, Arial, serif;
-		font-size: 13px;
-		color: rgb(153, 153, 153);
-		line-height: 1.5;
-	}
-
-	.redText {
-		color: #e54540;
 	}
 
 	.v-text-field {
