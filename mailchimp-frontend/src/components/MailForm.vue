@@ -165,11 +165,22 @@
 				</v-card-actions>
 			</v-form>
 		</v-card>
+		<div class="intro">
+			<div class="intro-text">
+				<h1 class="hide">
+					<span class="text" id="text">{{ overlayText }}</span>
+				</h1>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 	import axios from "axios"
+	// typical import
+	import gsap from "gsap"
+	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
+
 	export default {
 		name: "MailForm",
 		props: {
@@ -181,6 +192,8 @@
 			difficulties: ["low", "middle", "high"],
 			enabled: false,
 			isValid: true,
+			overlayText: "Votre MRI s'envoie",
+
 			// Name of the form data
 			form: {
 				contentTitle: "",
@@ -198,16 +211,49 @@
 			},
 		}),
 		methods: {
-			sendForm: function() {
-				console.log("function called")
-				axios
-					.post("https://us-central1-testmailinglist-6b8aa.cloudfunctions.net/helloWorld", this.form)
-					.then((res) => {
-						console.log(res)
-					})
-					.catch((error) => {
-						console.log(error.response.status)
-					})
+			sendForm: async function() {
+                this.overlayText = "Votre MRI s'envoie"
+				tl.fromTo(".intro", {y: "-100%"}, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", {y: "100%"}, { y: "0%", duration: 1 })
+
+				const response = await axios.post(
+					"https://us-central1-testmailinglist-6b8aa.cloudfunctions.net/helloWorld",
+					this.form
+				)
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+                var success
+				if (response.status == 200) {
+					this.overlayText = "Voilà, c'est fait"
+                    success = true
+				} else {
+					this.overlayText = "Il y a eu une erreur :("
+                    success = false
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				setTimeout(() => { //Set a timeout for the user to have time to read the message
+					this.closeOverlay(success)
+				}, 1000)
+			},
+			closeOverlay: async function(success) {
+				tl.to(".text", { y: "-100%", duration: 1 })
+				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
+
+				if (success) {
+					for (let field in this.form) {
+                        this.form[field] = ""
+                    }
+				}
+                else {
+                    //Add a hint message to help the user correct its mistakes
+                    console.log("here is what you need to do...")
+                }
 			},
 		},
 	}
@@ -225,5 +271,32 @@
 
 	.v-textarea {
 		width: 100%;
+	}
+
+	.intro {
+		background: #fd8334;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 5;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transform: translateY(-100%);
+	}
+	.intro-text {
+		color: white;
+		font-family: "Avenir Next Regular";
+		font-size: 3rem;
+	}
+	.hide {
+		background: #fd8334;
+		overflow: hidden;
+	}
+	.hide span {
+		transform: translateY(100%);
+		display: inline-block;
 	}
 </style>
