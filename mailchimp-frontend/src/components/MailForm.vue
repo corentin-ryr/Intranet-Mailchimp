@@ -176,8 +176,10 @@
 </template>
 
 <script>
-	import axios from "axios"
-	// typical import
+	import firebase from "firebase"
+
+	// import axios from "axios"
+
 	import gsap from "gsap"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
@@ -212,32 +214,33 @@
 		}),
 		methods: {
 			sendForm: async function() {
-                this.overlayText = "Votre MRI s'envoie"
-				tl.fromTo(".intro", {y: "-100%"}, { y: "0%", duration: 0.75 })
-				tl.fromTo(".text", {y: "100%"}, { y: "0%", duration: 1 })
+				this.overlayText = "Votre MRI s'envoie"
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				const response = await axios.post(
-					"https://us-central1-testmailinglist-6b8aa.cloudfunctions.net/helloWorld",
-					this.form
-				)
+				var createCampaign = firebase.functions().httpsCallable("addMessage")
+				var success = true
+				try {
+					await createCampaign(this.form) //Call the firebase function
+				} catch (error) {
+					success = false
+				}
 
 				await tl.to(".text", {
 					y: "-100%",
 					duration: 1,
 				})
 
-                var success
-				if (response.status == 200) {
+				if (success) {
 					this.overlayText = "Voilà, c'est fait"
-                    success = true
 				} else {
 					this.overlayText = "Il y a eu une erreur :("
-                    success = false
 				}
 
 				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				setTimeout(() => { //Set a timeout for the user to have time to read the message
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
 					this.closeOverlay(success)
 				}, 1000)
 			},
@@ -247,13 +250,12 @@
 
 				if (success) {
 					for (let field in this.form) {
-                        this.form[field] = ""
-                    }
+						this.form[field] = ""
+					}
+				} else {
+					//Add a hint message to help the user correct its mistakes
+					console.log("here is what you need to do...")
 				}
-                else {
-                    //Add a hint message to help the user correct its mistakes
-                    console.log("here is what you need to do...")
-                }
 			},
 		},
 	}

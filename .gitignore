@@ -9,7 +9,7 @@ firebase.json
 .firebase/
 firebase-debug.log*
 firebase-debug.*.log*
-
+firebaseCredentials.json
 
 # local env files
 .env.local
