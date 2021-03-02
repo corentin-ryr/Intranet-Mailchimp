@@ -25,10 +25,14 @@ exports.helloWorld = functions.https.onCall((data, context) => {
 
 // The function to create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
 exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, context) => {
+    console.log(context)
+    
+    if (!context.auth.token) {
+        return Error("User not connected")
+    }
+
 
     //Retrieve the arguments in request
-    //const data = request.body
-    
     //Raw data
     contentTitle = data.contentTitle
     contentFirstDescription = data.contentFirstDescription
