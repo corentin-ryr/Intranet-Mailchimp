@@ -198,18 +198,19 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "",
-				contentFirstDescription: "",
-				contentDomain: "",
-				imageDomain: "",
-				contentPay: "",
-				imagePay: "",
-				contentDifficulty: "",
-				imageDifficulty: "",
-				contentSkills: "",
-				contentSchedule: "",
-				contentDescription: "",
+				contentTitle: "Test",
+				contentFirstDescription: "Test",
+				contentDomain: "Data",
+				imageDomain: "data",
+				contentPay: "Low",
+				imagePay: "low",
+				contentDifficulty: "Difficult",
+				imageDifficulty: "high",
+				contentSkills: "Several skills",
+				contentSchedule: "Soon",
+				contentDescription: "Lots of words",
 				formLink: "",
+                contactList: ["firstmail@telecom-etude.fr"]
 			},
 		}),
 		methods: {
@@ -218,7 +219,7 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				var createCampaign = firebase.functions().httpsCallable("addMessage")
+				var createCampaign = firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
 					await createCampaign(this.form) //Call the firebase function

@@ -4,28 +4,30 @@ const { debug } = require("firebase-functions/lib/logger")
 //Setup mailchimp
 const mailchimp = require("@mailchimp/mailchimp_marketing")
 
-// Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID"  " to midify the key and server of mailchimp
+// Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID mailchimp.subscriberlistid="SUBSCRIBER LIST ID"  " to midify the key and server of mailchimp
 mailchimp.setConfig({
 	apiKey: functions.config().mailchimp.apikey,
-	server: functions.config().mailchimp.server,
+    server: functions.config().mailchimp.server,
 })
 
 //Some constant
-const testEmails = ["corentin.royer@telecom-etude.fr"]
+const testEmails = ["corentin.royer@telecom-etude.fr", "hugo.queinnec@telecom-etude.fr"]
 const setHTMLContentBool = true
 const sentTestEmailsBool = true
 
 //Hello world functions for example
-exports.helloWorld = functions.https.onRequest((request, response) => {
-	functions.logger.info("Hello logs!", { structuredData: true })
-	response.send("Hello from Firebase!")
+exports.helloWorld = functions.https.onCall((data, context) => {
+    functions.logger.info("Hello logs!", { structuredData: true })
+    functions.logger.info(context.auth)
+    
+    return data.body
 })
 
 // The function to create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
-exports.createCampaignAndSendTestEmail = functions.https.onRequest((request, response) => {
+exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, context) => {
 
     //Retrieve the arguments in request
-    const data = request.body
+    //const data = request.body
     
     //Raw data
     contentTitle = data.contentTitle
@@ -43,6 +45,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onRequest((request, res
     imageDifficulty = data.imageDifficulty
     formBoolean = data.formBoolean
     formLink = data.formLink
+
     contactList = data.contactList
 
 
@@ -77,29 +80,29 @@ exports.createCampaignAndSendTestEmail = functions.https.onRequest((request, res
 	const mailFromName = "Telecom Etude"
     const mailReplyTo = contactList[0]
     
-    const response = await client.campaigns.create({
+    const result = await mailchimp.campaigns.create({
 		type: "regular",
-		recipents: { list_id: subscriberListID },
+		recipents: { list_id: functions.config().mailchimp.subscriberlistid },
 		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
 	})
-	const campaignID = response["id"]
+	const campaignID = result["id"]
 
     console.log("New campaign created with ID: " + campaignID)
 
     if (setHTMLContentBool) {
-		await client.campaigns.setContent(campaignID, { html: htmlContent })
+		await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
 		console.log("HTML Content set")
 	}
 
 	if (sentTestEmailsBool) {
 		console.log("Sending test emails to: " + testEmails)
-		await client.campaigns.sendTestEmail(campaignID, {
+		await mailchimp.campaigns.sendTestEmail(campaignID, {
 			test_emails: testEmails,
 			send_type: "html",
 		})
 	}
 
-	response.status(200).send("Your campaign has been created and has been sent to the auditors")
+	return "Your campaign has been created and has been sent to the auditors"
 })
 
 
