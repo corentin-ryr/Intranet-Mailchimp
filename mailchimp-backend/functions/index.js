@@ -7,7 +7,7 @@ const mailchimp = require("@mailchimp/mailchimp_marketing")
 // Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID mailchimp.subscriberlistid="SUBSCRIBER LIST ID"  " to midify the key and server of mailchimp
 mailchimp.setConfig({
 	apiKey: functions.config().mailchimp.apikey,
-    server: functions.config().mailchimp.server,
+	server: functions.config().mailchimp.server,
 })
 
 //Some constant
@@ -17,43 +17,58 @@ const sentTestEmailsBool = true
 
 //Hello world functions for example
 exports.helloWorld = functions.https.onCall((data, context) => {
-    functions.logger.info("Hello logs!", { structuredData: true })
-    functions.logger.info(context.auth)
-    
-    return data.body
+	functions.logger.info("Hello logs!", { structuredData: true })
+	functions.logger.info(context.auth)
+
+	return data.body
 })
 
 // The function to create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
 exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, context) => {
-    console.log(context)
-    
-    if (!context.auth.token) {
-        return Error("User not connected")
-    }
+	// Checking that the user is authenticated.
+	if (!context.auth) {
+		// Throwing an HttpsError so that the client gets the error details.
+		throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
+	}
 
+	//Retrieve the arguments in request
+	//Check if all data has been sent
+	if (
+		!data.contentTitle ||
+		!data.contentFirstDescription ||
+		!data.contentDomain ||
+		!data.contentPay ||
+		!data.contentDifficulty ||
+        !data.contentSkills ||
+        !data.contentSchedule ||
+        !data.imageDomain ||
+        !data.imagePay ||
+        !data.imageDifficulty ||
+        !data.formBoolean ||
+        (data.formBoolean == true && !data.formLink)
+    ) {
+        throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
+	}
+	//Raw data
+	contentTitle = data.contentTitle
+	contentFirstDescription = data.contentFirstDescription
+	contentDomain = data.contentDomain
+	contentPay = data.contentPay
+	contentDifficulty = data.contentDifficulty
+	contentSkills = data.contentSkills
+	contentSchedule = data.contentSchedule
+	contentDescription = data.contentDescription
 
-    //Retrieve the arguments in request
-    //Raw data
-    contentTitle = data.contentTitle
-    contentFirstDescription = data.contentFirstDescription
-    contentDomain = data.contentDomain
-    contentPay = data.contentPay
-    contentDifficulty = data.contentDifficulty
-    contentSkills = data.contentSkills
-    contentSchedule = data.contentSchedule
-    contentDescription = data.contentDescription
+	//Data to transform
+	imageDomain = data.imageDomain
+	imagePay = data.imagePay
+	imageDifficulty = data.imageDifficulty
+	formBoolean = data.formBoolean
+	formLink = data.formLink
 
-    //Data to transform
-    imageDomain = data.imageDomain
-    imagePay = data.imagePay
-    imageDifficulty = data.imageDifficulty
-    formBoolean = data.formBoolean
-    formLink = data.formLink
+	contactList = data.contactList
 
-    contactList = data.contactList
-
-
-    const [
+	const [
 		imageDomainLink,
 		imagePayLink,
 		imageDifficultyLink,
@@ -79,21 +94,21 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 		contentMailTo
 	)
 
-    const campaignName = contentTitle
+	const campaignName = contentTitle
 	const mailObject = "[Telecom Etude] " + contentTitle
 	const mailFromName = "Telecom Etude"
-    const mailReplyTo = contactList[0]
-    
-    const result = await mailchimp.campaigns.create({
+	const mailReplyTo = contactList[0]
+
+	const result = await mailchimp.campaigns.create({
 		type: "regular",
 		recipents: { list_id: functions.config().mailchimp.subscriberlistid },
 		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
 	})
 	const campaignID = result["id"]
 
-    console.log("New campaign created with ID: " + campaignID)
+	console.log("New campaign created with ID: " + campaignID)
 
-    if (setHTMLContentBool) {
+	if (setHTMLContentBool) {
 		await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
 		console.log("HTML Content set")
 	}
@@ -108,9 +123,6 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	return "Your campaign has been created and has been sent to the auditors"
 })
-
-
-
 
 // Helper functions to format the incomming data into the html email =================================================
 // ===================================================================================================================
@@ -149,8 +161,8 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png"
 			break
 		default:
-			console.log("ERROR: the domain name is incorrect")
-			break
+            console.log("ERROR: the domain name is incorrect")
+            throw new functions.https.HttpsError("invalid-argument", "The domain image name is incorrect.") 
 	}
 
 	switch (imagePay) {
@@ -167,8 +179,8 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/7781ba0c-a348-4722-ba77-beee6bbb5f51.png"
 			break
 		default:
-			console.log("ERROR: the pay status in incorrect")
-			break
+            console.log("ERROR: the pay status in incorrect")
+            throw new functions.https.HttpsError("invalid-argument", "The pay image name is incorrect.") 
 	}
 
 	switch (imageDifficulty) {
@@ -185,8 +197,8 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/93539be4-2afc-4c5f-a34e-f09fa0daa6b1.png"
 			break
 		default:
-			console.log("ERROR: the difficulty status in incorrect")
-			break
+            console.log("ERROR: the difficulty status in incorrect")
+            throw new functions.https.HttpsError("invalid-argument", "The difficulty image name is incorrect.") 
 	}
 
 	if (formBoolean) {
@@ -1492,11 +1504,3 @@ function contentEditHTML(
 
 	return htmlContent
 }
-
-
-
-
-
-
-
-
