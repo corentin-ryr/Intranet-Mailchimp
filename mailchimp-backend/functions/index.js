@@ -130,7 +130,7 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 			break
 		case "cyber":
 			imageDomainLink =
-				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/4d65cc38-f99c-4eb5-bd8b-f4c58d44aecb.png"
 			break
 		case "se":
 			imageDomainLink =

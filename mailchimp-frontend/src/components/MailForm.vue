@@ -7,7 +7,7 @@
 				v-model="isValid"
 				style="padding-left: 20px; padding-right: 20px"
 			>
-				<v-card-title style="font-family: 'Avenir Next Bold'">
+				<v-card-title style="font-family: 'Avenir Next Bold'" class="py-10">
 					<h2>Création d'un MRI</h2>
 				</v-card-title>
 
@@ -19,143 +19,205 @@
 					required
 					prepend-icon="mdi-account-outline"
 					outlined
-					shaped
+					
 				/>
 
 				<v-textarea
 					type="text"
 					name="contentFirstDescription"
 					v-model="form.contentFirstDescription"
-					label="Nous vous proposons aujourd'hui une étude de..."
+					label="Description introductive"
 					required
 					prepend-icon="mdi-account-outline"
 					auto-grow
 					outlined
 					rows="3"
 					row-height="25"
-					shaped
+					
 				/>
 
-				<v-text-field
-					type="text"
-					name="contentDomain"
-					v-model="form.contentDomain"
-					label="Data Science"
-					required
-					prepend-icon="mdi-dialpad"
-					outlined
-					shaped
-				/>
+				<v-container>
+					<v-row>
+						<v-col cols="6">
+							<v-text-field
+								type="text"
+								name="Domaine de l'étude"
+								v-model="form.contentDomain"
+								label="Data Science"
+								required
+								prepend-icon="mdi-dialpad"
+								outlined
+							/>
+						</v-col>
 
-				<v-select
-					:items="domains"
-					name="imageDomain"
-					v-model="form.imageDomain"
-					label="Image du domaine"
-					required
-					prepend-icon="mdi-"
-					outlined
-					shaped
-				/>
+						<v-col cols="6">
+							<v-select
+								:items="domains"
+								name="imageDomain"
+								v-model="form.imageDomain"
+								label="Image du domaine"
+								required
+								prepend-icon="mdi-"
+								outlined
+							/>
+						</v-col>
+					</v-row>
+					
+					<v-row>
+						<v-col cols="6">
+							<v-text-field
+								type="text"
+								name="contentPay"
+								v-model="form.contentPay"
+								label="Fourchette de rémunération"
+								required
+								prepend-icon="mdi-dialpad"
+								outlined
+							/>
+						</v-col>
 
-				<v-text-field
-					type="text"
-					name="contentPay"
-					v-model="form.contentPay"
-					label="1500-2000€"
-					required
-					prepend-icon="mdi-dialpad"
-					outlined
-					shaped
-				/>
+						<v-col cols="6">
+							<v-select
+								:items="pays"
+								name="imagePay"
+								v-model="form.imagePay"
+								label="Image de la rémunération"
+								required
+								prepend-icon="mdi-"
+								outlined
+							/>
+						</v-col>
+					</v-row>
 
-				<v-select
-					:items="pays"
-					name="imagePay"
-					v-model="form.imagePay"
-					label="Image du prix"
-					required
-					prepend-icon="mdi-"
-					outlined
-					shaped
-				/>
+					<v-row>
+						<v-col cols="6">
+							<v-text-field
+								type="text"
+								name="contentDifficulty"
+								v-model="form.contentDifficulty"
+								label="Difficulté"
+								required
+								prepend-icon="mdi-dialpad"
+								outlined
+							/>
+						</v-col>
 
-				<v-text-field
-					type="text"
-					name="contentDifficulty"
-					v-model="form.contentDifficulty"
-					label="Difficile"
-					required
-					prepend-icon="mdi-dialpad"
-					outlined
-					shaped
-				/>
+						<v-col cols="6">
+							<v-select
+								:items="difficulties"
+								name="imageDifficulty"
+								v-model="form.imageDifficulty"
+								label="Image de la difficulté"
+								required
+								prepend-icon="mdi-"
+								outlined
+							/>
+						</v-col>
+					</v-row>
 
-				<v-select
-					:items="difficulties"
-					name="imageDifficulty"
-					v-model="form.imageDifficulty"
-					label="Image du prix"
-					required
-					prepend-icon="mdi-"
-					outlined
-					shaped
-				/>
+				</v-container>
+
 
 				<v-textarea
 					type="text"
 					name="contentSkills"
 					v-model="form.contentSkills"
-					label="Nous recherchons un·e ou plusieurs intervenant·e·s connaissant la Data Science."
+					label="Compétences"
 					required
 					prepend-icon="mdi-dialpad"
 					auto-grow
 					outlined
 					rows="3"
 					row-height="25"
-					shaped
+					
 				/>
 
 				<v-textarea
 					type="text"
 					name="contentSchedule"
 					v-model="form.contentSchedule"
-					label="Le client désire commencer le plus tôt possible."
+					label="Échéances"
 					required
 					prepend-icon="mdi-dialpad"
 					auto-grow
 					outlined
 					rows="3"
 					row-height="25"
-					shaped
+					
 				/>
 
 				<v-textarea
 					type="text"
 					name="contentDescription"
 					v-model="form.contentDescription"
-					label="Le but de l'étude est de la finir."
+					label="Description complète et technique"
 					required
 					prepend-icon="mdi-dialpad"
 					auto-grow
 					outlined
 					rows="3"
 					row-height="25"
-					shaped
+					
 				/>
 
 				<v-row align="center" class="mx-auto">
-					<v-checkbox v-model="enabled" hide-details class="shrink mr-2 mt-0"></v-checkbox>
+					<v-checkbox v-model="form.formBoolean" hide-details class="shrink mr-2 mt-0"></v-checkbox>
 					<v-text-field
 						type="text"
 						name="formLink"
 						v-model="form.formLink"
-						label="www.link-to-form.fr"
-						:disabled="!enabled"
+						label="Lien vers un formulaire Google Form"
+						:disabled="!form.formBoolean"
 						outlined
-						shaped
+						
 					/>
 				</v-row>
+
+				
+				<v-combobox
+					name="contactList"
+					v-model="form.contactList"
+					:items="items"
+					label="Emails des administrateurs"
+					multiple
+					chips
+					required
+					prepend-icon="mdi-dialpad"
+					auto-grow
+					outlined
+					
+				
+				/>
+
+
+				<div class="text-center">
+					<v-dialog
+					v-model="dialog"
+					width="500"
+					>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn
+						color="red lighten-2"
+						dark
+						v-bind="attrs"
+						v-on="on"
+						>
+						Sent Data
+						</v-btn>
+					</template>
+
+					<v-card>
+						<v-card-title class="headline grey lighten-2">
+						Résultat
+						</v-card-title>
+						<v-card-text>
+							{{form}}
+						</v-card-text>
+
+					</v-card>
+					</v-dialog>
+				</div>
+				
 
 				<v-divider></v-divider>
 				<v-card-actions>
@@ -189,7 +251,7 @@
 			msg: String,
 		},
 		data: () => ({
-			domains: ["data", "dev", "cyber", "SE", "image", "etude"],
+			domains: ["data", "dev", "cyber", "se", "image", "etude"],
 			pays: ["low", "middle", "high"],
 			difficulties: ["low", "middle", "high"],
 			enabled: false,
@@ -198,19 +260,20 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "Test",
-				contentFirstDescription: "Test",
-				contentDomain: "Data",
-				imageDomain: "data",
-				contentPay: "Low",
-				imagePay: "low",
-				contentDifficulty: "Difficult",
-				imageDifficulty: "high",
-				contentSkills: "Several skills",
-				contentSchedule: "Soon",
-				contentDescription: "Lots of words",
+				contentTitle: "",
+				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
+				contentDomain: "",
+				imageDomain: "",
+				contentPay: "",
+				imagePay: "",
+				contentDifficulty: "",
+				imageDifficulty: "",
+				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
+				contentSchedule: "Le client désire commencer le plus tôt possible.",
+				contentDescription: "",
+				formBoolean: false,
 				formLink: "",
-                contactList: ["firstmail@telecom-etude.fr"]
+                contactList: "",
 			},
 		}),
 		methods: {
@@ -269,7 +332,7 @@
 	}
 
 	.v-text-field {
-		width: 60%;
+		width: 90%;
 	}
 
 	.v-textarea {
