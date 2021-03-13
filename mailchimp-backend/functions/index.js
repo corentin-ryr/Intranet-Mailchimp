@@ -15,14 +15,6 @@ const testEmails = ["corentin.royer@telecom-etude.fr", "hugo.queinnec@telecom-et
 const setHTMLContentBool = true
 const sentTestEmailsBool = true
 
-//Hello world functions for example
-exports.helloWorld = functions.https.onCall((data, context) => {
-	functions.logger.info("Hello logs!", { structuredData: true })
-	functions.logger.info(context.auth)
-
-	return data.body
-})
-
 // The function to create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
 exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, context) => {
 	// Checking that the user is authenticated.
@@ -39,15 +31,15 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 		!data.contentDomain ||
 		!data.contentPay ||
 		!data.contentDifficulty ||
-        !data.contentSkills ||
-        !data.contentSchedule ||
-        !data.imageDomain ||
-        !data.imagePay ||
-        !data.imageDifficulty ||
-        !data.formBoolean ||
-        (data.formBoolean == true && !data.formLink)
-    ) {
-        throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
+		!data.contentSkills ||
+		!data.contentSchedule ||
+		!data.imageDomain ||
+		!data.imagePay ||
+		!data.imageDifficulty ||
+		//!data.formBoolean ||
+		(data.formBoolean == true && !data.formLink)
+	) {
+		throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
 	}
 	//Raw data
 	contentTitle = data.contentTitle
@@ -146,7 +138,7 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 			break
 		case "cyber":
 			imageDomainLink =
-				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/4d65cc38-f99c-4eb5-bd8b-f4c58d44aecb.png"
 			break
 		case "se":
 			imageDomainLink =
@@ -161,8 +153,8 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png"
 			break
 		default:
-            console.log("ERROR: the domain name is incorrect")
-            throw new functions.https.HttpsError("invalid-argument", "The domain image name is incorrect.") 
+			console.log("ERROR: the domain name is incorrect")
+			throw new functions.https.HttpsError("invalid-argument", "The domain image name is incorrect.")
 	}
 
 	switch (imagePay) {
@@ -179,8 +171,8 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/7781ba0c-a348-4722-ba77-beee6bbb5f51.png"
 			break
 		default:
-            console.log("ERROR: the pay status in incorrect")
-            throw new functions.https.HttpsError("invalid-argument", "The pay image name is incorrect.") 
+			console.log("ERROR: the pay status in incorrect")
+			throw new functions.https.HttpsError("invalid-argument", "The pay image name is incorrect.")
 	}
 
 	switch (imageDifficulty) {
@@ -197,8 +189,8 @@ function contentTransformations(imageDomain, imagePay, imageDifficulty, formBool
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/93539be4-2afc-4c5f-a34e-f09fa0daa6b1.png"
 			break
 		default:
-            console.log("ERROR: the difficulty status in incorrect")
-            throw new functions.https.HttpsError("invalid-argument", "The difficulty image name is incorrect.") 
+			console.log("ERROR: the difficulty status in incorrect")
+			throw new functions.https.HttpsError("invalid-argument", "The difficulty image name is incorrect.")
 	}
 
 	if (formBoolean) {
