@@ -7,8 +7,8 @@
 				v-model="isValid"
 				style="padding-left: 20px; padding-right: 20px"
 			>
-				<v-card-title style="font-family: 'Avenir Next Bold'" class="py-10">
-					<h2>Création d'un MRI</h2>
+				<v-card-title style="font-family: 'Avenir Next Bold'; justify-content: center; align-items: center;" class="text-wrap py-10">
+					<h1>✉️ MRI</h1>
 				</v-card-title>
 
 				<v-text-field
@@ -17,7 +17,7 @@
 					v-model="form.contentTitle"
 					label="Nom de l'étude"
 					required
-					prepend-icon="mdi-account-outline"
+					prepend-icon="create"
 					outlined
 					
 				/>
@@ -28,7 +28,7 @@
 					v-model="form.contentFirstDescription"
 					label="Description introductive"
 					required
-					prepend-icon="mdi-account-outline"
+					prepend-icon="emoji_objects"
 					auto-grow
 					outlined
 					rows="3"
@@ -36,21 +36,21 @@
 					
 				/>
 
-				<v-container>
-					<v-row>
-						<v-col cols="6">
+				<v-container class="ma-0 pa-0">
+					<v-row class="ma-0 pa-0">
+						<v-col cols="6" class="ma-0 pa-0">
 							<v-text-field
 								type="text"
 								name="contentDomain"
 								v-model="form.contentDomain"
 								label="Domaine de l'étude"
 								required
-								prepend-icon="mdi-dialpad"
+								prepend-icon="build"
 								outlined
 							/>
 						</v-col>
 
-						<v-col cols="6">
+						<v-col cols="6" class="ma-0 pa-0">
 							<v-select
 								:items="domains"
 								name="imageDomain"
@@ -63,20 +63,20 @@
 						</v-col>
 					</v-row>
 					
-					<v-row>
-						<v-col cols="6">
+					<v-row class="ma-0 pa-0">
+						<v-col cols="6" class="ma-0 pa-0">
 							<v-text-field
 								type="text"
 								name="contentPay"
 								v-model="form.contentPay"
 								label="Fourchette de rémunération"
 								required
-								prepend-icon="mdi-dialpad"
+								prepend-icon="payments"
 								outlined
 							/>
 						</v-col>
 
-						<v-col cols="6">
+						<v-col cols="6" class="ma-0 pa-0">
 							<v-select
 								:items="pays"
 								name="imagePay"
@@ -89,20 +89,20 @@
 						</v-col>
 					</v-row>
 
-					<v-row>
-						<v-col cols="6">
+					<v-row class="ma-0 pa-0">
+						<v-col cols="6" class="ma-0 pa-0">
 							<v-text-field
 								type="text"
 								name="contentDifficulty"
 								v-model="form.contentDifficulty"
 								label="Difficulté"
 								required
-								prepend-icon="mdi-dialpad"
+								prepend-icon="psychology"
 								outlined
 							/>
 						</v-col>
 
-						<v-col cols="6">
+						<v-col cols="6" class="ma-0 pa-0">
 							<v-select
 								:items="difficulties"
 								name="imageDifficulty"
@@ -124,7 +124,7 @@
 					v-model="form.contentSkills"
 					label="Compétences"
 					required
-					prepend-icon="mdi-dialpad"
+					prepend-icon="account_circle"
 					auto-grow
 					outlined
 					rows="3"
@@ -138,7 +138,7 @@
 					v-model="form.contentSchedule"
 					label="Échéances"
 					required
-					prepend-icon="mdi-dialpad"
+					prepend-icon="today"
 					auto-grow
 					outlined
 					rows="3"
@@ -152,7 +152,7 @@
 					v-model="form.contentDescription"
 					label="Description complète et technique"
 					required
-					prepend-icon="mdi-dialpad"
+					prepend-icon="list_alt"
 					auto-grow
 					outlined
 					rows="3"
@@ -160,9 +160,10 @@
 					
 				/>
 
-				<v-row align="center" class="mx-auto">
-					<v-checkbox v-model="form.formBoolean" hide-details class="shrink mr-2 mt-0"></v-checkbox>
+				<v-row align="center" class="ma-0 pa-0">
+					<v-checkbox v-model="form.formBoolean" hide-details class="shrink mb-8 mt-0"></v-checkbox>
 					<v-text-field
+						style="width: 80%"
 						type="text"
 						name="formLink"
 						v-model="form.formLink"
@@ -181,7 +182,7 @@
 					multiple
 					chips
 					required
-					prepend-icon="mdi-dialpad"
+					prepend-icon="mail"
 					auto-grow
 					outlined
 					
@@ -395,7 +396,7 @@
 	}
 
 	.v-text-field {
-		width: 90%;
+		width: 100%;
 	}
 
 	.v-textarea {
