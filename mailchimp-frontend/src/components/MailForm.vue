@@ -41,9 +41,9 @@
 						<v-col cols="6">
 							<v-text-field
 								type="text"
-								name="Domaine de l'étude"
+								name="contentDomain"
 								v-model="form.contentDomain"
-								label="Data Science"
+								label="Domaine de l'étude"
 								required
 								prepend-icon="mdi-dialpad"
 								outlined
@@ -177,7 +177,6 @@
 				<v-combobox
 					name="contactList"
 					v-model="form.contactList"
-					:items="items"
 					label="Emails des administrateurs"
 					multiple
 					chips
@@ -192,7 +191,6 @@
 
 				<div class="text-center">
 					<v-dialog
-					v-model="dialog"
 					width="500"
 					>
 					<template v-slot:activator="{ on, attrs }">
@@ -211,7 +209,7 @@
 						Résultat
 						</v-card-title>
 						<v-card-text>
-							{{form}}
+							{{translatedForm()}}
 						</v-card-text>
 
 					</v-card>
@@ -251,9 +249,9 @@
 			msg: String,
 		},
 		data: () => ({
-			domains: ["data", "dev", "cyber", "se", "image", "etude"],
-			pays: ["low", "middle", "high"],
-			difficulties: ["low", "middle", "high"],
+			domains: ["Data Science, Machine Learning, IA", "Développement Web, Logiciel, Mobile", "Cybersécurité, Cryptographie", "Systèmes Embarqués, IoT", "Traitement d'Image", "Étude de marché, État de l'Art, Audit"],
+			pays: ["Faible", "Moyenne", "Élevée"],
+			difficulties: ["Faible", "Moyenne", "Élevée"],
 			enabled: false,
 			isValid: true,
 			overlayText: "Votre MRI s'envoie",
@@ -263,7 +261,7 @@
 				contentTitle: "",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
 				contentDomain: "",
-				imageDomain: "",
+				imageDomain: "",//this.translateDomainLabel("Data Science"),
 				contentPay: "",
 				imagePay: "",
 				contentDifficulty: "",
@@ -276,6 +274,8 @@
                 contactList: "",
 			},
 		}),
+
+
 		methods: {
 			sendForm: async function() {
 				this.overlayText = "Votre MRI s'envoie"
@@ -308,6 +308,7 @@
 					this.closeOverlay(success)
 				}, 1000)
 			},
+
 			closeOverlay: async function(success) {
 				tl.to(".text", { y: "-100%", duration: 1 })
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
@@ -321,6 +322,68 @@
 					console.log("here is what you need to do...")
 				}
 			},
+
+			translatedForm: function() {
+
+				var newForm = {... this.form};
+
+				switch (newForm.imageDomain) {
+					case this.domains[0]:
+						newForm.imageDomain = "data";
+						break;
+					case this.domains[1]:
+						newForm.imageDomain = "dev";
+						break;
+					case this.domains[2]:
+						newForm.imageDomain = "cyber";
+						break;
+					case this.domains[3]:
+						newForm.imageDomain = "se";
+						break;
+					case this.domains[4]:
+						newForm.imageDomain = "image";
+						break;
+					case this.domains[5]:
+						newForm.imageDomain = "etude";
+						break;
+				
+					default:
+						break;
+				}
+
+				switch (newForm.imagePay) {
+					case this.pays[0]:
+						newForm.imagePay = "low"
+						break;
+					case this.pays[1]:
+						newForm.imagePay = "middle"
+						break;
+					case this.pays[2]:
+						newForm.imagePay = "high"
+						break;
+				
+					default:
+						break;
+				}
+
+				switch (newForm.imageDifficulty) {
+					case this.difficulties[0]:
+						newForm.imageDifficulty = "low"
+						break;
+					case this.difficulties[1]:
+						newForm.imageDifficulty = "middle"
+						break;
+					case this.difficulties[2]:
+						newForm.imageDifficulty = "high"
+						break;
+				
+					default:
+						break;
+				}
+				
+				return newForm;
+			},
+
 		},
 	}
 </script>
