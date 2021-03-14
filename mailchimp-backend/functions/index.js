@@ -89,7 +89,9 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 	const campaignName = contentTitle
 	const mailObject = "[Telecom Etude] " + contentTitle
 	const mailFromName = "Telecom Etude"
-	const mailReplyTo = contactList[0]
+    const mailReplyTo = contactList[0]
+    
+    console.log("Creating the campaing...")
 
 	const result = await mailchimp.campaigns.create({
 		type: "regular",
@@ -107,10 +109,15 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	if (sentTestEmailsBool) {
 		console.log("Sending test emails to: " + testEmails)
-		await mailchimp.campaigns.sendTestEmail(campaignID, {
-			test_emails: testEmails,
-			send_type: "html",
-		})
+		try {
+            await mailchimp.campaigns.sendTestEmail(campaignID, {
+                test_emails: testEmails,
+                send_type: "html",
+            })
+        } catch (error) {
+            throw new functions.https.HttpsError("internal", "Error with mailchimp.")
+        }
+        
 	}
 
 	return "Your campaign has been created and has been sent to the auditors"
