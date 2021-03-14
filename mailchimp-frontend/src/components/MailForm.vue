@@ -304,7 +304,11 @@
 			overlayText: "Votre MRI s'envoie",
 
 			backgroundColor: "background: white",
-			emailRules: [v => !v || /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/.test(v) || "Une adresse email est invalide"],
+			//emailRules: [v => !v || /^(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+\s?,)*(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+)$/.test(v) || "Seules les adresses @telecom-etude.fr et @telecom-paris.fr"],
+			//emailRules: [v => !v || /^\[\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))"(,\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr)")*\s\]$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
+			//emailRules: [v => !v || /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr)),([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
+			emailRules: [v => !v || /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))(,([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr))*$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
+
 
 			// Name of the form data
 			form: {
