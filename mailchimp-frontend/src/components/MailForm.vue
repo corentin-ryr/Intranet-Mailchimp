@@ -238,289 +238,297 @@
 </template>
 
 <script>
-		import gsap from "gsap"
-		const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
+	import gsap from "gsap"
+	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
-		export default {
-			name: "MailForm",
-			props: {
-				msg: String,
-			},
-			data: () => ({
-				domains: ["Data Science, Machine Learning, IA", "Développement Web, Logiciel, Mobile", "Cybersécurité, Cryptographie", "Systèmes Embarqués, IoT", "Image, Computer Graphics, 3D", "Étude de marché, État de l'Art, Audit"],
-				pays: ["Faible", "Moyenne", "Élevée"],
-				difficulties: ["Faible", "Moyenne", "Élevée"],
-				imageDomainFull: "",
-				imageDifficultyFull: "",
-				imagePayFull: "",
+	export default {
+		name: "MailForm",
+		props: {
+			msg: String,
+		},
+		data: () => ({
+			domains: [
+				"Data Science, Machine Learning, IA",
+				"Développement Web, Logiciel, Mobile",
+				"Cybersécurité, Cryptographie",
+				"Systèmes Embarqués, IoT",
+				"Image, Computer Graphics, 3D",
+				"Étude de marché, État de l'Art, Audit",
+			],
+			pays: ["Faible", "Moyenne", "Élevée"],
+			difficulties: ["Faible", "Moyenne", "Élevée"],
+			imageDomainFull: "",
+			imageDifficultyFull: "",
+			imagePayFull: "",
 
-				//Other variables
-				enabled: false,
-				isValid: true,
-				overlayText: "Votre MRI s'envoie",
+			//Other variables
+			enabled: false,
+			isValid: true,
+			overlayText: "Votre MRI s'envoie",
 
-				backgroundColor: "background: white",
-				//emailRules: [v => !v || /^(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+\s?,)*(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+)$/.test(v) || "Seules les adresses @telecom-etude.fr et @telecom-paris.fr"],
-				//emailRules: [v => !v || /^\[\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))"(,\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr)")*\s\]$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
-				//emailRules: [v => !v || /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr)),([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
-				emailRules: [v => !v || /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))(,([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr))*$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
+			backgroundColor: "background: white",
+			//emailRules: [v => !v || /^(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+\s?,)*(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+)$/.test(v) || "Seules les adresses @telecom-etude.fr et @telecom-paris.fr"],
+			//emailRules: [v => !v || /^\[\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))"(,\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr)")*\s\]$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
+			//emailRules: [v => !v || /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr)),([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
+			emailRules: [
+				(v) =>
+					!v ||
+					/^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))(,([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr))*$/.test(
+						v
+					) ||
+					"Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement",
+			],
 
-
-				// Name of the form data
-				form: {
-					contentTitle: "",
-					contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-					contentDomain: "",
-					imageDomain: "",
-					contentPay: "",
-					imagePay: "",
-					contentDifficulty: "",
-					imageDifficulty: "",
-					contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
-					contentSchedule: "Le client désire commencer le plus tôt possible.",
-					contentDescription: "",
-					formBoolean: false,
-					formLink: "",
-					contactList: [],
-				},
-
-				previewHTML: "",
-			}),
-
-			watch: {
-				imageDomainFull: function() {
-					switch (this.imageDomainFull) {
-						case this.domains[0]:
-							this.form.imageDomain = "data"
-							break
-						case this.domains[1]:
-							this.form.imageDomain = "dev"
-							break
-						case this.domains[2]:
-							this.form.imageDomain = "cyber"
-							break
-						case this.domains[3]:
-							this.form.imageDomain = "se"
-							break
-						case this.domains[4]:
-							this.form.imageDomain = "image"
-							break
-						case this.domains[5]:
-							this.form.imageDomain = "etude"
-							break
-						default:
-							break
-					}
-				},
-
-				imageDifficultyFull: function() {
-					switch (this.imageDifficultyFull) {
-						case this.difficulties[0]:
-							this.form.imageDifficulty = "low"
-							break
-						case this.difficulties[1]:
-							this.form.imageDifficulty = "middle"
-							break
-						case this.difficulties[2]:
-							this.form.imageDifficulty = "high"
-							break
-						default:
-							return ""
-					}
-				},
-
-				imagePayFull: function() {
-					switch (this.imagePayFull) {
-						case this.pays[0]:
-							this.form.imagePay = "low"
-							break
-						case this.pays[1]:
-							this.form.imagePay = "middle"
-							break
-						case this.pays[2]:
-							this.form.imagePay = "high"
-							break
-						default:
-							return ""
-					}
-				},
+			// Name of the form data
+			form: {
+				contentTitle: "",
+				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
+				contentDomain: "",
+				imageDomain: "",
+				contentPay: "",
+				imagePay: "",
+				contentDifficulty: "",
+				imageDifficulty: "",
+				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
+				contentSchedule: "Le client désire commencer le plus tôt possible.",
+				contentDescription: "",
+				formBoolean: false,
+				formLink: "",
+				contactList: [],
 			},
 
-			methods: {
-				sendForm: async function() {
-	<<<<<<< HEAD
-					console.log(this.form)
+			previewHTML: "",
+		}),
 
-					this.overlayText = "Votre MRI s'envoie"
-	=======
-					this.backgroundColor = "background: #e54540";
+		watch: {
+			imageDomainFull: function() {
+				switch (this.imageDomainFull) {
+					case this.domains[0]:
+						this.form.imageDomain = "data"
+						break
+					case this.domains[1]:
+						this.form.imageDomain = "dev"
+						break
+					case this.domains[2]:
+						this.form.imageDomain = "cyber"
+						break
+					case this.domains[3]:
+						this.form.imageDomain = "se"
+						break
+					case this.domains[4]:
+						this.form.imageDomain = "image"
+						break
+					case this.domains[5]:
+						this.form.imageDomain = "etude"
+						break
+					default:
+						break
+				}
+			},
 
-					this.overlayText = "MRI en cours d'envoi 📨"
-	>>>>>>> Hugo
-					tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
-					tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+			imageDifficultyFull: function() {
+				switch (this.imageDifficultyFull) {
+					case this.difficulties[0]:
+						this.form.imageDifficulty = "low"
+						break
+					case this.difficulties[1]:
+						this.form.imageDifficulty = "middle"
+						break
+					case this.difficulties[2]:
+						this.form.imageDifficulty = "high"
+						break
+					default:
+						return ""
+				}
+			},
 
-					var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
-					var success = true
-					try {
-						await createCampaign(this.form) //Call the firebase function
-					} catch (error) {
-						console.log(error)
-						success = false
+			imagePayFull: function() {
+				switch (this.imagePayFull) {
+					case this.pays[0]:
+						this.form.imagePay = "low"
+						break
+					case this.pays[1]:
+						this.form.imagePay = "middle"
+						break
+					case this.pays[2]:
+						this.form.imagePay = "high"
+						break
+					default:
+						return ""
+				}
+			},
+		},
+
+		methods: {
+			sendForm: async function() {
+				console.log(this.form)
+
+				this.backgroundColor = "background: #e54540"
+				this.overlayText = "MRI en cours d'envoi 📨"
+
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				var success = true
+				try {
+					await createCampaign(this.form) //Call the firebase function
+				} catch (error) {
+					console.log(error)
+					success = false
+				}
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+				if (success) {
+					this.overlayText = "MRI envoyé ! 📮"
+				} else {
+					this.overlayText = "Une erreur s'est produite ⚠️"
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
+					this.closeOverlay(success)
+				}, 1500)
+			},
+
+			closeOverlay: async function(success) {
+				tl.to(".text", { y: "-100%", duration: 1 })
+				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
+
+				if (success) {
+					for (let field in this.form) {
+						this.form[field] = ""
 					}
+				} else {
+					//Add a hint message to help the user correct its mistakes
+					console.log("here is what you need to do...")
+				}
+				setTimeout(() => {
+					this.backgroundColor = "background: white"
+				}, 1500)
+			},
 
-					await tl.to(".text", {
-						y: "-100%",
-						duration: 1,
-					})
+			createPreviewHTML: function() {
+				const [
+					imageDomainLink,
+					imagePayLink,
+					imageDifficultyLink,
+					contentApply,
+					contentMailContact,
+					contentMailTo,
+				] = this.contentTransformations(
+					this.form.imageDomain,
+					this.form.imagePay,
+					this.form.imageDifficulty,
+					this.form.formBoolean,
+					this.form.formLink,
+					this.form.contactList
+				)
+				this.previewHTML = this.contentEditHTML(
+					this.form.contentTitle,
+					this.form.contentFirstDescription,
+					this.form.contentDomain,
+					imageDomainLink,
+					this.form.contentPay,
+					imagePayLink,
+					this.form.contentDifficulty,
+					imageDifficultyLink,
+					this.form.contentSkills,
+					this.form.contentSchedule,
+					this.form.contentDescription,
+					contentApply,
+					contentMailContact,
+					contentMailTo
+				)
+			},
 
-					if (success) {
-						this.overlayText = "MRI envoyé ! 📮"
-					} else {
-						this.overlayText = "Une erreur s'est produite ⚠️"
-					}
+			contentTransformations: function(
+				imageDomain,
+				imagePay,
+				imageDifficulty,
+				formBoolean,
+				formLink,
+				contactList
+			) {
+				var imageDomainLink = ""
+				var imagePayLink = ""
+				var imageDifficultyLink = ""
+				var contentApply = ""
+				var contentMailContact = ""
+				var contentMailTo = ""
 
-					await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+				switch (imageDomain) {
+					case "data":
+						imageDomainLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
+						break
+					case "dev":
+						imageDomainLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/458e3a19-7fe7-4471-aad4-8d19e43f2383.png"
+						break
+					case "cyber":
+						imageDomainLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
+						break
+					case "se":
+						imageDomainLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/ad81493a-5281-4772-adef-4bcebee00243.png"
+						break
+					case "image":
+						imageDomainLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/863635c4-6fc0-42d0-add6-7c4b8aa04b9b.png"
+						break
+					case "etude":
+						imageDomainLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png"
+						break
+					default:
+						break
+				}
 
-					setTimeout(() => {
-						//Set a timeout for the user to have time to read the message
-						this.closeOverlay(success)
-					}, 1500)
-				},
+				switch (imagePay) {
+					case "low":
+						imagePayLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/aa0aa2c2-9aaf-46f8-ae91-8c28953b02bc.png"
+						break
+					case "middle":
+						imagePayLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/d790eeff-772d-4aa7-91a0-f1883414b675.png"
+						break
+					case "high":
+						imagePayLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/7781ba0c-a348-4722-ba77-beee6bbb5f51.png"
+						break
+					default:
+						break
+				}
 
-				closeOverlay: async function(success) {
-					tl.to(".text", { y: "-100%", duration: 1 })
-					tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
+				switch (imageDifficulty) {
+					case "low":
+						imageDifficultyLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/b30e558d-f0e5-489a-80ba-681d27021c0a.png"
+						break
+					case "middle":
+						imageDifficultyLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/1f020378-3a07-4a5b-892c-62fd7822e9f0.png"
+						break
+					case "high":
+						imageDifficultyLink =
+							"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/93539be4-2afc-4c5f-a34e-f09fa0daa6b1.png"
+						break
+					default:
+						break
+				}
 
-					if (success) {
-						for (let field in this.form) {
-							this.form[field] = ""
-						}
-					} else {
-						//Add a hint message to help the user correct its mistakes
-						console.log("here is what you need to do...")
-					}
-					setTimeout(() => {
-						this.backgroundColor = "background: white";
-					}, 1500)
-
-				},
-
-				createPreviewHTML: function() {
-					const [
-						imageDomainLink,
-						imagePayLink,
-						imageDifficultyLink,
-						contentApply,
-						contentMailContact,
-						contentMailTo,
-					] = this.contentTransformations(
-						this.form.imageDomain,
-						this.form.imagePay,
-						this.form.imageDifficulty,
-						this.form.formBoolean,
-						this.form.formLink,
-						this.form.contactList
-					)
-					this.previewHTML = this.contentEditHTML(
-						this.form.contentTitle,
-						this.form.contentFirstDescription,
-						this.form.contentDomain,
-						imageDomainLink,
-						this.form.contentPay,
-						imagePayLink,
-						this.form.contentDifficulty,
-						imageDifficultyLink,
-						this.form.contentSkills,
-						this.form.contentSchedule,
-						this.form.contentDescription,
-						contentApply,
-						contentMailContact,
-						contentMailTo
-					)
-				},
-
-				contentTransformations: function(
-					imageDomain,
-					imagePay,
-					imageDifficulty,
-					formBoolean,
-					formLink,
-					contactList
-				) {
-					var imageDomainLink = ""
-					var imagePayLink = ""
-					var imageDifficultyLink = ""
-					var contentApply = ""
-					var contentMailContact = ""
-					var contentMailTo = ""
-
-					switch (imageDomain) {
-						case "data":
-							imageDomainLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
-							break
-						case "dev":
-							imageDomainLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/458e3a19-7fe7-4471-aad4-8d19e43f2383.png"
-							break
-						case "cyber":
-							imageDomainLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/3f084638-6053-45c6-a99e-7ad481f340fc.png"
-							break
-						case "se":
-							imageDomainLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/ad81493a-5281-4772-adef-4bcebee00243.png"
-							break
-						case "image":
-							imageDomainLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/863635c4-6fc0-42d0-add6-7c4b8aa04b9b.png"
-							break
-						case "etude":
-							imageDomainLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png"
-							break
-						default:
-							break
-					}
-
-					switch (imagePay) {
-						case "low":
-							imagePayLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/aa0aa2c2-9aaf-46f8-ae91-8c28953b02bc.png"
-							break
-						case "middle":
-							imagePayLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/d790eeff-772d-4aa7-91a0-f1883414b675.png"
-							break
-						case "high":
-							imagePayLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/7781ba0c-a348-4722-ba77-beee6bbb5f51.png"
-							break
-						default:
-							break
-					}
-
-					switch (imageDifficulty) {
-						case "low":
-							imageDifficultyLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/b30e558d-f0e5-489a-80ba-681d27021c0a.png"
-							break
-						case "middle":
-							imageDifficultyLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/1f020378-3a07-4a5b-892c-62fd7822e9f0.png"
-							break
-						case "high":
-							imageDifficultyLink =
-								"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/93539be4-2afc-4c5f-a34e-f09fa0daa6b1.png"
-							break
-						default:
-							break
-					}
-
-					if (formBoolean) {
-						contentApply =
-							`
+				if (formBoolean) {
+					contentApply =
+						`
 						</table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
 							<tbody class="mcnTextBlockOuter">
 								<tr>
@@ -563,8 +571,8 @@
 												<tr>
 													<td align="center" valign="middle" class="mcnButtonContent" style="font-family: Helvetica; font-size: 18px; padding: 18px;">
 														<a class="mcnButton " title="Je répond au formulaire" href="` +
-							formLink +
-							`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Je répond au formulaire</a>
+						formLink +
+						`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">Je répond au formulaire</a>
 													</td>
 												</tr>
 											</tbody>
@@ -573,8 +581,8 @@
 								</tr>
 							</tbody>
 						`
-					} else {
-						contentApply = `
+				} else {
+					contentApply = `
 						</table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnTextBlock" style="min-width:100%;">
 							<tbody class="mcnTextBlockOuter">
 								<tr>
@@ -609,56 +617,56 @@
 								</tr>
 							</tbody>
 						`
+				}
+
+				contentMailTo = "mailto:"
+				for (var i1 = 0; i1 < contactList.length; i1++) {
+					var mail0 = contactList[i1]
+					contentMailTo += mail0 + ","
+				}
+				contentMailTo += "?subject=Envoi%20du%20CV%20pour%20l'%C3%A9tude%20"
+
+				contentMailContact = "N'hésitez pas à demander plus d'informations ou de détails à "
+				for (var i2 = 0; i2 < contactList.length; i2++) {
+					var mail = contactList[i2]
+					var name = mail.charAt(0).toUpperCase() + mail.substring(1, mail.indexOf("."))
+					if (contactList.length == 1) {
+						contentMailContact += name + " (" + mail + ")."
+					} else if (i2 != contactList.length - 1) {
+						contentMailContact += name + " (" + mail + "), "
+					} else {
+						contentMailContact += "et " + name + " (" + mail + ")."
 					}
+				}
 
-					contentMailTo = "mailto:"
-					for (var i1 = 0; i1 < contactList.length; i1++) {
-						var mail0 = contactList[i1]
-						contentMailTo += mail0 + ","
-					}
-					contentMailTo += "?subject=Envoi%20du%20CV%20pour%20l'%C3%A9tude%20"
-
-					contentMailContact = "N'hésitez pas à demander plus d'informations ou de détails à "
-					for (var i2 = 0; i2 < contactList.length; i2++) {
-						var mail = contactList[i2]
-						var name = mail.charAt(0).toUpperCase() + mail.substring(1, mail.indexOf("."))
-						if (contactList.length == 1) {
-							contentMailContact += name + " (" + mail + ")."
-						} else if (i2 != contactList.length - 1) {
-							contentMailContact += name + " (" + mail + "), "
-						} else {
-							contentMailContact += "et " + name + " (" + mail + ")."
-						}
-					}
-
-					return [
-						imageDomainLink,
-						imagePayLink,
-						imageDifficultyLink,
-						contentApply,
-						contentMailContact,
-						contentMailTo,
-					]
-				},
-
-				contentEditHTML: function(
-					contentTitle,
-					contentFirstDescription,
-					contentDomain,
+				return [
 					imageDomainLink,
-					contentPay,
 					imagePayLink,
-					contentDifficulty,
 					imageDifficultyLink,
-					contentSkills,
-					contentSchedule,
-					contentDescription,
 					contentApply,
 					contentMailContact,
-					contentMailTo
-				) {
-					var htmlContent =
-						`
+					contentMailTo,
+				]
+			},
+
+			contentEditHTML: function(
+				contentTitle,
+				contentFirstDescription,
+				contentDomain,
+				imageDomainLink,
+				contentPay,
+				imagePayLink,
+				contentDifficulty,
+				imageDifficultyLink,
+				contentSkills,
+				contentSchedule,
+				contentDescription,
+				contentApply,
+				contentMailContact,
+				contentMailTo
+			) {
+				var htmlContent =
+					`
 						<!doctype html>
 						<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 							<head>
@@ -1203,8 +1211,8 @@
 												<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
 													<h1>` +
-						contentTitle +
-						`</h1>
+					contentTitle +
+					`</h1>
 
 						<div id="gtx-trans" style="position: absolute; left: -41px; top: -8px;">
 						<div class="gtx-trans-icon">&nbsp;</div>
@@ -1264,8 +1272,8 @@
 						Bonjour à toutes et à tous,<br>
 						<br>
 						` +
-						contentFirstDescription +
-						`
+					contentFirstDescription +
+					`
 												</td>
 											</tr>
 										</tbody></table>
@@ -1293,8 +1301,8 @@
 
 
 									<img alt="Domaine" src="` +
-						imageDomainLink +
-						`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
+					imageDomainLink +
+					`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
 
 
 								</td>
@@ -1303,8 +1311,8 @@
 								<td class="mcnTextContent" valign="top" style="padding:0 9px 0 9px;" width="100%">
 									<h4 class="null" style="text-align: center; font-size: smaller; font-weight: lighter; color: #757575;">DOMAINE</h4>
 									<h4 class="null" style="text-align: center;">` +
-						contentDomain +
-						`</h4>
+					contentDomain +
+					`</h4>
 
 								</td>
 							</tr>
@@ -1317,8 +1325,8 @@
 
 
 									<img alt="Rémunération" src="` +
-						imagePayLink +
-						`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
+					imagePayLink +
+					`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
 
 
 								</td>
@@ -1327,8 +1335,8 @@
 								<td class="mcnTextContent" valign="top" style="padding:0 9px 0 9px;" width="100%">
 									<h4 class="null" style="text-align: center; font-size: smaller; font-weight: lighter; color: #757575;">RÉMUNÉRATION</h4>
 									<h4 class="null" style="text-align: center;">` +
-						contentPay +
-						`</h4>
+					contentPay +
+					`</h4>
 
 								</td>
 							</tr>
@@ -1341,8 +1349,8 @@
 
 
 									<img alt="Difficulté" src="` +
-						imageDifficultyLink +
-						`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
+					imageDifficultyLink +
+					`" width="100%" style="max-width: 250px; border-top-left-radius: 0%; border-top-right-radius: 0%; border-bottom-right-radius: 0%; border-bottom-left-radius: 0%;" class="mcnImage">
 
 
 								</td>
@@ -1351,8 +1359,8 @@
 								<td class="mcnTextContent" valign="top" style="padding:0 9px 0 9px;" width="100%">
 									<h4 class="null" style="text-align: center; font-size: smaller; font-weight: lighter; color: #757575;">DIFFICULTÉ</h4>
 									<h4 class="null" style="text-align: center;">` +
-						contentDifficulty +
-						`</h4>
+					contentDifficulty +
+					`</h4>
 
 								</td>
 							</tr>
@@ -1397,8 +1405,8 @@
 
 													<h3>Compétences :</h3>
 						` +
-						contentSkills +
-						`
+					contentSkills +
+					`
 												</td>
 											</tr>
 										</tbody></table>
@@ -1432,8 +1440,8 @@
 
 													<h3>Échéances :</h3>
 						` +
-						contentSchedule +
-						`
+					contentSchedule +
+					`
 												</td>
 											</tr>
 										</tbody></table>
@@ -1467,8 +1475,8 @@
 
 													<h3>Description :</h3>
 						` +
-						contentDescription +
-						`
+					contentDescription +
+					`
 												</td>
 											</tr>
 										</tbody></table>
@@ -1502,8 +1510,8 @@
 								</tr>
 							</tbody>
 						` +
-						contentApply +
-						`
+					contentApply +
+					`
 						</table><table border="0" cellpadding="0" cellspacing="0" width="100%" class="mcnButtonBlock" style="min-width:100%;">
 							<tbody class="mcnButtonBlockOuter">
 								<tr>
@@ -1513,8 +1521,8 @@
 												<tr>
 													<td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial; font-size: 18px; padding: 18px;">
 														<a class="mcnButton " title="J'envoie mon CV" href="` +
-						contentMailTo +
-						`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">J'envoie mon CV</a>
+					contentMailTo +
+					`" target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">J'envoie mon CV</a>
 													</td>
 												</tr>
 											</tbody>
@@ -1540,8 +1548,8 @@
 												<td valign="top" class="mcnTextContent" style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
 													` +
-						contentMailContact +
-						`<br>
+					contentMailContact +
+					`<br>
 						<br>
 						À bientôt,<br>
 						L'équipe Telecom Etude
@@ -1826,10 +1834,10 @@
 							</body>
 						</html>`
 
-					return htmlContent
-				},
+				return htmlContent
 			},
-		}
+		},
+	}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
