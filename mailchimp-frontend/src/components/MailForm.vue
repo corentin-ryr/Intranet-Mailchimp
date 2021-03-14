@@ -181,33 +181,6 @@
 					outlined
 				/>
 
-				<!-- 				<div class="text-center">
-					<v-dialog
-					width="500"
-					>
-					<template v-slot:activator="{ on, attrs }">
-						<v-btn
-						color="red lighten-2"
-						dark
-						v-bind="attrs"
-						v-on="on"
-						>
-						Sent Data
-						</v-btn>
-					</template>
-
-					<v-card>
-						<v-card-title class="headline grey lighten-2">
-						Résultat
-						</v-card-title>
-						<v-card-text>
-							{{translatedForm()}}
-						</v-card-text>
-
-					</v-card>
-					</v-dialog>
-				</div> -->
-
 				<div class="text-center">
 					<v-dialog height="90%" width="90%">
 						<template v-slot:activator="{ on, attrs }">
@@ -265,9 +238,6 @@
 
 <script>
 	import firebase from "firebase"
-
-	// import axios from "axios"
-
 	import gsap from "gsap"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
@@ -319,33 +289,25 @@
 
 		watch: {
 			imageDomainFull: function() {
-				console.log("wtacher called")
-
-				switch (this.imageDifficultyFull) {
+				switch (this.imageDomainFull) {
 					case this.domains[0]:
 						this.form.imageDomain = "data"
 						break
-
 					case this.domains[1]:
 						this.form.imageDomain = "dev"
 						break
-
 					case this.domains[2]:
 						this.form.imageDomain = "cyber"
 						break
-
 					case this.domains[3]:
 						this.form.imageDomain = "se"
 						break
-
 					case this.domains[4]:
 						this.form.imageDomain = "image"
 						break
-
 					case this.domains[5]:
 						this.form.imageDomain = "etude"
 						break
-
 					default:
 						break
 				}
@@ -355,16 +317,13 @@
 				switch (this.imageDifficultyFull) {
 					case this.difficulties[0]:
 						this.form.imageDifficulty = "low"
-                        break
-
+						break
 					case this.difficulties[1]:
 						this.form.imageDifficulty = "middle"
-                        break
-
+						break
 					case this.difficulties[2]:
 						this.form.imageDifficulty = "high"
-                        break
-
+						break
 					default:
 						return ""
 				}
@@ -374,16 +333,13 @@
 				switch (this.imagePayFull) {
 					case this.pays[0]:
 						this.form.imagePay = "low"
-                        break
-
+						break
 					case this.pays[1]:
 						this.form.imagePay = "middle"
-                        break
-
+						break
 					case this.pays[2]:
 						this.form.imagePay = "high"
-                        break
-
+						break
 					default:
 						return ""
 				}
@@ -392,7 +348,7 @@
 
 		methods: {
 			sendForm: async function() {
-				console.log(this.form.imageDifficulty)
+				console.log(this.form)
 
 				this.overlayText = "Votre MRI s'envoie"
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
@@ -440,68 +396,7 @@
 				}
 			},
 
-			translatedForm: function() {
-				var newForm = { ...this.form }
-
-				switch (newForm.imageDomain) {
-					case this.domains[0]:
-						newForm.imageDomain = "data"
-						break
-					case this.domains[1]:
-						newForm.imageDomain = "dev"
-						break
-					case this.domains[2]:
-						newForm.imageDomain = "cyber"
-						break
-					case this.domains[3]:
-						newForm.imageDomain = "se"
-						break
-					case this.domains[4]:
-						newForm.imageDomain = "image"
-						break
-					case this.domains[5]:
-						newForm.imageDomain = "etude"
-						break
-
-					default:
-						break
-				}
-
-				switch (newForm.imagePay) {
-					case this.pays[0]:
-						newForm.imagePay = "low"
-						break
-					case this.pays[1]:
-						newForm.imagePay = "middle"
-						break
-					case this.pays[2]:
-						newForm.imagePay = "high"
-						break
-
-					default:
-						break
-				}
-
-				switch (newForm.imageDifficulty) {
-					case this.difficulties[0]:
-						newForm.imageDifficulty = "low"
-						break
-					case this.difficulties[1]:
-						newForm.imageDifficulty = "middle"
-						break
-					case this.difficulties[2]:
-						newForm.imageDifficulty = "high"
-						break
-
-					default:
-						break
-				}
-
-				return newForm
-			},
-
 			createPreviewHTML: function() {
-				const form = this.translatedForm()
 				const [
 					imageDomainLink,
 					imagePayLink,
@@ -510,25 +405,25 @@
 					contentMailContact,
 					contentMailTo,
 				] = this.contentTransformations(
-					form.imageDomain,
-					form.imagePay,
-					form.imageDifficulty,
-					form.formBoolean,
-					form.formLink,
-					form.contactList
+					this.form.imageDomain,
+					this.form.imagePay,
+					this.form.imageDifficulty,
+					this.form.formBoolean,
+					this.form.formLink,
+					this.form.contactList
 				)
 				this.previewHTML = this.contentEditHTML(
-					form.contentTitle,
-					form.contentFirstDescription,
-					form.contentDomain,
+					this.form.contentTitle,
+					this.form.contentFirstDescription,
+					this.form.contentDomain,
 					imageDomainLink,
-					form.contentPay,
+					this.form.contentPay,
 					imagePayLink,
-					form.contentDifficulty,
+					this.form.contentDifficulty,
 					imageDifficultyLink,
-					form.contentSkills,
-					form.contentSchedule,
-					form.contentDescription,
+					this.form.contentSkills,
+					this.form.contentSchedule,
+					this.form.contentDescription,
 					contentApply,
 					contentMailContact,
 					contentMailTo
