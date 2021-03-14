@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<v-app-bar app id="UI" clipped-left flat>
+		<v-app-bar app id="UI" color="white" clipped-left dark>
 			<v-img
 				class="mx-2"
 				src="./assets/logo_long.svg"
@@ -32,9 +32,9 @@
 			</v-container>
 		</v-main>
 		<v-footer id="UI" app>
-			<v-card id="gradient" class="ma-2 rounded-lg clickable" elevation="0" max-height="35">
-				<v-card-text class="mt-n2  ">
-					<span id="gradient" style="font-family: 'Avenir Next Regular'"
+			<v-card id="gradient" class="d-flex align-center ma-2 rounded-lg" elevation="0" max-height="35">
+				<v-card-text>
+					<span style="font-family: 'Avenir Next Regular'; color: white"
 						>&copy; {{ new Date().getFullYear() }}</span
 					>
 				</v-card-text>

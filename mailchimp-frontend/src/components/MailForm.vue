@@ -259,6 +259,25 @@
 				</h1>
 			</div>
 		</div>
+
+		<div>
+			<v-card class="mx-auto" width="400">
+				<v-row align="center" justify= "space-around" class="ma-10">
+				<v-btn text class="d-flex align-center" href='https://github.com/corentin-ryr/Intranet-Mailchimp'>
+					Github
+				</v-btn>
+				<v-btn text class="d-flex align-center" href='https://www.linkedin.com/in/corentin-royer-a67a90159/'>
+					Corentin
+				</v-btn>
+				<v-btn text class="d-flex align-center" href='https://www.linkedin.com/in/hugo-queinnec/'>
+					Hugo
+				</v-btn>
+				</v-row>
+			</v-card>
+			
+		</div>
+
+
 	</div>
 </template>
 
@@ -571,7 +590,7 @@
 					`;
 				}
 
-				contentMailTo = "mailto:"+contactList;
+				contentMailTo = "mailto:";
 					for (var i1=0; i1<contactList.length; i1++){
 					var mail0 = contactList[i1];
 					contentMailTo += mail0 + ",";
