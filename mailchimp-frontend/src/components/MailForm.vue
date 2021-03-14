@@ -1805,7 +1805,7 @@
 	.intro-text {
 		color: white;
 		font-family: "Avenir Next Regular";
-		font-size: 3rem;
+		font-size: xx-large;
 	}
 	.hide {
 		overflow: hidden;
