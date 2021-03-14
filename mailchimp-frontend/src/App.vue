@@ -1,22 +1,39 @@
 <template>
 	<v-app>
-		<v-app-bar app id="UI" color="white" clipped-left dark>
-			<v-img
-				class="mx-2"
-				src="./assets/logo_long.svg"
-				max-height="100"
-				max-width="150"
-				contain
-				style="pointer-events: all"
-			></v-img>
+		<v-app-bar app id="UI" clipped-left flat>
+			<v-img class="mx-2 clickable" src="./assets/logo_long.svg" max-height="100" max-width="150" contain></v-img>
 
 			<v-spacer></v-spacer>
 
 			<template v-if="user.loggedIn">
-				<div class="nav-item">{{ user.data.displayName }}</div>
+				<!-- <div class="nav-item">{{ user.data.displayName }}</div>
 				<li class="nav-item">
 					<a class="nav-link clickable" @click.prevent="logout">Sign out</a>
-				</li>
+				</li> -->
+
+				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn class="clickable" icon v-bind="attrs" v-on="on">
+							<v-icon>mdi-account-circle</v-icon>
+						</v-btn>
+					</template>
+
+					<v-card>
+						<v-list>
+							<v-list-item>
+								<v-list-item-content>
+									<v-list-item-title>{{ user.data.displayName }}</v-list-item-title>
+								</v-list-item-content>
+
+								<v-list-item-action>
+									<v-btn @click.prevent="logout" icon>
+										<v-icon>mdi-logout</v-icon>
+									</v-btn>
+								</v-list-item-action>
+							</v-list-item>
+						</v-list>
+					</v-card>
+				</v-menu>
 			</template>
 			<template v-else>
 				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="login">
@@ -32,7 +49,7 @@
 			</v-container>
 		</v-main>
 		<v-footer id="UI" app>
-			<v-card id="gradient" class="d-flex align-center ma-2 rounded-lg" elevation="0" max-height="35">
+			<v-card id="gradient" class="d-flex align-center ma-2 rounded-lg clickable" elevation="0" max-height="35">
 				<v-card-text>
 					<span style="font-family: 'Avenir Next Regular'; color: white"
 						>&copy; {{ new Date().getFullYear() }}</span
@@ -59,6 +76,9 @@
 		components: {
 			MailForm,
 		},
+		data: () => ({
+			menu: false,
+		}),
 		methods: {
 			async login() {
 				var provider = new this.$firebase.auth.GoogleAuthProvider()
@@ -70,6 +90,8 @@
 					// This gives you a Google Access Token. You can use it to access the Google API.
 					console.log(credential.accessToken)
 				}
+
+				this.menu = false
 			},
 			async logout() {
 				await this.$firebase.auth().signOut()
@@ -95,8 +117,9 @@
 	}
 
 	#UI {
-		background: rgba(117, 190, 218, 0);
-		/* background: linear-gradient(90deg, #fd8334, #d51f48); */
+		background-color: rgba(255, 255, 255, 0.15);
+		/* backdrop-filter: blur(15px); */
+
 		color: black;
 		pointer-events: none;
 	}
