@@ -185,6 +185,7 @@
 					prepend-icon="mail"
 					auto-grow
 					outlined
+					:rules="emailRules"
 					
 				
 				/>
@@ -252,8 +253,8 @@
 				</v-card-actions>
 			</v-form>
 		</v-card>
-		<div class="intro">
-			<div class="intro-text">
+		<div class="intro" :style="backgroundColor">
+			<div class="intro-text" style="padding: 10% 10%">
 				<h1 class="hide">
 					<span class="text" id="text">{{ overlayText }}</span>
 				</h1>
@@ -263,14 +264,14 @@
 		<div>
 			<v-card class="mx-auto" width="400">
 				<v-row align="center" justify= "space-around" class="ma-10">
-				<v-btn text class="d-flex align-center" href='https://github.com/corentin-ryr/Intranet-Mailchimp'>
-					Github
-				</v-btn>
 				<v-btn text class="d-flex align-center" href='https://www.linkedin.com/in/corentin-royer-a67a90159/'>
 					Corentin
 				</v-btn>
 				<v-btn text class="d-flex align-center" href='https://www.linkedin.com/in/hugo-queinnec/'>
 					Hugo
+				</v-btn>
+				<v-btn text class="d-flex align-center" href='https://github.com/corentin-ryr/Intranet-Mailchimp'>
+					Github
 				</v-btn>
 				</v-row>
 			</v-card>
@@ -295,12 +296,15 @@
 			msg: String,
 		},
 		data: () => ({
-			domains: ["Data Science, Machine Learning, IA", "Développement Web, Logiciel, Mobile", "Cybersécurité, Cryptographie", "Systèmes Embarqués, IoT", "Traitement d'Image", "Étude de marché, État de l'Art, Audit"],
+			domains: ["Data Science, Machine Learning, IA", "Développement Web, Logiciel, Mobile", "Cybersécurité, Cryptographie", "Systèmes Embarqués, IoT", "Image, Computer Graphics, 3D", "Étude de marché, État de l'Art, Audit"],
 			pays: ["Faible", "Moyenne", "Élevée"],
 			difficulties: ["Faible", "Moyenne", "Élevée"],
 			enabled: false,
 			isValid: true,
 			overlayText: "Votre MRI s'envoie",
+
+			backgroundColor: "background: white",
+			emailRules: [v => !v || /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/.test(v) || "Une adresse email est invalide"],
 
 			// Name of the form data
 			form: {
@@ -327,7 +331,9 @@
 
 		methods: {
 			sendForm: async function() {
-				this.overlayText = "Votre MRI s'envoie"
+				this.backgroundColor = "background: #e54540";
+
+				this.overlayText = "MRI en cours d'envoi 📨"
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
@@ -345,9 +351,9 @@
 				})
 
 				if (success) {
-					this.overlayText = "Voilà, c'est fait"
+					this.overlayText = "MRI envoyé ! 📮"
 				} else {
-					this.overlayText = "Il y a eu une erreur :("
+					this.overlayText = "Une erreur s'est produite ⚠️"
 				}
 
 				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
@@ -355,7 +361,7 @@
 				setTimeout(() => {
 					//Set a timeout for the user to have time to read the message
 					this.closeOverlay(success)
-				}, 1000)
+				}, 1500)
 			},
 
 			closeOverlay: async function(success) {
@@ -370,6 +376,10 @@
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
 				}
+				setTimeout(() => {
+					this.backgroundColor = "background: white";
+				}, 1500)
+				
 			},
 
 			translatedForm: function() {
@@ -1780,7 +1790,7 @@
 	}
 
 	.intro {
-		background: #fd8334;
+		
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -1798,7 +1808,6 @@
 		font-size: 3rem;
 	}
 	.hide {
-		background: #fd8334;
 		overflow: hidden;
 	}
 	.hide span {
