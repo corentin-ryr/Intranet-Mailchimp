@@ -206,6 +206,8 @@
 				</v-card-actions>
 			</v-form>
 		</v-card>
+
+		<!-- HTML content for the loading animation -->
 		<div class="intro">
 			<div class="intro-text">
 				<h1 class="hide">
@@ -237,7 +239,6 @@
 </template>
 
 <script>
-	import firebase from "firebase"
 	import gsap from "gsap"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
@@ -354,7 +355,7 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				var createCampaign = firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
 					await createCampaign(this.form) //Call the firebase function

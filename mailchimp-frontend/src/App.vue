@@ -45,7 +45,6 @@
 
 <script>
 	import MailForm from "@/components/MailForm.vue"
-	import firebase from "firebase/app"
 	import { mapGetters } from "vuex"
 
 	const html = document.documentElement
@@ -62,8 +61,8 @@
 		},
 		methods: {
 			async login() {
-				var provider = new firebase.auth.GoogleAuthProvider()
-				var result = await firebase.auth().signInWithPopup(provider)
+				var provider = new this.$firebase.auth.GoogleAuthProvider()
+				var result = await this.$firebase.auth().signInWithPopup(provider)
 
 				if (result.credential) {
 					var credential = result.credential
@@ -73,7 +72,7 @@
 				}
 			},
 			async logout() {
-				await firebase.auth().signOut()
+				await this.$firebase.auth().signOut()
 			},
 		},
 		computed: {

@@ -4,10 +4,8 @@ import vuetify from "./plugins/vuetify"
 import "material-design-icons-iconfont/dist/material-design-icons.css"
 import store from "./plugins/store"
 
-//Firebase
-import firebase from "firebase"
-
 // Add the Firebase services that you want to use
+import firebase from "firebase/app"
 import "firebase/auth"
 import "firebase/functions"
 const firebaseCredentials = require("./firebaseCredentials.json")
@@ -22,12 +20,14 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 
+
 firebase.auth().onAuthStateChanged((user) => {
 	store.dispatch("fetchUser", user)
 })
 
 Vue.config.productionTip = false
 
+Vue.prototype.$firebase = firebase
 new Vue({
 	vuetify,
 	store,
