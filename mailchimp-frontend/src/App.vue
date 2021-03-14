@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<v-app-bar app id="UI" clipped-left flat>
+		<v-app-bar app id="UI" color="white" clipped-left dark>
 			<v-img class="mx-2 clickable" src="./assets/logo_long.svg" max-height="100" max-width="150" contain></v-img>
 
 			<v-spacer></v-spacer>
