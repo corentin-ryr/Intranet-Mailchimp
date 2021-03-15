@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<v-app-bar app id="UI" color="white" clipped-left dark>
+		<v-app-bar app id="UI" color="white" clipped-left>
 			<v-img class="mx-2 clickable" src="./assets/logo_long.svg" max-height="100" max-width="150" contain></v-img>
 
 			<v-spacer></v-spacer>
@@ -126,7 +126,6 @@
 
 	#UI {
 		background-color: rgba(255, 255, 255, 0.15);
-		/* backdrop-filter: blur(15px); */
 
 		color: black;
 		pointer-events: none;
