@@ -218,12 +218,24 @@
 				</v-card-actions>
 			</v-form>
 		</v-card>
+
 		<div class="intro" :style="backgroundColor">
-			<div class="intro-text" style="padding: 10% 10%">
-				<h1 class="hide">
-					<span class="text" id="text">{{ overlayText }}</span>
-				</h1>
-			</div>
+				<div class="intro-text" style="padding: 10% 10%">
+					<h1 class="hide">
+						<span class="text" id="text">{{ overlayText }}</span>
+					</h1>
+						<v-progress-linear
+							v-if="loadingVisibility"
+							class="my-8"
+							color="white"
+							indeterminate
+							rounded
+							align="center"
+							height="6"
+							width="6"
+							
+						></v-progress-linear>
+				</div>
 		</div>
 
 		<div>
@@ -278,6 +290,7 @@
 			enabled: false,
 			isValid: true,
 			overlayText: "Votre MRI s'envoie",
+			loadingVisibility: true,
 
 			backgroundColor: "background: white",
 			emailRules: [
@@ -291,20 +304,20 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "",
+				contentTitle: "a",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-				contentDomain: "",
-				imageDomain: "",
-				contentPay: "",
-				imagePay: "",
-				contentDifficulty: "",
-				imageDifficulty: "",
+				contentDomain: "a",
+				imageDomain: "Data Science, Machine Learning, IA",
+				contentPay: "a",
+				imagePay: "Faible",
+				contentDifficulty: "a",
+				imageDifficulty: "Faible",
 				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
 				contentSchedule: "Le client désire commencer le plus tôt possible.",
-				contentDescription: "",
+				contentDescription: "a",
 				formBoolean: false,
 				formLink: "",
-				contactList: [],
+				contactList: ["hugo.queinnec@telecom-paris.fr"],
 			},
 
 			previewHTML: "",
@@ -397,7 +410,6 @@
 			},
 
 			sendForm: async function() {
-				//console.log(this.form)
 
 				this.backgroundColor = "background: #e54540"
 				this.overlayText = "MRI en cours d'envoi 📨"
@@ -409,6 +421,7 @@
 				var success = true
 				try {
 					await createCampaign(this.form) //Call the firebase function
+					
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -419,13 +432,15 @@
 					duration: 1,
 				})
 
+
 				if (success) {
-					this.overlayText = "MRI envoyé ! 📮"
+					this.loadingVisibility = false;
+					this.overlayText = "MRI envoyé ! 🚀"
 				} else {
 					this.overlayText = "Une erreur s'est produite ⚠️"
 				}
 
-				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
 
 				setTimeout(() => {
 					//Set a timeout for the user to have time to read the message
@@ -447,6 +462,7 @@
 				}
 				setTimeout(() => {
 					this.backgroundColor = "background: white"
+					//this.loadingVisibility = true;
 				}, 1500)
 			},
 
