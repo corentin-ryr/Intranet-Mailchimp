@@ -304,20 +304,20 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "a",
+				contentTitle: "",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-				contentDomain: "a",
-				imageDomain: "Data Science, Machine Learning, IA",
-				contentPay: "a",
-				imagePay: "Faible",
-				contentDifficulty: "a",
-				imageDifficulty: "Faible",
+				contentDomain: "",
+				imageDomain: "",
+				contentPay: "",
+				imagePay: "",
+				contentDifficulty: "",
+				imageDifficulty: "",
 				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
 				contentSchedule: "Le client désire commencer le plus tôt possible.",
-				contentDescription: "a",
+				contentDescription: "",
 				formBoolean: false,
 				formLink: "",
-				contactList: ["hugo.queinnec@telecom-paris.fr"],
+				contactList: [],
 			},
 
 			previewHTML: "",
@@ -462,7 +462,7 @@
 				}
 				setTimeout(() => {
 					this.backgroundColor = "background: white"
-					//this.loadingVisibility = true;
+					this.loadingVisibility = true;
 				}, 1500)
 			},
 
