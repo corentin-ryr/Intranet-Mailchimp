@@ -20,6 +20,7 @@
 					v-model="form.contentTitle"
 					label="Nom de l'étude"
 					required
+					:rules="[v => !!v || 'Champ requis']"
 					prepend-icon="create"
 					outlined
 				/>
@@ -30,6 +31,7 @@
 					v-model="form.contentFirstDescription"
 					label="Description introductive"
 					required
+					:rules="[v => !!v || 'Champ requis']"
 					prepend-icon="emoji_objects"
 					auto-grow
 					outlined
@@ -46,6 +48,7 @@
 								v-model="form.contentDomain"
 								label="Domaine de l'étude"
 								required
+								:rules="[v => !!v || 'Champ requis']"
 								prepend-icon="build"
 								outlined
 							/>
@@ -58,6 +61,7 @@
 								v-model="imageDomainFull"
 								label="Image du domaine"
 								required
+								:rules="[v => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
 							/>
@@ -72,6 +76,7 @@
 								v-model="form.contentPay"
 								label="Fourchette de rémunération"
 								required
+								:rules="[v => !!v || 'Champ requis']"
 								prepend-icon="payments"
 								outlined
 							/>
@@ -84,6 +89,7 @@
 								v-model="imagePayFull"
 								label="Image de la rémunération"
 								required
+								:rules="[v => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
 							/>
@@ -98,6 +104,7 @@
 								v-model="form.contentDifficulty"
 								label="Difficulté"
 								required
+								:rules="[v => !!v || 'Champ requis']"
 								prepend-icon="psychology"
 								outlined
 							/>
@@ -110,6 +117,7 @@
 								v-model="imageDifficultyFull"
 								label="Image de la difficulté"
 								required
+								:rules="[v => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
 							/>
@@ -123,6 +131,7 @@
 					v-model="form.contentSkills"
 					label="Compétences"
 					required
+					:rules="[v => !!v || 'Champ requis']"
 					prepend-icon="account_circle"
 					auto-grow
 					outlined
@@ -136,6 +145,7 @@
 					v-model="form.contentSchedule"
 					label="Échéances"
 					required
+					:rules="[v => !!v || 'Champ requis']"
 					prepend-icon="today"
 					auto-grow
 					outlined
@@ -149,6 +159,7 @@
 					v-model="form.contentDescription"
 					label="Description complète et technique"
 					required
+					:rules="[v => !!v || 'Champ requis']"
 					prepend-icon="list_alt"
 					auto-grow
 					outlined
@@ -218,26 +229,24 @@
 		<div>
 			<v-card class="mx-auto" width="400">
 				<v-row align="center" justify="space-around" class="ma-10">
-					<v-btn
-						text
-						class="d-flex align-center"
-						href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
-					>
+					<v-btn text color="red accent-4" class="d-flex align-center my-1" href="https://www.linkedin.com/in/corentin-royer-a67a90159/" width="100">
 						Corentin
 					</v-btn>
-					<v-btn text class="d-flex align-center" href="https://www.linkedin.com/in/hugo-queinnec/">
+					<v-btn text color="red accent-4" class="d-flex align-center my-1" href="https://www.linkedin.com/in/hugo-queinnec/" width="100">
 						Hugo
 					</v-btn>
-					<v-btn text class="d-flex align-center" href="https://github.com/corentin-ryr/Intranet-Mailchimp">
+					<v-btn text color="blue accent-4" class="d-flex align-center my-1" href="https://github.com/corentin-ryr/Intranet-Mailchimp" width="100">
 						Github
 					</v-btn>
 				</v-row>
+				
 			</v-card>
 		</div>
 	</div>
 </template>
 
 <script>
+	
 	import gsap from "gsap"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
@@ -246,6 +255,7 @@
 		props: {
 			msg: String,
 		},
+
 		data: () => ({
 			domains: [
 				"Data Science, Machine Learning, IA",
@@ -267,9 +277,6 @@
 			overlayText: "Votre MRI s'envoie",
 
 			backgroundColor: "background: white",
-			//emailRules: [v => !v || /^(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+\s?,)*(\s?[^\s,]+@(telecom-paris|telecom-etude)+\.[^\s,]+)$/.test(v) || "Seules les adresses @telecom-etude.fr et @telecom-paris.fr"],
-			//emailRules: [v => !v || /^\[\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))"(,\s"([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr)")*\s\]$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
-			//emailRules: [v => !v || /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr)),([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))$/.test(v) || "Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement"],
 			emailRules: [
 				(v) =>
 					!v ||
@@ -357,7 +364,9 @@
 						return ""
 				}
 			},
+
 		},
+
 
 		methods: {
 			sendForm: async function() {
@@ -413,6 +422,7 @@
 					this.backgroundColor = "background: white"
 				}, 1500)
 			},
+
 
 			createPreviewHTML: function() {
 				const [

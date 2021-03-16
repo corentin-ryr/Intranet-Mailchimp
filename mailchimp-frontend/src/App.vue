@@ -44,7 +44,7 @@
 
 		<v-main>
 			<!-- Provides the application the proper gutter -->
-			<v-container fluid>
+			<v-container>
 				<MailForm></MailForm>
 			</v-container>
 		</v-main>
