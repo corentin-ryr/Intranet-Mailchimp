@@ -47,6 +47,7 @@
 	import MailForm from "@/components/MailForm.vue"
 	import { mapGetters } from "vuex"
 
+
 	const html = document.documentElement
 	html.setAttribute("lang", "sv")
 
@@ -74,6 +75,7 @@
 			async logout() {
 				await this.$firebase.auth().signOut()
 			},
+
 		},
 		computed: {
 			// map `this.user` to `this.$store.getters.user`
@@ -81,6 +83,7 @@
 				user: "user",
 			}),
 		},
+
 	}
 </script>
 
