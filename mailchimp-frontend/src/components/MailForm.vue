@@ -3,6 +3,7 @@
 		<v-card class="mx-auto mt-10" width="1000">
 			<v-form
 				id="mailForm"
+				ref="mailFormRef"
 				v-on:submit.prevent="checkAuthentification"
 				v-model="isValid"
 				style="padding-left: 20px; padding-right: 20px"
@@ -304,20 +305,20 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "",
+				contentTitle: "a",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-				contentDomain: "",
+				contentDomain: "a",
 				imageDomain: "",
-				contentPay: "",
+				contentPay: "a",
 				imagePay: "",
-				contentDifficulty: "",
+				contentDifficulty: "a",
 				imageDifficulty: "",
 				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
 				contentSchedule: "Le client désire commencer le plus tôt possible.",
-				contentDescription: "",
+				contentDescription: "a",
 				formBoolean: false,
 				formLink: "",
-				contactList: [],
+				contactList: ["hugo.queinnec@telecom-paris.fr"],
 			},
 
 			previewHTML: "",
@@ -417,10 +418,10 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				//var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
-					await createCampaign(this.form) //Call the firebase function
+					//await createCampaign(this.form) //Call the firebase function
 					
 				} catch (error) {
 					console.log(error)
@@ -437,6 +438,7 @@
 					this.loadingVisibility = false;
 					this.overlayText = "MRI envoyé ! 🚀"
 				} else {
+					this.loadingVisibility = false;
 					this.overlayText = "Une erreur s'est produite ⚠️"
 				}
 
@@ -453,9 +455,11 @@
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
 
 				if (success) {
-					for (let field in this.form) {
+					/* for (let field in this.form) {
 						this.form[field] = ""
-					}
+					} */
+					this.$refs.mailFormRef.reset()
+
 				} else {
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
