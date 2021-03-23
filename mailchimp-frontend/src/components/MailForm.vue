@@ -305,20 +305,20 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "a",
+				contentTitle: "",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-				contentDomain: "a",
+				contentDomain: "",
 				imageDomain: "",
-				contentPay: "a",
+				contentPay: "",
 				imagePay: "",
-				contentDifficulty: "a",
+				contentDifficulty: "",
 				imageDifficulty: "",
 				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
 				contentSchedule: "Le client désire commencer le plus tôt possible.",
-				contentDescription: "a",
+				contentDescription: "",
 				formBoolean: false,
 				formLink: "",
-				contactList: ["hugo.queinnec@telecom-paris.fr"],
+				contactList: [""],
 			},
 
 			previewHTML: "",
@@ -418,10 +418,10 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				//var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
-					//await createCampaign(this.form) //Call the firebase function
+					await createCampaign(this.form) //Call the firebase function
 					
 				} catch (error) {
 					console.log(error)
@@ -455,9 +455,9 @@
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
 
 				if (success) {
-					/* for (let field in this.form) {
+					for (let field in this.form) {
 						this.form[field] = ""
-					} */
+					}
 					this.$refs.mailFormRef.reset()
 
 				} else {
