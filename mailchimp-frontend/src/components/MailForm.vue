@@ -3,7 +3,8 @@
 		<v-card class="mx-auto mt-10" width="1000">
 			<v-form
 				id="mailForm"
-				v-on:submit.prevent="sendForm"
+				ref="mailFormRef"
+				v-on:submit.prevent="checkAuthentification"
 				v-model="isValid"
 				style="padding-left: 20px; padding-right: 20px"
 			>
@@ -218,12 +219,24 @@
 				</v-card-actions>
 			</v-form>
 		</v-card>
+
 		<div class="intro" :style="backgroundColor">
-			<div class="intro-text" style="padding: 10% 10%">
-				<h1 class="hide">
-					<span class="text" id="text">{{ overlayText }}</span>
-				</h1>
-			</div>
+				<div class="intro-text" style="padding: 10% 10%">
+					<h1 class="hide">
+						<span class="text" id="text">{{ overlayText }}</span>
+					</h1>
+						<v-progress-linear
+							v-if="loadingVisibility"
+							class="my-8"
+							color="white"
+							indeterminate
+							rounded
+							align="center"
+							height="6"
+							width="6"
+							
+						></v-progress-linear>
+				</div>
 		</div>
 
 		<div>
@@ -238,6 +251,9 @@
 					<v-btn text color="blue accent-4" class="d-flex align-center my-1" href="https://github.com/corentin-ryr/Intranet-Mailchimp" width="100">
 						Github
 					</v-btn>
+					<!-- <v-btn v-on:click="checkAuthentification" text color="blue accent-4" class="d-flex align-center my-1"  width="100">
+						Test Send
+					</v-btn> -->
 				</v-row>
 				
 			</v-card>
@@ -246,7 +262,7 @@
 </template>
 
 <script>
-	
+
 	import gsap from "gsap"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
@@ -275,6 +291,7 @@
 			enabled: false,
 			isValid: true,
 			overlayText: "Votre MRI s'envoie",
+			loadingVisibility: true,
 
 			backgroundColor: "background: white",
 			emailRules: [
@@ -288,20 +305,20 @@
 
 			// Name of the form data
 			form: {
-				contentTitle: "",
+				contentTitle: "a",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-				contentDomain: "",
+				contentDomain: "a",
 				imageDomain: "",
-				contentPay: "",
+				contentPay: "a",
 				imagePay: "",
-				contentDifficulty: "",
+				contentDifficulty: "a",
 				imageDifficulty: "",
 				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
 				contentSchedule: "Le client désire commencer le plus tôt possible.",
-				contentDescription: "",
+				contentDescription: "a",
 				formBoolean: false,
 				formLink: "",
-				contactList: [],
+				contactList: ["hugo.queinnec@telecom-paris.fr"],
 			},
 
 			previewHTML: "",
@@ -369,8 +386,31 @@
 
 
 		methods: {
+
+			checkAuthentification: async function() {
+				//is the user logged in ?
+				if (!this.$store.getters.user.loggedIn){
+					await this.login();
+					this.sendForm();
+				}
+				else {
+					this.sendForm();
+				}
+			},
+
+			async login() {
+				var provider = new this.$firebase.auth.GoogleAuthProvider()
+				var result = await this.$firebase.auth().signInWithPopup(provider)
+
+				if (result.credential) {
+					var credential = result.credential
+
+					// This gives you a Google Access Token. You can use it to access the Google API.
+					console.log(credential.accessToken)
+				}
+			},
+
 			sendForm: async function() {
-				console.log(this.form)
 
 				this.backgroundColor = "background: #e54540"
 				this.overlayText = "MRI en cours d'envoi 📨"
@@ -378,10 +418,11 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				//var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
-					await createCampaign(this.form) //Call the firebase function
+					//await createCampaign(this.form) //Call the firebase function
+					
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -392,13 +433,16 @@
 					duration: 1,
 				})
 
+
 				if (success) {
-					this.overlayText = "MRI envoyé ! 📮"
+					this.loadingVisibility = false;
+					this.overlayText = "MRI envoyé ! 🚀"
 				} else {
+					this.loadingVisibility = false;
 					this.overlayText = "Une erreur s'est produite ⚠️"
 				}
 
-				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
 
 				setTimeout(() => {
 					//Set a timeout for the user to have time to read the message
@@ -411,15 +455,18 @@
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
 
 				if (success) {
-					for (let field in this.form) {
+					/* for (let field in this.form) {
 						this.form[field] = ""
-					}
+					} */
+					this.$refs.mailFormRef.reset()
+
 				} else {
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
 				}
 				setTimeout(() => {
 					this.backgroundColor = "background: white"
+					this.loadingVisibility = true;
 				}, 1500)
 			},
 
