@@ -15,6 +15,8 @@ As the sent emails all use the same template, and as the only difference between
 Then, the node.js backend creates the HTML content of the email from the content written, and creates a Mailchimp campaign.
 Finally, a test email is sent to auditors for review.
 
+![](/resources/ExampleMRI.png)
+
 ## Development
 ### Front-End
 The Front-End development uses the [Vue.js](https://vuejs.org) framework, with the [Vuetify](https://vuetifyjs.com/en/) library. This allow beautiful handcrafted Material Design components.
