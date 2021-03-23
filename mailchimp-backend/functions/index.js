@@ -11,7 +11,7 @@ mailchimp.setConfig({
 })
 
 //Some constant
-const testEmails = ["corentin.royer@telecom-etude.fr", "hugo.queinnec@telecom-etude.fr"]
+const testEmails = ["responsable.commercial@telecom-etude.fr", "secretariat.generale@telecom-etude.fr"]
 const setHTMLContentBool = true
 const sentTestEmailsBool = true
 
