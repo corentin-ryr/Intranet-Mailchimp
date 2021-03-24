@@ -21,7 +21,7 @@
 					v-model="form.contentTitle"
 					label="Nom de l'étude"
 					required
-					:rules="[v => !!v || 'Champ requis']"
+					:rules="[(v) => !!v || 'Champ requis']"
 					prepend-icon="create"
 					outlined
 				/>
@@ -32,7 +32,7 @@
 					v-model="form.contentFirstDescription"
 					label="Description introductive"
 					required
-					:rules="[v => !!v || 'Champ requis']"
+					:rules="[(v) => !!v || 'Champ requis']"
 					prepend-icon="emoji_objects"
 					auto-grow
 					outlined
@@ -49,7 +49,7 @@
 								v-model="form.contentDomain"
 								label="Domaine de l'étude"
 								required
-								:rules="[v => !!v || 'Champ requis']"
+								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="build"
 								outlined
 							/>
@@ -62,7 +62,7 @@
 								v-model="imageDomainFull"
 								label="Image du domaine"
 								required
-								:rules="[v => !!v || 'Champ requis']"
+								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
 							/>
@@ -77,7 +77,7 @@
 								v-model="form.contentPay"
 								label="Fourchette de rémunération"
 								required
-								:rules="[v => !!v || 'Champ requis']"
+								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="payments"
 								outlined
 							/>
@@ -90,7 +90,7 @@
 								v-model="imagePayFull"
 								label="Image de la rémunération"
 								required
-								:rules="[v => !!v || 'Champ requis']"
+								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
 							/>
@@ -105,7 +105,7 @@
 								v-model="form.contentDifficulty"
 								label="Difficulté"
 								required
-								:rules="[v => !!v || 'Champ requis']"
+								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="psychology"
 								outlined
 							/>
@@ -118,7 +118,7 @@
 								v-model="imageDifficultyFull"
 								label="Image de la difficulté"
 								required
-								:rules="[v => !!v || 'Champ requis']"
+								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
 							/>
@@ -132,7 +132,7 @@
 					v-model="form.contentSkills"
 					label="Compétences"
 					required
-					:rules="[v => !!v || 'Champ requis']"
+					:rules="[(v) => !!v || 'Champ requis']"
 					prepend-icon="account_circle"
 					auto-grow
 					outlined
@@ -146,7 +146,7 @@
 					v-model="form.contentSchedule"
 					label="Échéances"
 					required
-					:rules="[v => !!v || 'Champ requis']"
+					:rules="[(v) => !!v || 'Champ requis']"
 					prepend-icon="today"
 					auto-grow
 					outlined
@@ -160,7 +160,7 @@
 					v-model="form.contentDescription"
 					label="Description complète et technique"
 					required
-					:rules="[v => !!v || 'Champ requis']"
+					:rules="[(v) => !!v || 'Champ requis']"
 					prepend-icon="list_alt"
 					auto-grow
 					outlined
@@ -221,48 +221,63 @@
 		</v-card>
 
 		<div class="intro" :style="backgroundColor">
-				<div class="intro-text" style="padding: 10% 10%">
-					<h1 class="hide">
-						<span class="text" id="text">{{ overlayText }}</span>
-					</h1>
-						<v-progress-linear
-							v-if="loadingVisibility"
-							class="my-8"
-							color="white"
-							indeterminate
-							rounded
-							align="center"
-							height="6"
-							width="6"
-							
-						></v-progress-linear>
-				</div>
+			<div class="intro-text" style="padding: 10% 10%">
+				<h1 class="hide">
+					<span class="text" id="text">{{ overlayText }}</span>
+				</h1>
+				<v-progress-linear
+					v-if="loadingVisibility"
+					class="my-8"
+					color="white"
+					indeterminate
+					rounded
+					align="center"
+					height="6"
+					width="6"
+				></v-progress-linear>
+			</div>
 		</div>
 
 		<div>
 			<v-card class="mx-auto" width="400">
 				<v-row align="center" justify="space-around" class="ma-10">
-					<v-btn text color="red accent-4" class="d-flex align-center my-1" href="https://www.linkedin.com/in/corentin-royer-a67a90159/" width="100">
+					<v-btn
+						text
+						color="red accent-4"
+						class="d-flex align-center my-1"
+						href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
+						width="100"
+					>
 						Corentin
 					</v-btn>
-					<v-btn text color="red accent-4" class="d-flex align-center my-1" href="https://www.linkedin.com/in/hugo-queinnec/" width="100">
+					<v-btn
+						text
+						color="red accent-4"
+						class="d-flex align-center my-1"
+						href="https://www.linkedin.com/in/hugo-queinnec/"
+						width="100"
+					>
 						Hugo
 					</v-btn>
-					<v-btn text color="blue accent-4" class="d-flex align-center my-1" href="https://github.com/corentin-ryr/Intranet-Mailchimp" width="100">
+					<v-btn
+						text
+						color="blue accent-4"
+						class="d-flex align-center my-1"
+						href="https://github.com/corentin-ryr/Intranet-Mailchimp"
+						width="100"
+					>
 						Github
 					</v-btn>
 					<!-- <v-btn v-on:click="checkAuthentification" text color="blue accent-4" class="d-flex align-center my-1"  width="100">
 						Test Send
 					</v-btn> -->
 				</v-row>
-				
 			</v-card>
 		</div>
 	</div>
 </template>
 
 <script>
-
 	import gsap from "gsap"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
@@ -381,37 +396,25 @@
 						return ""
 				}
 			},
-
 		},
 
-
 		methods: {
-
 			checkAuthentification: async function() {
 				//is the user logged in ?
-				if (!this.$store.getters.user.loggedIn){
-					await this.login();
-					this.sendForm();
-				}
-				else {
-					this.sendForm();
+				if (!this.$store.getters.user.loggedIn) {
+					await this.login()
+					this.sendForm()
+				} else {
+					this.sendForm()
 				}
 			},
 
 			async login() {
 				var provider = new this.$firebase.auth.GoogleAuthProvider()
-				var result = await this.$firebase.auth().signInWithPopup(provider)
-
-				if (result.credential) {
-					var credential = result.credential
-
-					// This gives you a Google Access Token. You can use it to access the Google API.
-					console.log(credential.accessToken)
-				}
+				await this.$firebase.auth().signInWithPopup(provider)
 			},
 
 			sendForm: async function() {
-
 				this.backgroundColor = "background: #e54540"
 				this.overlayText = "MRI en cours d'envoi 📨"
 
@@ -422,7 +425,6 @@
 				var success = true
 				try {
 					await createCampaign(this.form) //Call the firebase function
-					
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -433,12 +435,11 @@
 					duration: 1,
 				})
 
-
 				if (success) {
-					this.loadingVisibility = false;
+					this.loadingVisibility = false
 					this.overlayText = "MRI envoyé ! 🚀"
 				} else {
-					this.loadingVisibility = false;
+					this.loadingVisibility = false
 					this.overlayText = "Une erreur s'est produite ⚠️"
 				}
 
@@ -459,19 +460,17 @@
 						this.form[field] = ""
 					}
 					this.$refs.mailFormRef.reset()
-
 				} else {
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
 				}
 				setTimeout(() => {
 					this.backgroundColor = "background: white"
-					this.loadingVisibility = true;
+					this.loadingVisibility = true
 				}, 1500)
 			},
 
-
-			createPreviewHTML: function() {
+			createPreviewHTML: async function() {
 				const [
 					imageDomainLink,
 					imagePayLink,
@@ -487,7 +486,7 @@
 					this.form.formLink,
 					this.form.contactList
 				)
-				this.previewHTML = this.contentEditHTML(
+				this.previewHTML = await this.contentEditHTML(
 					this.form.contentTitle,
 					this.form.contentFirstDescription,
 					this.form.contentDomain,
@@ -706,7 +705,7 @@
 				]
 			},
 
-			contentEditHTML: function(
+			contentEditHTML: async function(
 				contentTitle,
 				contentFirstDescription,
 				contentDomain,
@@ -722,7 +721,11 @@
 				contentMailContact,
 				contentMailTo
 			) {
-				var htmlContent =
+				var template = await fetch("/TemplateMRI.txt")
+				var text = await template.text()
+				console.log(text)
+                
+                var htmlContent =
 					`
 						<!doctype html>
 						<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
