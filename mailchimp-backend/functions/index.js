@@ -88,6 +88,23 @@ exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
 	return htmlContent
 })
 
+exports.getCampaignsToValidate = functions.https.onCall(async (data, context) => {
+	const campaigns_ref = db.collection("campaigns")
+	const campaignsToValidate = await campaigns_ref.where("validation", "==", false).get()
+
+	if (campaignsToValidate.empty) {
+		console.log("No matching documents.")
+		return
+	}
+
+	var campaignsToValidateNames = []
+	campaignsToValidate.forEach((campaign) => {
+		campaignsToValidateNames.push(campaign.get(contentTitle))
+	})
+
+	return campaignsToValidateNames
+})
+
 // Helper functions to format the incomming data into the html email =================================================
 // ===================================================================================================================
 // ===================================================================================================================
@@ -250,8 +267,7 @@ async function contentEditHTML(data) {
 	return htmlContent
 }
 
-async function createCampaignEntry(campaignID, data)
-{
-    const res = await db.collection("campaigns").doc(campaignID).set(data)
+async function createCampaignEntry(campaignID, data) {
+	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	console.log(res)
 }
