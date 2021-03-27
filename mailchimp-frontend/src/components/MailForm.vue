@@ -268,9 +268,6 @@
 					>
 						Github
 					</v-btn>
-					<!-- <v-btn v-on:click="checkAuthentification" text color="blue accent-4" class="d-flex align-center my-1"  width="100">
-						Test Send
-					</v-btn> -->
 				</v-row>
 			</v-card>
 		</div>

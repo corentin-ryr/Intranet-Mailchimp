@@ -25,6 +25,136 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	//Retrieve the arguments in request
 	//Check if all data has been sent
+	// if (
+	// 	!data.contentTitle ||
+	// 	!data.contentFirstDescription ||
+	// 	!data.contentDomain ||
+	// 	!data.contentPay ||
+	// 	!data.contentDifficulty ||
+	// 	!data.contentSkills ||
+	// 	!data.contentSchedule ||
+	// 	!data.imageDomain ||
+	// 	!data.imagePay ||
+	// 	!data.imageDifficulty ||
+	// 	//!data.formBoolean ||
+	// 	(data.formBoolean == true && !data.formLink)
+	// ) {
+	// 	throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
+	// }
+
+	const [
+		contentTitle,
+		contentFirstDescription,
+		contentDomain,
+		imageDomainLink,
+		contentPay,
+		imagePayLink,
+		contentDifficulty,
+		imageDifficultyLink,
+		contentSkills,
+		contentSchedule,
+		contentDescription,
+		contentApply,
+		contentMailContact,
+		contentMailTo,
+	] = checkAndFormatData(data)
+
+	// //Raw data
+	// contentTitle = data.contentTitle
+	// contentFirstDescription = data.contentFirstDescription
+	// contentDomain = data.contentDomain
+	// contentPay = data.contentPay
+	// contentDifficulty = data.contentDifficulty
+	// contentSkills = data.contentSkills
+	// contentSchedule = data.contentSchedule
+	// contentDescription = data.contentDescription
+
+	// //Data to transform
+	// imageDomain = data.imageDomain
+	// imagePay = data.imagePay
+	// imageDifficulty = data.imageDifficulty
+	// formBoolean = data.formBoolean
+	// formLink = data.formLink
+
+	// contactList = data.contactList
+
+	// const [
+	// 	imageDomainLink,
+	// 	imagePayLink,
+	// 	imageDifficultyLink,
+	// 	contentApply,
+	// 	contentMailContact,
+	// 	contentMailTo,
+	// ] = contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList)
+
+	const htmlContent = contentEditHTML(
+		contentTitle,
+		contentFirstDescription,
+		contentDomain,
+		imageDomainLink,
+		contentPay,
+		imagePayLink,
+		contentDifficulty,
+		imageDifficultyLink,
+		contentSkills,
+		contentSchedule,
+		contentDescription,
+		contentApply,
+		contentMailContact,
+		contentMailTo
+	)
+
+	const campaignName = contentTitle
+	const mailObject = "[Telecom Etude] " + contentTitle
+	const mailFromName = "Telecom Etude"
+	const mailReplyTo = contactList[0]
+
+	console.log("Creating the campaing...")
+
+	const result = await mailchimp.campaigns.create({
+		type: "regular",
+		recipents: { list_id: functions.config().mailchimp.subscriberlistid },
+		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
+	})
+	const campaignID = result["id"]
+
+	console.log("New campaign created with ID: " + campaignID)
+
+	if (setHTMLContentBool) {
+		await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
+		console.log("HTML Content set")
+	}
+
+	if (sentTestEmailsBool) {
+		console.log("Sending test emails to: " + testEmails)
+		try {
+			await mailchimp.campaigns.sendTestEmail(campaignID, {
+				test_emails: testEmails,
+				send_type: "html",
+			})
+		} catch (error) {
+			throw new functions.https.HttpsError("internal", "Error with mailchimp.")
+		}
+	}
+
+	return "Your campaign has been created and has been sent to the auditors"
+})
+
+//The function to get the preview email
+exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
+	await generate
+})
+
+// Helper functions to format the incomming data into the html email =================================================
+// ===================================================================================================================
+// ===================================================================================================================
+
+/**
+ *
+ * @param {*} data dictionary of email content (e.g: key=contentTitle, value="Titre de l'étude")
+ */
+function checkAndFormatData(data) {
+	//Check if all data has been sent
 	if (
 		!data.contentTitle ||
 		!data.contentFirstDescription ||
@@ -41,6 +171,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 	) {
 		throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
 	}
+
 	//Raw data
 	contentTitle = data.contentTitle
 	contentFirstDescription = data.contentFirstDescription
@@ -69,7 +200,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 		contentMailTo,
 	] = contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList)
 
-	const htmlContent = contentEditHTML(
+	return [
 		contentTitle,
 		contentFirstDescription,
 		contentDomain,
@@ -83,48 +214,9 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 		contentDescription,
 		contentApply,
 		contentMailContact,
-		contentMailTo
-	)
-
-	const campaignName = contentTitle
-	const mailObject = "[Telecom Etude] " + contentTitle
-	const mailFromName = "Telecom Etude"
-    const mailReplyTo = contactList[0]
-    
-    console.log("Creating the campaing...")
-
-	const result = await mailchimp.campaigns.create({
-		type: "regular",
-		recipents: { list_id: functions.config().mailchimp.subscriberlistid },
-		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
-	})
-	const campaignID = result["id"]
-
-	console.log("New campaign created with ID: " + campaignID)
-
-	if (setHTMLContentBool) {
-		await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
-		console.log("HTML Content set")
-	}
-
-	if (sentTestEmailsBool) {
-		console.log("Sending test emails to: " + testEmails)
-		try {
-            await mailchimp.campaigns.sendTestEmail(campaignID, {
-                test_emails: testEmails,
-                send_type: "html",
-            })
-        } catch (error) {
-            throw new functions.https.HttpsError("internal", "Error with mailchimp.")
-        }
-        
-	}
-
-	return "Your campaign has been created and has been sent to the auditors"
-})
-
-// Helper functions to format the incomming data into the html email =================================================
-// ===================================================================================================================
+		contentMailTo,
+	]
+}
 
 function contentTransformations(imageDomain, imagePay, imageDifficulty, formBoolean, formLink, contactList) {
 	var imageDomainLink = ""
