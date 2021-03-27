@@ -49,6 +49,8 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	console.log("New campaign created with ID: " + campaignID)
 
+	createCampaignEntry(campaignID, data)
+
 	if (setHTMLContentBool) {
 		await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
 		console.log("HTML Content set")
@@ -246,4 +248,10 @@ async function contentEditHTML(data) {
 	htmlContent = htmlContent.replace("CONTENT_MAILTO", data.contentMailTo)
 
 	return htmlContent
+}
+
+async function createCampaignEntry(campaignID, data)
+{
+    const res = await db.collection("campaigns").doc(campaignID).set(data)
+	console.log(res)
 }
