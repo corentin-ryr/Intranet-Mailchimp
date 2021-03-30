@@ -94,15 +94,28 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 
 	if (campaignsToValidate.empty) {
 		console.log("No matching documents.")
-		return
+		return new functions.https.HttpsError("notFound", "No campaign to validate.")
 	}
 
-	var campaignsToValidateNames = []
+	var campaignsToValidateNames = {}
 	campaignsToValidate.forEach((campaign) => {
-		campaignsToValidateNames.push(campaign.get(contentTitle))
+		campaignsToValidateNames[campaign.data().contentTitle] = campaign.id
 	})
 
 	return campaignsToValidateNames
+})
+
+exports.getCampaignsWithId = functions.https.onCall(async (data, context) => {
+    const campaigns_ref = db.collection("campaigns")
+    var campaignToFetch
+
+    try {
+        campaignToFetch = await campaigns_ref.doc(data).get()
+    } catch (error) {
+        return new functions.https.HttpsError("notFound", "No campaign with this id.")
+    }
+
+	return campaignToFetch.data()
 })
 
 // Helper functions to format the incomming data into the html email =================================================
@@ -268,6 +281,7 @@ async function contentEditHTML(data) {
 }
 
 async function createCampaignEntry(campaignID, data) {
+	data.validation = false
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	console.log(res)
 }

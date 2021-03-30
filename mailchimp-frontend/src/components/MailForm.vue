@@ -397,6 +397,8 @@
 		},
 
 		methods: {
+
+
 			checkAuthentification: async function() {
 				//is the user logged in ?
 				if (!this.$store.getters.user.loggedIn) {
