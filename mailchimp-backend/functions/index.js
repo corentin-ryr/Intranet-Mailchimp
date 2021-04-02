@@ -1,26 +1,28 @@
+// Setup firebase ====================================================
 const functions = require("firebase-functions")
 const { debug } = require("firebase-functions/lib/logger")
 const admin = require("firebase-admin")
 admin.initializeApp()
-
 const db = admin.firestore()
 
-//Setup mailchimp
+// Setup mailchimp =====================================================
 const mailchimp = require("@mailchimp/mailchimp_marketing")
-
 // Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID mailchimp.subscriberlistid="SUBSCRIBER LIST ID"  " to midify the key and server of mailchimp
 mailchimp.setConfig({
 	apiKey: functions.config().mailchimp.apikey,
 	server: functions.config().mailchimp.server,
 })
 
-//Some constant
+// Some constant =======================================================
 const testEmails = ["responsable.commercial@telecom-etude.fr", "secretaire.general@telecom-etude.fr"]
 //const testEmails = ["hugo.queinnec@telecom-etude.fr", "corentin.royer@telecom-etude.fr"]
-const setHTMLContentBool = true
-const sentTestEmailsBool = true
 
-// The function to create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
+// Firebase functions ===================================================
+// ======================================================================
+
+/**
+ * This function takes all the fields from the form as input and create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
+ */
 exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, context) => {
 	// Checking that the user is authenticated.
 	if (!context.auth) {
@@ -28,15 +30,15 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 		throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
 	}
 	//Format the data for the next function
-	data = await checkAndFormatData(data)
+	var formatedData = await checkAndFormatData(data)
 
 	//Generate the html content
-	const htmlContent = await contentEditHTML(data)
+	const htmlContent = await contentEditHTML(formatedData)
 
-	const campaignName = data.contentTitle
-	const mailObject = "[Telecom Etude] " + data.contentTitle
+	const campaignName = formatedData.contentTitle
+	const mailObject = "[Telecom Etude] " + formatedData.contentTitle
 	const mailFromName = "Telecom Etude"
-	const mailReplyTo = data.contactList[0] //Or set it to candidature@telecom-etude.fr ?
+	const mailReplyTo = "candidature@telecom-etude.fr" //formatedData.contactList[0] //Or set it to candidature@telecom-etude.fr ?
 
 	console.log("Creating the campaing...")
 
@@ -49,29 +51,26 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	console.log("New campaign created with ID: " + campaignID)
 
-	createCampaignEntry(campaignID, data)
+	createCampaignEntry(campaignID, formatedData)
 
-	if (setHTMLContentBool) {
-		await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
-		console.log("HTML Content set")
-	}
+	await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
+	console.log("HTML Content set")
 
-	if (sentTestEmailsBool) {
-		console.log("Sending test emails to: " + testEmails)
-		try {
-			await mailchimp.campaigns.sendTestEmail(campaignID, {
-				test_emails: testEmails,
-				send_type: "html",
-			})
-		} catch (error) {
-			throw new functions.https.HttpsError("internal", "Error with mailchimp.")
-		}
+	console.log("Sending test emails to: " + testEmails)
+	try {
+		await mailchimp.campaigns.sendTestEmail(campaignID, {
+			test_emails: testEmails,
+			send_type: "html",
+		})
+	} catch (error) {
+		throw new functions.https.HttpsError("internal", "Error with mailchimp.")
 	}
 
 	return "Your campaign has been created and has been sent to the auditors."
 })
-
-//The function to get the preview email
+/**
+ * This function takes all the fields from the form as input and returns the email html that would be send to mailchimp
+ */
 exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
 	// Checking that the user is authenticated.
 	if (!context.auth) {
@@ -88,6 +87,9 @@ exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
 	return htmlContent
 })
 
+/**
+ * This function return a dictionary with the names of the campaigns to validate as keys and the campaign's ids as value.
+ */
 exports.getCampaignsToValidate = functions.https.onCall(async (data, context) => {
 	const campaigns_ref = db.collection("campaigns")
 	const campaignsToValidate = await campaigns_ref.where("validation", "==", false).get()
@@ -105,17 +107,39 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 	return campaignsToValidateNames
 })
 
+/**
+ * This function takes a campaign id as input and return all the fields of that campaign (title, description, difficulty...)
+ */
 exports.getCampaignsWithId = functions.https.onCall(async (data, context) => {
-    const campaigns_ref = db.collection("campaigns")
-    var campaignToFetch
+	const campaigns_ref = db.collection("campaigns")
+	var campaignToFetch
 
+	try {
+		campaignToFetch = await campaigns_ref.doc(data).get()
+	} catch (error) {
+		return new functions.https.HttpsError("notFound", "No campaign with this id.")
+	}
+
+	var data = campaignToFetch.data()
+	delete data["validation"]
+	return data
+})
+
+/**
+ * Input : the form data, the campaign id
+ * Effect : Update the entry in the database.
+ */
+exports.updateCampaign = functions.https.onCall(async (data, context) => {
+    const id = data.id
+    console.log(id)
+    delete data.id
     try {
-        campaignToFetch = await campaigns_ref.doc(data).get()
+        await createCampaignEntry(id, data)
     } catch (error) {
-        return new functions.https.HttpsError("notFound", "No campaign with this id.")
+        return new functions.https.HttpsError("notFound", "No campaign with this id.") //TODO
     }
-
-	return campaignToFetch.data()
+    
+	return "Campaign updated"
 })
 
 // Helper functions to format the incomming data into the html email =================================================

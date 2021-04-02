@@ -197,7 +197,14 @@
 				<div class="text-center">
 					<v-dialog height="90%" width="90%">
 						<template v-slot:activator="{ on, attrs }">
-							<v-btn color="red lighten-2" dark v-bind="attrs" v-on="on" v-on:click="createPreviewHTML()">
+							<v-btn
+								color="red lighten-2"
+								dark
+								v-bind="attrs"
+								v-on="on"
+								v-on:click="createPreviewHTML()"
+								aria-label="Preview button"
+							>
 								Prévisualiser
 							</v-btn>
 						</template>
@@ -213,12 +220,29 @@
 
 				<v-divider></v-divider>
 				<v-card-actions>
-					<v-btn type="submit" form="mailForm" class="mx-auto" :disabled="!isValid" color="secondary">
+					<v-btn
+						type="submit"
+						form="mailForm"
+						class="mx-auto"
+						:disabled="!isValid"
+						color="secondary"
+						aria-label="Send button"
+					>
 						Envoyer
 					</v-btn>
 				</v-card-actions>
 			</v-form>
 		</v-card>
+
+		<v-btn
+			v-on:click="testFunc"
+			text
+			color="red accent-4"
+			class="d-flex align-center my-1"
+			width="100"
+		>
+			Corentin
+		</v-btn>
 
 		<div class="intro" :style="backgroundColor">
 			<!-- This div contains the elements for the animation sequence on form sending  -->
@@ -227,6 +251,7 @@
 					<span class="text" id="text">{{ overlayText }}</span>
 				</h1>
 				<v-progress-linear
+					aria-label="Progress bar"
 					v-if="loadingVisibility"
 					class="my-8"
 					color="white"
@@ -397,7 +422,20 @@
 		},
 
 		methods: {
+            testFunc: async function() {
+                //Get campaign to modify
+                var getCampaigns = this.$firebase.functions().httpsCallable("getCampaignsToValidate")
+                var campaigns= await getCampaigns()
+                console.log(campaigns)
+                const campaignId = campaigns["TEST"]
 
+                //Update campaign
+                var inputdata = this.form
+                inputdata["id"] = campaignId
+				var updateCampaign = this.$firebase.functions().httpsCallable("updateCampaign")
+                var res= await updateCampaign(inputdata)
+                console.log(res)
+            },
 
 			checkAuthentification: async function() {
 				//is the user logged in ?

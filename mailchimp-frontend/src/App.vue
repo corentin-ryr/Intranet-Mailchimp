@@ -6,14 +6,10 @@
 			<v-spacer></v-spacer>
 
 			<template v-if="user.loggedIn">
-				<!-- <div class="nav-item">{{ user.data.displayName }}</div>
-				<li class="nav-item">
-					<a class="nav-link clickable" @click.prevent="logout">Sign out</a>
-				</li> -->
 
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn class="clickable" icon v-bind="attrs" v-on="on">
+						<v-btn class="clickable" icon v-bind="attrs" v-on="on" aria-label="Account button">
 							<v-icon>mdi-account-circle</v-icon>
 						</v-btn>
 					</template>
@@ -26,7 +22,7 @@
 								</v-list-item-content>
 
 								<v-list-item-action>
-									<v-btn @click.prevent="logout" icon>
+									<v-btn @click.prevent="logout" icon aria-label="Logout button">
 										<v-icon>mdi-logout</v-icon>
 									</v-btn>
 								</v-list-item-action>
@@ -36,7 +32,7 @@
 				</v-menu>
 			</template>
 			<template v-else>
-				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="login">
+				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="login" aria-label="Connection button">
 					<span style="font-family: 'Avenir Next Regular'">Connexion</span>
 				</v-btn>
 			</template>
