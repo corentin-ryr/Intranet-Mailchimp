@@ -38,7 +38,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 	const campaignName = formatedData.contentTitle
 	const mailObject = "[Telecom Etude] " + formatedData.contentTitle
 	const mailFromName = "Telecom Etude"
-	const mailReplyTo = "candidature@telecom-etude.fr" //formatedData.contactList[0] //Or set it to candidature@telecom-etude.fr ?
+	const mailReplyTo = "noreply@telecom-etude.fr" //formatedData.contactList[0] //Or set it to candidature@telecom-etude.fr ?
 
 	console.log("Creating the campaing...")
 

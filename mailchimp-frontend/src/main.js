@@ -9,6 +9,7 @@ import store from "./plugins/store"
 import firebase from "firebase/app"
 import "firebase/auth"
 import "firebase/functions"
+import router from './router'
 const firebaseCredentials = require("./firebaseCredentials.json")
 const firebaseConfig = {
 	apiKey: firebaseCredentials.apiKey,
@@ -30,7 +31,8 @@ Vue.config.productionTip = false
 
 
 new Vue({
-	vuetify,
-	store,
-	render: (h) => h(App),
+    vuetify,
+    store,
+    router,
+    render: (h) => h(App)
 }).$mount("#app")

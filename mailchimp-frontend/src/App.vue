@@ -6,10 +6,17 @@
 			<v-spacer></v-spacer>
 
 			<template v-if="user.loggedIn">
+				<router-link to="validation">
+					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
+						<span style="font-family: 'Avenir Next Regular'">Validation</span>
+					</v-btn>
+				</router-link>
+			</template>
 
+			<template v-if="user.loggedIn">
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn class="clickable" icon v-bind="attrs" v-on="on" aria-label="Account button">
+						<v-btn class="clickable" icon v-bind="attrs" v-on="on">
 							<v-icon>mdi-account-circle</v-icon>
 						</v-btn>
 					</template>
@@ -22,7 +29,7 @@
 								</v-list-item-content>
 
 								<v-list-item-action>
-									<v-btn @click.prevent="logout" icon aria-label="Logout button">
+									<v-btn @click.prevent="logout" icon>
 										<v-icon>mdi-logout</v-icon>
 									</v-btn>
 								</v-list-item-action>
@@ -32,7 +39,7 @@
 				</v-menu>
 			</template>
 			<template v-else>
-				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="login" aria-label="Connection button">
+				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="login">
 					<span style="font-family: 'Avenir Next Regular'">Connexion</span>
 				</v-btn>
 			</template>
@@ -41,7 +48,7 @@
 		<v-main>
 			<!-- Provides the application the proper gutter -->
 			<v-container>
-				<MailForm></MailForm>
+				<router-view></router-view>
 			</v-container>
 		</v-main>
 		<v-footer id="UI" app>
@@ -57,28 +64,20 @@
 </template>
 
 <script>
-	import MailForm from "@/components/MailForm.vue"
 	import { mapGetters } from "vuex"
-
 	const html = document.documentElement
 	html.setAttribute("lang", "sv")
-
-	// var link = document.querySelector("link[rel~='icon']")
-	// if (!link) {
-	// 	link = document.createElement("link")
-	// 	link.rel = "icon"
-	// 	document.getElementsByTagName("head")[0].appendChild(link)
-	// }
-	// link.href = "favicon.png"
-
+	var link = document.querySelector("link[rel~='icon']")
+	if (!link) {
+		link = document.createElement("link")
+		link.rel = "icon"
+		document.getElementsByTagName("head")[0].appendChild(link)
+	}
+	link.href = "favicon.png"
 	export default {
 		name: "App",
-
 		props: {
 			source: String,
-		},
-		components: {
-			MailForm,
 		},
 		data: () => ({
 			menu: false,
@@ -87,20 +86,16 @@
 			async login() {
 				var provider = new this.$firebase.auth.GoogleAuthProvider()
 				var result = await this.$firebase.auth().signInWithPopup(provider)
-
 				if (result.credential) {
 					var credential = result.credential
-
 					// This gives you a Google Access Token. You can use it to access the Google API.
 					console.log(credential.accessToken)
 				}
-
 				this.menu = false
 			},
 			async logout() {
 				await this.$firebase.auth().signOut()
 			},
-
 		},
 		computed: {
 			// map `this.user` to `this.$store.getters.user`
@@ -108,7 +103,6 @@
 				user: "user",
 			}),
 		},
-
 	}
 </script>
 
@@ -121,10 +115,8 @@
 		font-family: "Avenir Next Bold";
 		src: url("./fonts/avenir-bold.otf") format("opentype"); /*File to be stored at your site */
 	}
-
 	#UI {
 		background-color: rgba(255, 255, 255, 0.15);
-
 		color: black;
 		pointer-events: none;
 	}
