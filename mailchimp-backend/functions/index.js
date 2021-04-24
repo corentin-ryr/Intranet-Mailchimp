@@ -17,6 +17,7 @@ mailchimp.setConfig({
 const testEmails = ["responsable.commercial@telecom-etude.fr", "secretaire.general@telecom-etude.fr"]
 //const testEmails = ["hugo.queinnec@telecom-etude.fr", "corentin.royer@telecom-etude.fr"]
 
+// ======================================================================
 // Firebase functions ===================================================
 // ======================================================================
 
@@ -51,7 +52,9 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	console.log("New campaign created with ID: " + campaignID)
 
-	createCampaignEntry(campaignID, formatedData)
+	// We add the unformated data to the database (because the html can be generated from these data).
+	// The data have been checked earlier so we know it is complete.
+	createCampaignEntry(campaignID, data)
 
 	await mailchimp.campaigns.setContent(campaignID, { html: htmlContent })
 	console.log("HTML Content set")
@@ -110,7 +113,7 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 /**
  * This function takes a campaign id as input and return all the fields of that campaign (title, description, difficulty...)
  */
-exports.getCampaignsWithId = functions.https.onCall(async (data, context) => {
+exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
 	const campaigns_ref = db.collection("campaigns")
 	var campaignToFetch
 
@@ -130,20 +133,29 @@ exports.getCampaignsWithId = functions.https.onCall(async (data, context) => {
  * Effect : Update the entry in the database.
  */
 exports.updateCampaign = functions.https.onCall(async (data, context) => {
-    const id = data.id
-    console.log(id)
-    delete data.id
-    try {
-        await createCampaignEntry(id, data)
-    } catch (error) {
-        return new functions.https.HttpsError("notFound", "No campaign with this id.") //TODO
-    }
-    
+	const id = data.id
+	console.log(id)
+	delete data.id
+	try {
+		await createCampaignEntry(id, data)
+	} catch (error) {
+		return new functions.https.HttpsError("notFound", "No campaign with this id.") //TODO
+	}
+
 	return "Campaign updated"
 })
 
-// Helper functions to format the incomming data into the html email =================================================
+/**
+ * 
+ */
+exports.validateCampaign = functions.https.onCall(async (data, context) =>
+{
+    return new functions.https.HttpsError("unimplemented") //TODO
+
+})
+
 // ===================================================================================================================
+// Helper functions to format the incomming data into the html email =================================================
 // ===================================================================================================================
 
 /**
@@ -304,8 +316,38 @@ async function contentEditHTML(data) {
 	return htmlContent
 }
 
+/**
+ * This function add each field of the data in the database and adds a validation field (initialy set to false)
+ * @param {*} campaignID The mailchimp campaign ID
+ * @param {*} data The unformated data (data from the frontend form)
+ */
 async function createCampaignEntry(campaignID, data) {
-	data.validation = false
+	data.validationRespoCom = false
+	data.validationSecGe = false
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	console.log(res)
+}
+
+
+async function validateCampaign(campaignID, isRespoCom) {
+	if (isRespoCom) {
+        db.collection("campaigns")
+            .doc(campaignID)
+            .update({
+                validationRespoCom: true,
+            })
+            .then(function ()
+            {
+                console.log("Updated validation")
+            })
+	} else {
+		db.collection("campaigns")
+			.doc(campaignID)
+			.update({
+				validationSecGe: true,
+			})
+			.then(function () {
+				console.log("Updated validation")
+			})
+	}
 }
