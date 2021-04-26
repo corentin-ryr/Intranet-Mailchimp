@@ -31,7 +31,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 		throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
 	}
 	//Format the data for the next function
-	var formatedData = await checkAndFormatData(data)
+	var formatedData = await checkAndFormatData(Object.assign({}, data))
 
 	//Generate the html content
 	const htmlContent = await contentEditHTML(formatedData)
@@ -41,7 +41,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 	const mailFromName = "Telecom Etude"
 	const mailReplyTo = "noreply@telecom-etude.fr" //formatedData.contactList[0] //Or set it to candidature@telecom-etude.fr ?
 
-	console.log("Creating the campaing...")
+	console.log("Creating the campaign...")
 
 	const result = await mailchimp.campaigns.create({
 		type: "regular",
@@ -95,17 +95,24 @@ exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
  */
 exports.getCampaignsToValidate = functions.https.onCall(async (data, context) => {
 	const campaigns_ref = db.collection("campaigns")
-	const campaignsToValidate = await campaigns_ref.where("validation", "==", false).get()
+	const campaignsRespoCom = await campaigns_ref.where("validationRespoCom", "==", false).get()
+	const campaignsSecGe = await campaigns_ref.where("validationSecGe", "==", false).get()
 
-	if (campaignsToValidate.empty) {
+	if (campaignsRespoCom.empty && campaignsSecGe.empty) {
 		console.log("No matching documents.")
 		return new functions.https.HttpsError("notFound", "No campaign to validate.")
 	}
 
-	var campaignsToValidateNames = {}
-	campaignsToValidate.forEach((campaign) => {
-		campaignsToValidateNames[campaign.data().contentTitle] = campaign.id
+	var campaignsToValidateNamesRespoCom = {}
+	var campaignsToValidateNamesSecGe = {}
+	campaignsRespoCom.forEach((campaign) => {
+		campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = campaign.id
 	})
+	campaignsSecGe.forEach((campaign) => {
+		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = campaign.id
+	})
+
+    campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe }
 
 	return campaignsToValidateNames
 })
@@ -181,6 +188,7 @@ async function checkAndFormatData(data) {
 		throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
 	}
 
+    // Apply transformation to transformed data not to modify data
 	data = await contentTransformations(data)
 
 	return data

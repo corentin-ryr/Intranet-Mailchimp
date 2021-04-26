@@ -234,16 +234,6 @@
 			</v-form>
 		</v-card>
 
-		<v-btn
-			v-on:click="testFunc"
-			text
-			color="red accent-4"
-			class="d-flex align-center my-1"
-			width="100"
-		>
-			Corentin
-		</v-btn>
-
 		<div class="intro" :style="backgroundColor">
 			<!-- This div contains the elements for the animation sequence on form sending  -->
 			<div class="intro-text" style="padding: 10% 10%">
@@ -422,21 +412,6 @@
 		},
 
 		methods: {
-            testFunc: async function() {
-                //Get campaign to modify
-                var getCampaigns = this.$firebase.functions().httpsCallable("getCampaignsToValidate")
-                var campaigns= await getCampaigns()
-                console.log(campaigns)
-                const campaignId = campaigns["TEST"]
-
-                //Update campaign
-                var inputdata = this.form
-                inputdata["id"] = campaignId
-				var updateCampaign = this.$firebase.functions().httpsCallable("updateCampaign")
-                var res= await updateCampaign(inputdata)
-                console.log(res)
-            },
-
 			checkAuthentification: async function() {
 				//is the user logged in ?
 				if (!this.$store.getters.user.loggedIn) {
