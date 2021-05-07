@@ -94,7 +94,14 @@ exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
  * This function return a dictionary with the names of the campaigns to validate as keys and the campaign's ids as value.
  */
 exports.getCampaignsToValidate = functions.https.onCall(async (data, context) => {
-	const campaigns_ref = db.collection("campaigns")
+    if (!context.auth || context.auth.token.moderator !== true) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as moderator."
+		)
+	}
+    
+    const campaigns_ref = db.collection("campaigns")
 	const campaignsRespoCom = await campaigns_ref.where("validationRespoCom", "==", false).get()
 	const campaignsSecGe = await campaigns_ref.where("validationSecGe", "==", false).get()
 
@@ -112,7 +119,7 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = campaign.id
 	})
 
-    campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe }
+	campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe }
 
 	return campaignsToValidateNames
 })
@@ -121,7 +128,14 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
  * This function takes a campaign id as input and return all the fields of that campaign (title, description, difficulty...)
  */
 exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
-	const campaigns_ref = db.collection("campaigns")
+    if (!context.auth || context.auth.token.moderator !== true) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as moderator."
+		)
+	}
+    
+    const campaigns_ref = db.collection("campaigns")
 	var campaignToFetch
 
 	try {
@@ -140,7 +154,14 @@ exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
  * Effect : Update the entry in the database.
  */
 exports.updateCampaign = functions.https.onCall(async (data, context) => {
-	const id = data.id
+    if (!context.auth || context.auth.token.moderator !== true) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as moderator."
+		)
+	}
+    
+    const id = data.id
 	console.log(id)
 	delete data.id
 	try {
@@ -153,12 +174,17 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 })
 
 /**
- * 
+ *
  */
 exports.validateCampaign = functions.https.onCall(async (data, context) =>
 {
-    return new functions.https.HttpsError("unimplemented") //TODO
-
+	if (!context.auth || context.auth.token.moderator !== true) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as moderator."
+		)
+	}
+	return new functions.https.HttpsError("unimplemented") //TODO
 })
 
 // ===================================================================================================================
@@ -188,7 +214,7 @@ async function checkAndFormatData(data) {
 		throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
 	}
 
-    // Apply transformation to transformed data not to modify data
+	// Apply transformation to transformed data not to modify data
 	data = await contentTransformations(data)
 
 	return data
@@ -336,18 +362,16 @@ async function createCampaignEntry(campaignID, data) {
 	console.log(res)
 }
 
-
 async function validateCampaign(campaignID, isRespoCom) {
 	if (isRespoCom) {
-        db.collection("campaigns")
-            .doc(campaignID)
-            .update({
-                validationRespoCom: true,
-            })
-            .then(function ()
-            {
-                console.log("Updated validation")
-            })
+		db.collection("campaigns")
+			.doc(campaignID)
+			.update({
+				validationRespoCom: true,
+			})
+			.then(function () {
+				console.log("Updated validation")
+			})
 	} else {
 		db.collection("campaigns")
 			.doc(campaignID)
@@ -359,3 +383,60 @@ async function validateCampaign(campaignID, isRespoCom) {
 			})
 	}
 }
+
+// ===================================================================================================================
+// Admin functions to give and revoke privileges =====================================================================
+// ===================================================================================================================
+
+exports.addUserToModerator = functions.https.onCall(async (data, context) => {
+	if (!context.auth || context.auth.token.admin !== true) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as admin."
+		)
+	}
+
+	const email = data.email
+	console.log(email)
+	return grantModeratorRole(email).then(() => {
+		return {
+			result: "Request fulfilled! ${email} is now a moderator.",
+		}
+	})
+})
+
+async function grantModeratorRole(email) {
+	const user = await admin.auth().getUserByEmail(email)
+	if (user.customClaims && user.customClaims.moderator === true) {
+		return
+	}
+	return admin.auth().setCustomUserClaims(user.uid, {
+		moderator: true,
+	})
+}
+
+exports.revokeUsers = functions.https.onCall(async (data, context) => {
+	if (!context.auth || context.auth.token.admin !== true) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as admin."
+		)
+	}
+
+	//Get all the users and if they have the custom claims "moderator", delete it
+	usersRevoked = []
+    admin
+		.auth()
+		.listUsers()
+		.then((listUsersResult) => {
+			listUsersResult.users.forEach((userRecord) => {
+                console.log("user", userRecord.customClaims)
+                if (userRecord.customClaims && userRecord.customClaims["moderator"] === true) {
+                    admin.auth().updateUser(uid, { claim: null })
+                    usersRevoked.push(userRecord.email)
+                }
+			})
+        })
+    
+    return usersRevoked
+})

@@ -1,17 +1,12 @@
-<template>
-	<div>
+<template
+	><div>
 		<v-card class="card mx-auto mt-10" width="1000">
-			<v-form
-				id="mailForm"
-				ref="mailFormRef"
-				v-on:submit.prevent="checkAuthentification"
-				v-model="isValid"
-			>
+			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="checkAuthentification" v-model="isValid">
 				<v-card-title
 					style="font-family: 'Avenir Next Bold'; justify-content: center; align-items: center;"
 					class="text-wrap py-10"
 				>
-					<h1>✉️ MRI</h1>
+					<h1>Edition du MRI {{this.id}}</h1>
 				</v-card-title>
 
 				<v-text-field
@@ -300,6 +295,7 @@
 		},
 
 		data: () => ({
+            id: "",
 			domains: [
 				"Data Science, Machine Learning, IA",
 				"Développement Web, Logiciel, Mobile",
@@ -350,6 +346,10 @@
 
 			previewHTML: "",
 		}),
+
+        created() {
+            this.id = this.$route.params.id
+        },
 
 		watch: {
 			imageDomainFull: function() {

@@ -6,7 +6,8 @@
 			<v-spacer></v-spacer>
 
 			<template v-if="user.loggedIn">
-				<router-link to="validation">
+				<!-- && user.data.claims.moderator -->
+				<router-link to="/validation">
 					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
 						<span style="font-family: 'Avenir Next Regular'">Validation</span>
 					</v-btn>
@@ -47,7 +48,7 @@
 
 		<v-main>
 			<!-- Provides the application the proper gutter -->
-			<v-container>
+			<v-container v-if="user.loggedIn">
 				<router-view></router-view>
 			</v-container>
 		</v-main>
@@ -81,20 +82,33 @@
 		},
 		data: () => ({
 			menu: false,
+			// moderator: false,
 		}),
+
+		// created() {
+		// 	this.updateClaims()
+		// },
+
 		methods: {
 			async login() {
 				var provider = new this.$firebase.auth.GoogleAuthProvider()
 				var result = await this.$firebase.auth().signInWithPopup(provider)
 				if (result.credential) {
-					var credential = result.credential
-					// This gives you a Google Access Token. You can use it to access the Google API.
-					console.log(credential.accessToken)
+                    console.log(result)
+					// this.updateClaims()
 				}
 				this.menu = false
 			},
 			async logout() {
 				await this.$firebase.auth().signOut()
+				this.moderator = false
+				this.menu = false
+			},
+			async updateClaims() {
+				const idTokenResult = await this.$firebase.auth().currentUser.getIdTokenResult()
+				if (idTokenResult.claims.moderator) {
+					this.moderator = true
+				}
 			},
 		},
 		computed: {
@@ -127,7 +141,15 @@
 		background: linear-gradient(90deg, #fd8334, #d51f48);
 		color: white;
 	}
+	#gradient-outline {
+		border-color: #d51f48;
+		color: #d51f48;
+	}
 	.clickable {
 		pointer-events: all;
+	}
+	.card {
+		padding-left: 20px;
+		padding-right: 20px;
 	}
 </style>

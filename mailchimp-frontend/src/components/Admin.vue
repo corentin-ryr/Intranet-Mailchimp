@@ -1,0 +1,60 @@
+<template>
+	<div>
+		<v-card class="card mx-auto mt-10" width="600">
+			<v-card-title>Admin Page</v-card-title>
+			<v-text-field type="text" name="email" v-model="email" label="Email" prepend-icon="email" outlined />
+
+			<v-card-actions>
+				<v-btn
+					id="gradient-outline"
+					outlined
+					class="ma-2 rounded-lg clickable"
+					depressed
+					v-on:click="revokeUsers"
+				>
+					<span style="font-family: 'Avenir Next Regular'">Révoquer tous les accès</span>
+				</v-btn>
+
+				<v-spacer></v-spacer>
+				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="addUserToModerator">
+					<span style="font-family: 'Avenir Next Regular'">Ajouter l'utilisateur</span>
+				</v-btn>
+			</v-card-actions>
+		</v-card>
+	</div>
+</template>
+
+<script>
+	export default {
+		name: "MailForm",
+		props: {
+			msg: String,
+		},
+
+		data: () => ({
+			email: "",
+		}),
+
+		methods: {
+			addUserToModerator: async function() {
+				//Get campaign to modify
+				var addUserToModerator = this.$firebase.functions().httpsCallable("addUserToModerator")
+				try {
+					const result = await addUserToModerator({ email: this.email })
+					console.log(result)
+				} catch (error) {
+					console.log(error)
+				}
+			},
+			revokeUsers: async function() {
+				//Get campaign to modify
+				var revokeUsers = this.$firebase.functions().httpsCallable("revokeUsers")
+				const result = await revokeUsers()
+
+				console.log(result)
+			},
+		},
+	}
+</script>
+
+<style></style>
