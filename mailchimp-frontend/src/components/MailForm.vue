@@ -1,12 +1,7 @@
 <template>
 	<div>
 		<v-card class="card mx-auto mt-10" width="1000">
-			<v-form
-				id="mailForm"
-				ref="mailFormRef"
-				v-on:submit.prevent="checkAuthentification"
-				v-model="isValid"
-			>
+			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="checkAuthentification" v-model="isValid">
 				<v-card-title
 					style="font-family: 'Avenir Next Bold'; justify-content: center; align-items: center;"
 					class="text-wrap py-10"
@@ -57,8 +52,10 @@
 						<v-col cols="6" class="ma-0 pa-0">
 							<v-select
 								:items="domains"
+								item-text="domain"
+								item-value="abbr"
 								name="imageDomain"
-								v-model="imageDomainFull"
+								v-model="form.imageDomain"
 								label="Image du domaine"
 								required
 								:rules="[(v) => !!v || 'Champ requis']"
@@ -85,8 +82,10 @@
 						<v-col cols="6" class="ma-0 pa-0">
 							<v-select
 								:items="pays"
+								item-text="pay"
+								item-value="abbr"
 								name="imagePay"
-								v-model="imagePayFull"
+								v-model="form.imagePay"
 								label="Image de la rémunération"
 								required
 								:rules="[(v) => !!v || 'Champ requis']"
@@ -113,8 +112,10 @@
 						<v-col cols="6" class="ma-0 pa-0">
 							<v-select
 								:items="difficulties"
+								item-text="difficulty"
+								item-value="abbr"
 								name="imageDifficulty"
-								v-model="imageDifficultyFull"
+								v-model="form.imageDifficulty"
 								label="Image de la difficulté"
 								required
 								:rules="[(v) => !!v || 'Champ requis']"
@@ -301,18 +302,25 @@
 
 		data: () => ({
 			domains: [
-				"Data Science, Machine Learning, IA",
-				"Développement Web, Logiciel, Mobile",
-				"Cybersécurité, Cryptographie",
-				"Systèmes Embarqués, IoT",
-				"Image, Computer Graphics, 3D",
-				"Étude de marché, État de l'Art, Audit",
+				{ domain: "Data Science, Machine Learning, IA", abbr: "data" },
+				{ domain: "Développement Web, Logiciel, Mobile", abbr: "dev" },
+				{ domain: "Cybersécurité, Cryptographie", abbr: "cyber" },
+				{ domain: "Systèmes Embarqués, IoT", abbr: "se" },
+				{ domain: "Image, Computer Graphics, 3D", abbr: "image" },
+				{ domain: "Étude de marché, État de l'Art, Audit", abbr: "etude" },
 			],
-			pays: ["Faible", "Moyenne", "Élevée"],
-			difficulties: ["Faible", "Moyenne", "Élevée"],
-			imageDomainFull: "",
-			imageDifficultyFull: "",
-			imagePayFull: "",
+
+			pays: [
+				{ pay: "Faible", abbr: "low" },
+				{ pay: "Moyenne", abbr: "middle" },
+				{ pay: "Élevée", abbr: "high" },
+			],
+
+			difficulties: [
+				{ difficulty: "Faible", abbr: "low" },
+				{ difficulty: "Moyenne", abbr: "middle" },
+				{ difficulty: "Élevée", abbr: "high" },
+			],
 
 			//Other variables
 			enabled: false,
@@ -350,65 +358,6 @@
 
 			previewHTML: "",
 		}),
-
-		watch: {
-			imageDomainFull: function() {
-				switch (this.imageDomainFull) {
-					case this.domains[0]:
-						this.form.imageDomain = "data"
-						break
-					case this.domains[1]:
-						this.form.imageDomain = "dev"
-						break
-					case this.domains[2]:
-						this.form.imageDomain = "cyber"
-						break
-					case this.domains[3]:
-						this.form.imageDomain = "se"
-						break
-					case this.domains[4]:
-						this.form.imageDomain = "image"
-						break
-					case this.domains[5]:
-						this.form.imageDomain = "etude"
-						break
-					default:
-						break
-				}
-			},
-
-			imageDifficultyFull: function() {
-				switch (this.imageDifficultyFull) {
-					case this.difficulties[0]:
-						this.form.imageDifficulty = "low"
-						break
-					case this.difficulties[1]:
-						this.form.imageDifficulty = "middle"
-						break
-					case this.difficulties[2]:
-						this.form.imageDifficulty = "high"
-						break
-					default:
-						return ""
-				}
-			},
-
-			imagePayFull: function() {
-				switch (this.imagePayFull) {
-					case this.pays[0]:
-						this.form.imagePay = "low"
-						break
-					case this.pays[1]:
-						this.form.imagePay = "middle"
-						break
-					case this.pays[2]:
-						this.form.imagePay = "high"
-						break
-					default:
-						return ""
-				}
-			},
-		},
 
 		methods: {
 			checkAuthentification: async function() {

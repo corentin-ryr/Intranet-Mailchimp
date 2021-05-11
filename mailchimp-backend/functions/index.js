@@ -17,9 +17,9 @@ mailchimp.setConfig({
 const testEmails = ["responsable.commercial@telecom-etude.fr", "secretaire.general@telecom-etude.fr"]
 //const testEmails = ["hugo.queinnec@telecom-etude.fr", "corentin.royer@telecom-etude.fr"]
 
-// ======================================================================
-// Firebase functions ===================================================
-// ======================================================================
+// ================================================================================================================================
+// Firebase functions =============================================================================================================
+// ================================================================================================================================
 
 /**
  * This function takes all the fields from the form as input and create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
