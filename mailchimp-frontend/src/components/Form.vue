@@ -1,12 +1,12 @@
 <template>
 	<div>
 		<v-card class="card mx-auto mt-10" width="1000">
-			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="checkAuthentification" v-model="isValid">
+			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="submit" v-model="isValid">
 				<v-card-title
 					style="font-family: 'Avenir Next Bold'; justify-content: center; align-items: center;"
 					class="text-wrap py-10"
 				>
-					<h1>✉️ MRI</h1>
+					<h1>Edition du MRI {{ this.id }}</h1>
 				</v-card-title>
 
 				<v-text-field
@@ -234,26 +234,6 @@
 			</v-form>
 		</v-card>
 
-		<div class="intro" :style="backgroundColor">
-			<!-- This div contains the elements for the animation sequence on form sending  -->
-			<div class="intro-text" style="padding: 10% 10%">
-				<h1 class="hide">
-					<span class="text" id="text">{{ overlayText }}</span>
-				</h1>
-				<v-progress-linear
-					aria-label="Progress bar"
-					v-if="loadingVisibility"
-					class="my-8"
-					color="white"
-					indeterminate
-					rounded
-					align="center"
-					height="6"
-					width="6"
-				></v-progress-linear>
-			</div>
-		</div>
-
 		<div>
 			<v-card class="mx-auto" width="400">
 				<v-row align="center" justify="space-around" class="ma-10">
@@ -291,15 +271,26 @@
 </template>
 
 <script>
-	import gsap from "gsap"
-	import { mapGetters, mapActions } from "vuex"
-
-	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
-
 	export default {
-		name: "MailForm",
+		name: "Form",
 		props: {
-			msg: String,
+			form: {
+				contentTitle: "",
+				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
+				contentDomain: "",
+				imageDomain: "",
+				contentPay: "",
+				imagePay: "",
+				contentDifficulty: "",
+				imageDifficulty: "",
+				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
+				contentSchedule: "Le client désire commencer le plus tôt possible.",
+				contentDescription: "",
+				formBoolean: false,
+				formLink: "",
+				contactList: [],
+			},
+			id: String,
 		},
 
 		data: () => ({
@@ -327,109 +318,27 @@
 			//Other variables
 			enabled: false,
 			isValid: true,
-			overlayText: "Votre MRI s'envoie",
-			loadingVisibility: true,
+			// overlayText: "Votre MRI s'envoie",
+			// loadingVisibility: true,
 
-			backgroundColor: "background: white",
+			// backgroundColor: "background: white",
 			emailRules: [
 				(v) =>
 					!v ||
-					/^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-etude\.fr)(,([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr))*$/.test(
+					/^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))(,([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr))*$/.test(
 						v
 					) ||
-					"Adresses prenom.nom@telecom-etude.fr uniquement",
+					"Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement",
 			],
-
-			// Name of the form data
-			form: {
-				contentTitle: "",
-				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
-				contentDomain: "",
-				imageDomain: "",
-				contentPay: "",
-				imagePay: "",
-				contentDifficulty: "",
-				imageDifficulty: "",
-				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
-				contentSchedule: "Le client désire commencer le plus tôt possible.",
-				contentDescription: "",
-				formBoolean: false,
-				formLink: "",
-				contactList: [],
-			},
 
 			previewHTML: "",
 		}),
 
 		methods: {
-			checkAuthentification: async function() {
-				//is the user logged in ?
-				if (this.isUserAuth) {
-					this.sendForm()
-				} else {
-					await this.signInAction()
-					this.sendForm()
-				}
+			submit: function() {
+				this.$emit("submit")
 			},
-
-			sendForm: async function() {
-				this.backgroundColor = "background: #e54540"
-				this.overlayText = "MRI en cours d'envoi 📨"
-
-				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
-				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
-
-				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
-				var success = true
-				try {
-					await createCampaign(this.form) //Call the firebase function
-				} catch (error) {
-					console.log(error)
-					success = false
-				}
-
-				await tl.to(".text", {
-					y: "-100%",
-					duration: 1,
-				})
-
-				if (success) {
-					this.loadingVisibility = false
-					this.overlayText = "MRI envoyé ! 🚀"
-				} else {
-					this.loadingVisibility = false
-					this.overlayText = "Une erreur s'est produite ⚠️"
-				}
-
-				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
-
-				setTimeout(() => {
-					//Set a timeout for the user to have time to read the message
-					this.closeOverlay(success)
-				}, 1500)
-			},
-
-			closeOverlay: async function(success) {
-				tl.to(".text", { y: "-100%", duration: 1 })
-				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
-
-				if (success) {
-					for (let field in this.form) {
-						this.form[field] = ""
-					}
-					this.$refs.mailFormRef.reset()
-				} else {
-					//Add a hint message to help the user correct its mistakes
-					console.log("here is what you need to do...")
-				}
-				setTimeout(() => {
-					this.backgroundColor = "background: white"
-					this.loadingVisibility = true
-				}, 1500)
-			},
-
 			createPreviewHTML: async function() {
-				console.log(this.$store.state.moderator)
 				var getPreviewEmail = this.$firebase.functions().httpsCallable("getPreviewEmail")
 				try {
 					const response = await getPreviewEmail(this.form) //Call the firebase function
@@ -438,10 +347,6 @@
 					console.log(error)
 				}
 			},
-			...mapActions(["authAction", "signInAction", "signOutAction"]),
-		},
-		computed: {
-			...mapGetters(["user", "moderator", "admin", "isUserAuth"]),
 		},
 	}
 </script>

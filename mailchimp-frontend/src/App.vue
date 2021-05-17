@@ -5,7 +5,7 @@
 
 			<v-spacer></v-spacer>
 
-			<template v-if="isUserAdmin"> 
+			<template v-if="isUserAdmin">
 				<router-link to="/admin">
 					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
 						<span style="font-family: 'Avenir Next Regular'">Admin</span>
@@ -22,12 +22,11 @@
 			</template>
 
 			<template v-if="isUserAuth">
-                <router-link to="/myCampaigns">
+				<router-link to="/myCampaigns">
 					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
 						<span style="font-family: 'Avenir Next Regular'">Mes MRI</span>
 					</v-btn>
 				</router-link>
-
 
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
