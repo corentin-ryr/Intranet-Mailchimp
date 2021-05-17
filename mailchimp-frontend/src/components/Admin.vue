@@ -1,8 +1,23 @@
 <template>
 	<div>
-		<v-card class="card mx-auto mt-10" width="600">
+		<v-card class="card mx-auto mt-10" width="800">
 			<v-card-title>Admin Page</v-card-title>
-			<v-text-field type="text" name="email" v-model="email" label="Email" prepend-icon="email" outlined />
+
+			<v-card-actions>
+				<v-text-field type="text" name="email" v-model="email" label="Email" prepend-icon="email" outlined />
+
+				<v-spacer></v-spacer>
+
+				<v-select
+					:items="roles"
+					name="imageDomain"
+					v-model="role"
+					label="Role du modérateur"
+					required
+					:rules="[(v) => !!v || 'Champ requis']"
+					outlined
+				/>
+			</v-card-actions>
 
 			<v-card-actions>
 				<v-btn
@@ -33,6 +48,8 @@
 
 		data: () => ({
 			email: "",
+			roles: ["SecGez", "RespoCo"],
+            role: ""
 		}),
 
 		methods: {
@@ -40,7 +57,7 @@
 				//Get campaign to modify
 				var addUserToModerator = this.$firebase.functions().httpsCallable("addUserToModerator")
 				try {
-					const result = await addUserToModerator({ email: this.email })
+					const result = await addUserToModerator({ email: this.email, role: this.role })
 					console.log(result)
 				} catch (error) {
 					console.log(error)

@@ -91,17 +91,17 @@ exports.getPreviewEmail = functions.https.onCall(async (data, context) => {
 })
 
 /**
- * This function return a dictionary with the names of the campaigns to validate as keys and the campaign's ids as value.
+ * This function return a dictionary with the names of the campaigns to validate as keys and the campaign's ids as value. A campaign is validated when it is validated by both the moderator.
  */
 exports.getCampaignsToValidate = functions.https.onCall(async (data, context) => {
-    if (!context.auth || context.auth.token.moderator !== true) {
+	if (!hasModeratorRole(context)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as moderator."
 		)
 	}
-    
-    const campaigns_ref = db.collection("campaigns")
+
+	const campaigns_ref = db.collection("campaigns")
 	const campaignsRespoCom = await campaigns_ref.where("validationRespoCom", "==", false).get()
 	const campaignsSecGe = await campaigns_ref.where("validationSecGe", "==", false).get()
 
@@ -128,14 +128,14 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
  * This function takes a campaign id as input and return all the fields of that campaign (title, description, difficulty...)
  */
 exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
-    if (!context.auth || context.auth.token.moderator !== true) {
+	if (!hasModeratorRole(context)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as moderator."
 		)
 	}
-    
-    const campaigns_ref = db.collection("campaigns")
+
+	const campaigns_ref = db.collection("campaigns")
 	var campaignToFetch
 
 	try {
@@ -154,14 +154,14 @@ exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
  * Effect : Update the entry in the database.
  */
 exports.updateCampaign = functions.https.onCall(async (data, context) => {
-    if (!context.auth || context.auth.token.moderator !== true) {
+	if (!hasModeratorRole(context)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as moderator."
 		)
 	}
-    
-    const id = data.id
+
+	const id = data.id
 	console.log(id)
 	delete data.id
 	try {
@@ -176,9 +176,8 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 /**
  *
  */
-exports.validateCampaign = functions.https.onCall(async (data, context) =>
-{
-	if (!context.auth || context.auth.token.moderator !== true) {
+exports.validateCampaign = functions.https.onCall(async (data, context) => {
+	if (!hasModeratorRole(context)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as moderator."
@@ -389,7 +388,7 @@ async function validateCampaign(campaignID, isRespoCom) {
 // ===================================================================================================================
 
 exports.addUserToModerator = functions.https.onCall(async (data, context) => {
-	if (!context.auth || context.auth.token.admin !== true) {
+	if (!context.auth || context.auth.token.email !== "admin@telecom-etude.fr") {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as admin."
@@ -398,25 +397,32 @@ exports.addUserToModerator = functions.https.onCall(async (data, context) => {
 
 	const email = data.email
 	console.log(email)
-	return grantModeratorRole(email).then(() => {
+	return grantRole(email, data.role).then(() => {
 		return {
 			result: "Request fulfilled! ${email} is now a moderator.",
 		}
 	})
 })
 
-async function grantModeratorRole(email) {
+async function grantRole(email, role) {
 	const user = await admin.auth().getUserByEmail(email)
 	if (user.customClaims && user.customClaims.moderator === true) {
 		return
 	}
-	return admin.auth().setCustomUserClaims(user.uid, {
-		moderator: true,
-	})
+
+	if (role != "SecGez" && role != "RespoCo") {
+		return
+	}
+
+	var claims = { moderator: true }
+	claims[role] = true
+
+	return admin.auth().setCustomUserClaims(user.uid, claims)
 }
 
 exports.revokeUsers = functions.https.onCall(async (data, context) => {
-	if (!context.auth || context.auth.token.admin !== true) {
+	console.log(context.auth.token.email)
+	if (!context.auth || context.auth.token.email !== "admin@telecom-etude.fr") {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as admin."
@@ -425,18 +431,26 @@ exports.revokeUsers = functions.https.onCall(async (data, context) => {
 
 	//Get all the users and if they have the custom claims "moderator", delete it
 	usersRevoked = []
-    admin
-		.auth()
-		.listUsers()
-		.then((listUsersResult) => {
-			listUsersResult.users.forEach((userRecord) => {
-                console.log("user", userRecord.customClaims)
-                if (userRecord.customClaims && userRecord.customClaims["moderator"] === true) {
-                    admin.auth().updateUser(uid, { claim: null })
-                    usersRevoked.push(userRecord.email)
-                }
-			})
-        })
-    
-    return usersRevoked
+	const listUsersResult = await admin.auth().listUsers()
+	listUsersResult.users.forEach((userRecord) => {
+		if (userRecord.customClaims && userRecord.customClaims["moderator"] === true) {
+			console.log(userRecord.email)
+			console.log("user", userRecord.customClaims)
+			admin.auth().setCustomUserClaims(userRecord.uid, {})
+			usersRevoked.push(userRecord.email)
+		}
+	})
+
+	return usersRevoked
 })
+
+// ==========================================================================================================
+// Helper function for handling rights ======================================================================
+// ==========================================================================================================
+
+function hasModeratorRole(context) {
+	if (context.auth && (context.auth.token.moderator || context.auth.token.email === "admin@telecom-etude.fr")) {
+		return true
+	}
+	return false
+}

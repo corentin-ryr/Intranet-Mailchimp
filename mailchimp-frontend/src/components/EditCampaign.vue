@@ -1,5 +1,5 @@
-<template
-	><div>
+<template>
+	<div>
 		<v-card class="card mx-auto mt-10" width="1000">
 			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="checkAuthentification" v-model="isValid">
 				<v-card-title
@@ -379,9 +379,9 @@
 				//is the user logged in ?
 				if (!this.$store.getters.user.loggedIn) {
 					await this.login()
-					this.sendForm()
+					this.updateCampaign()
 				} else {
-					this.sendForm()
+					this.updateCampaign()
 				}
 			},
 
@@ -390,17 +390,22 @@
 				await this.$firebase.auth().signInWithPopup(provider)
 			},
 
-			sendForm: async function() {
+			updateCampaign: async function() {
+				//Animation
 				this.backgroundColor = "background: #e54540"
 				this.overlayText = "MRI en cours d'envoi 📨"
 
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				//Call to the api
+                var data = this.form
+                data.id = this.id
+
+				var updateCampaign = this.$firebase.functions().httpsCallable("updateCampaign")
 				var success = true
 				try {
-					await createCampaign(this.form) //Call the firebase function
+					await updateCampaign(data) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -431,12 +436,7 @@
 				tl.to(".text", { y: "-100%", duration: 1 })
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
 
-				if (success) {
-					for (let field in this.form) {
-						this.form[field] = ""
-					}
-					this.$refs.mailFormRef.reset()
-				} else {
+				if (!success) {
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
 				}

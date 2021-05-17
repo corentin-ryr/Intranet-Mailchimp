@@ -5,7 +5,7 @@
 
 			<v-spacer></v-spacer>
 
-			<template v-if="user.loggedIn">
+			<template v-if="isUserAuth">
 				<!-- && user.data.claims.moderator -->
 				<router-link to="/validation">
 					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
@@ -14,7 +14,7 @@
 				</router-link>
 			</template>
 
-			<template v-if="user.loggedIn">
+			<template v-if="isUserAuth">
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
 						<v-btn class="clickable" icon v-bind="attrs" v-on="on">
@@ -26,11 +26,11 @@
 						<v-list>
 							<v-list-item>
 								<v-list-item-content>
-									<v-list-item-title>{{ user.data.displayName }}</v-list-item-title>
+									<v-list-item-title>{{ getDisplayName }}</v-list-item-title>
 								</v-list-item-content>
 
 								<v-list-item-action>
-									<v-btn @click.prevent="logout" icon>
+									<v-btn @click.prevent="signOutAction" icon>
 										<v-icon>mdi-logout</v-icon>
 									</v-btn>
 								</v-list-item-action>
@@ -40,7 +40,7 @@
 				</v-menu>
 			</template>
 			<template v-else>
-				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="login">
+				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="signInAction">
 					<span style="font-family: 'Avenir Next Regular'">Connexion</span>
 				</v-btn>
 			</template>
@@ -48,7 +48,7 @@
 
 		<v-main>
 			<!-- Provides the application the proper gutter -->
-			<v-container v-if="user.loggedIn">
+			<v-container v-if="isUserAuth">
 				<router-view></router-view>
 			</v-container>
 		</v-main>
@@ -65,16 +65,8 @@
 </template>
 
 <script>
-	import { mapGetters } from "vuex"
-	const html = document.documentElement
-	html.setAttribute("lang", "sv")
-	var link = document.querySelector("link[rel~='icon']")
-	if (!link) {
-		link = document.createElement("link")
-		link.rel = "icon"
-		document.getElementsByTagName("head")[0].appendChild(link)
-	}
-	link.href = "favicon.png"
+	import { mapGetters, mapActions } from "vuex"
+
 	export default {
 		name: "App",
 		props: {
@@ -82,40 +74,18 @@
 		},
 		data: () => ({
 			menu: false,
-			// moderator: false,
 		}),
 
-		// created() {
-		// 	this.updateClaims()
-		// },
-
 		methods: {
-			async login() {
-				var provider = new this.$firebase.auth.GoogleAuthProvider()
-				var result = await this.$firebase.auth().signInWithPopup(provider)
-				if (result.credential) {
-                    console.log(result)
-					// this.updateClaims()
-				}
-				this.menu = false
-			},
-			async logout() {
-				await this.$firebase.auth().signOut()
-				this.moderator = false
-				this.menu = false
-			},
-			async updateClaims() {
-				const idTokenResult = await this.$firebase.auth().currentUser.getIdTokenResult()
-				if (idTokenResult.claims.moderator) {
-					this.moderator = true
-				}
-			},
+
+			...mapActions(["authAction", "signInAction", "signOutAction"]),
 		},
 		computed: {
 			// map `this.user` to `this.$store.getters.user`
-			...mapGetters({
-				user: "user",
-			}),
+			...mapGetters(["getUser", "moderator", "admin", "isUserAuth", "getDisplayName"]),
+		},
+		mounted() {
+			this.authAction()
 		},
 	}
 </script>

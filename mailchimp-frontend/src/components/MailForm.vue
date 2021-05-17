@@ -292,6 +292,8 @@
 
 <script>
 	import gsap from "gsap"
+	import { mapGetters, mapActions } from "vuex"
+
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
 	export default {
@@ -362,18 +364,15 @@
 		methods: {
 			checkAuthentification: async function() {
 				//is the user logged in ?
-				if (!this.$store.getters.user.loggedIn) {
-					await this.login()
+				if (this.isUserAuth) {
 					this.sendForm()
 				} else {
+					await this.signInAction()
 					this.sendForm()
 				}
 			},
 
-			async login() {
-				var provider = new this.$firebase.auth.GoogleAuthProvider()
-				await this.$firebase.auth().signInWithPopup(provider)
-			},
+
 
 			sendForm: async function() {
 				this.backgroundColor = "background: #e54540"
@@ -432,6 +431,7 @@
 			},
 
 			createPreviewHTML: async function() {
+				console.log(this.$store.state.moderator)
 				var getPreviewEmail = this.$firebase.functions().httpsCallable("getPreviewEmail")
 				try {
 					const response = await getPreviewEmail(this.form) //Call the firebase function
@@ -440,6 +440,10 @@
 					console.log(error)
 				}
 			},
+			...mapActions(["authAction", "signInAction", "signOutAction"]),
+		},
+		computed: {
+			...mapGetters(["user", "moderator", "admin", "isUserAuth"]),
 		},
 	}
 </script>
