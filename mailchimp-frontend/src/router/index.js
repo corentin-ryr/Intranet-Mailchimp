@@ -5,6 +5,7 @@ import Validation from "../components/Validation.vue"
 import Admin from "../components/Admin.vue"
 import EditCampaign from "../components/EditCampaign.vue"
 import About from "../components/About.vue"
+import CampaignList from "../components/CampaignList.vue"
 
 Vue.use(VueRouter)
 
@@ -32,6 +33,11 @@ const routes = [
         path: "/admin",
         name: "Admin",
         component: Admin,
+    },
+    {
+        path: "/myCampaigns",
+        name: "CampaignList",
+        component: CampaignList,
     },
 
 ]

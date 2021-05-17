@@ -5,8 +5,15 @@
 
 			<v-spacer></v-spacer>
 
-			<template v-if="isUserAuth">
-				<!-- && user.data.claims.moderator -->
+			<template v-if="isUserAdmin"> 
+				<router-link to="/admin">
+					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
+						<span style="font-family: 'Avenir Next Regular'">Admin</span>
+					</v-btn>
+				</router-link>
+			</template>
+
+			<template v-if="isUserModerator || isUserAdmin">
 				<router-link to="/validation">
 					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
 						<span style="font-family: 'Avenir Next Regular'">Validation</span>
@@ -15,6 +22,13 @@
 			</template>
 
 			<template v-if="isUserAuth">
+                <router-link to="/myCampaigns">
+					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
+						<span style="font-family: 'Avenir Next Regular'">Mes MRI</span>
+					</v-btn>
+				</router-link>
+
+
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
 						<v-btn class="clickable" icon v-bind="attrs" v-on="on">
@@ -69,20 +83,16 @@
 
 	export default {
 		name: "App",
-		props: {
-			source: String,
-		},
+
 		data: () => ({
 			menu: false,
 		}),
 
 		methods: {
-
 			...mapActions(["authAction", "signInAction", "signOutAction"]),
 		},
 		computed: {
-			// map `this.user` to `this.$store.getters.user`
-			...mapGetters(["getUser", "moderator", "admin", "isUserAuth", "getDisplayName"]),
+			...mapGetters(["getUser", "isUserModerator", "isUserAdmin", "isUserAuth", "getDisplayName"]),
 		},
 		mounted() {
 			this.authAction()

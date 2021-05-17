@@ -27,6 +27,7 @@ const store = new Vuex.Store({
 		moderator: false,
 		admin: false,
 		user: null,
+		claims: [],
 	},
 
 	actions: {
@@ -44,6 +45,8 @@ const store = new Vuex.Store({
 			var provider = new firebase.auth.GoogleAuthProvider()
 			try {
 				await firebase.auth().signInWithPopup(provider)
+				const result = await firebase.auth().currentUser.getIdTokenResult()
+				commit("setClaims", result.claims)
 			} catch (error) {
 				commit("setError", error.message)
 			}
@@ -63,20 +66,33 @@ const store = new Vuex.Store({
 	getters: {
 		getUser(state) {
 			return state.user
-        },
-        getDisplayName(state)
-        {
-            if (state.user) {
-                return state.user.displayName
-            }
-            return ""
-            
-        },
-		isUserAuth(state) {
-			return !!state.user
+		},
+		getDisplayName(state) {
+			if (state.user) {
+				return state.user.displayName
+			}
+			return ""
 		},
 		getError(state) {
 			return state.error
+		},
+		isUserAuth(state) {
+			return !!state.user
+		},
+		isUserAdmin(state) {
+			if (state.user && state.user.email === "admin@telecom-etude.fr") {
+				return true
+			}
+			return false
+		},
+
+		isUserModerator(state) {
+			// Confirm the user is an Admin.
+			if (state.user && state.claims.moderator) {
+				return true
+			} else {
+				return false
+			}
 		},
 	},
 	mutations: {
@@ -86,9 +102,11 @@ const store = new Vuex.Store({
 		setError(state, payload) {
 			state.error = payload
 		},
+		setClaims(state, payload) {
+			state.claims = payload
+		},
 	},
 })
-
 
 // Initialize Vue =======================================================
 Vue.prototype.$firebase = firebase

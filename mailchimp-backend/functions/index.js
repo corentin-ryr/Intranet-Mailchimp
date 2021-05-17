@@ -125,6 +125,32 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 })
 
 /**
+ * This function return a dictionary with the names of the campaigns that the user owns (its email is one of the email contact of the campaign) as keys and the campaign's ids as value. A campaign is validated when it is validated by both the moderator.
+ */
+exports.getMyCampaigns = functions.https.onCall(async (data, context) => {
+	if (!context.auth) {
+		// Throwing an HttpsError so that the client gets the error details.
+		throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
+	}
+
+	const campaigns_ref = db.collection("campaigns")
+    console.log(context.auth.token.email)
+	const myCampaigns = await campaigns_ref.where("contactList", "array-contains", context.auth.token.email).get()
+
+	if (myCampaigns.empty) {
+		console.log("No matching documents.")
+		throw new functions.https.HttpsError("not-found", "No campaign to validate.")
+	}
+
+	var myCampaignsNames = {}
+	myCampaigns.forEach((campaign) => {
+		myCampaignsNames[campaign.data().contentTitle] = campaign.id
+	})
+
+	return myCampaignsNames
+})
+
+/**
  * This function takes a campaign id as input and return all the fields of that campaign (title, description, difficulty...)
  */
 exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
