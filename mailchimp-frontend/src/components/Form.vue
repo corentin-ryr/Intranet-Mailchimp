@@ -6,7 +6,7 @@
 					style="font-family: 'Avenir Next Bold'; justify-content: center; align-items: center;"
 					class="text-wrap py-10"
 				>
-					<h1>Edition du MRI {{ this.id }}</h1>
+					<h1>Edition du MRI {{ this.campaignId }}</h1>
 				</v-card-title>
 
 				<v-text-field
@@ -290,7 +290,7 @@
 				formLink: "",
 				contactList: [],
 			},
-			id: String,
+			campaignId: String,
 		},
 
 		data: () => ({

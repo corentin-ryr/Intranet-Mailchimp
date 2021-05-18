@@ -7,7 +7,7 @@
             <h1>EDITION</h1>
         </template>
 
-		<Form v-bind:form.sync="this.form" v-on:submit="this.checkAuthentification"></Form>
+		<Form v-bind:form.sync="this.form" v-bind:campaignId="this.id" v-on:submit="this.checkAuthentification"></Form>
 
 		<div class="intro" :style="backgroundColor">
 			<!-- This div contains the elements for the animation sequence on form sending  -->
