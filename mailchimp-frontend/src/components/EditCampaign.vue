@@ -49,7 +49,6 @@
 			backgroundColor: "background: white",
 
 			form: {},
-			previewHTML: "",
 		}),
 
 		async created() {
@@ -144,14 +143,6 @@
 <style scoped>
 	div {
 		margin-bottom: 10px;
-	}
-
-	.v-text-field {
-		width: 100%;
-	}
-
-	.v-textarea {
-		width: 100%;
 	}
 
 	.intro {

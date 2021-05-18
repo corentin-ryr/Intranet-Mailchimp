@@ -365,28 +365,4 @@
 		width: 100%;
 	}
 
-	.intro {
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: 5;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		transform: translateY(-100%);
-	}
-	.intro-text {
-		color: white;
-		font-family: "Avenir Next Regular";
-		font-size: xx-large;
-	}
-	.hide {
-		overflow: hidden;
-	}
-	.hide span {
-		transform: translateY(100%);
-		display: inline-block;
-	}
 </style>
