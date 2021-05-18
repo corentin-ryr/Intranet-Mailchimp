@@ -179,7 +179,18 @@ exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
  * Effect : Update the entry in the database.
  */
 exports.updateCampaign = functions.https.onCall(async (data, context) => {
-	if (!hasModeratorRole(context)) {
+	const campaigns_ref = db.collection("campaigns")
+	var campaignToFetch
+	try {
+		campaignToFetch = await campaigns_ref.doc(data.id).get()
+	} catch (error) {
+		return new functions.https.HttpsError("notFound", "No campaign with this id.")
+	}
+
+	var contactList = campaignToFetch.data().contactList
+    
+    
+    if (!hasModeratorRole(context) && !contactList.includes(context.auth.token.email)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as moderator."
