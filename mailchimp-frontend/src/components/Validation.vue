@@ -14,9 +14,6 @@
 <script>
 	export default {
 		name: "MailForm",
-		props: {
-			msg: String,
-		},
 
 		data: () => ({
 			campaigns: {},
@@ -37,7 +34,7 @@
 			},
 
 			editCampaign: function(id) {
-				this.$router.push({ path: `/campaign/${id}` })
+				this.$router.push({ path: `/valCampaign/${id}` })
 			},
 		},
 	}

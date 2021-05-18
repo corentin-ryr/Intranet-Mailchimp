@@ -1,5 +1,12 @@
 <template>
 	<div>
+        <template v-if="validation">
+            <h1>VALIDATION</h1>
+        </template>
+        <template v-else>
+            <h1>EDITION</h1>
+        </template>
+
 		<Form v-bind:form.sync="this.form" v-on:submit="this.checkAuthentification"></Form>
 
 		<div class="intro" :style="backgroundColor">
@@ -34,7 +41,7 @@
 	export default {
 		name: "MailForm",
 		props: {
-			msg: String,
+			validation: Boolean,
 		},
 		components: {
 			Form,
@@ -134,7 +141,7 @@
 			...mapActions(["authAction", "signInAction", "signOutAction"]),
 		},
 		computed: {
-			...mapGetters(["user", "moderator", "admin", "isUserAuth"]),
+			...mapGetters(["getUser", "isUserModerator", "isUserAdmin", "isUserAuth", "getDisplayName"]),
 		},
 	}
 </script>

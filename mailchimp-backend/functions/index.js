@@ -134,7 +134,7 @@ exports.getMyCampaigns = functions.https.onCall(async (data, context) => {
 	}
 
 	const campaigns_ref = db.collection("campaigns")
-    console.log(context.auth.token.email)
+	console.log(context.auth.token.email)
 	const myCampaigns = await campaigns_ref.where("contactList", "array-contains", context.auth.token.email).get()
 
 	if (myCampaigns.empty) {
@@ -154,16 +154,8 @@ exports.getMyCampaigns = functions.https.onCall(async (data, context) => {
  * This function takes a campaign id as input and return all the fields of that campaign (title, description, difficulty...)
  */
 exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
-	if (!hasModeratorRole(context)) {
-		throw new functions.https.HttpsError(
-			"unauthenticated",
-			"The function must be called while authenticated as moderator."
-		)
-	}
-
 	const campaigns_ref = db.collection("campaigns")
 	var campaignToFetch
-
 	try {
 		campaignToFetch = await campaigns_ref.doc(data).get()
 	} catch (error) {
@@ -171,7 +163,14 @@ exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
 	}
 
 	var data = campaignToFetch.data()
-	delete data["validation"]
+
+	if (!hasModeratorRole(context) && !data.contactList.includes(context.auth.token.email)) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as someone who has access to the campaign."
+		)
+	}
+
 	return data
 })
 

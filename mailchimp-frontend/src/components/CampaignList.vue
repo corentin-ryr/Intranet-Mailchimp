@@ -37,7 +37,7 @@
 			},
 
 			editCampaign: function(id) {
-				this.$router.push({ path: `/campaign/${id}` })
+				this.$router.push({ path: `/editCampaign/${id}` })
 			},
 		},
 	}

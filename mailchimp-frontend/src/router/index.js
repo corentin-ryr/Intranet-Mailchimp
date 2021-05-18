@@ -1,10 +1,9 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import Home from "../components/MailForm.vue"
+import Home from "../components/NewCampaign.vue"
 import Validation from "../components/Validation.vue"
 import Admin from "../components/Admin.vue"
 import EditCampaign from "../components/EditCampaign.vue"
-import About from "../components/About.vue"
 import CampaignList from "../components/CampaignList.vue"
 
 Vue.use(VueRouter)
@@ -21,13 +20,14 @@ const routes = [
         component: Validation,
     },
     {
-        path: "/campaign/:id",
-        component: EditCampaign
+        path: "/valCampaign/:id",
+        component: EditCampaign,
+        props: {validation: true}
     },
-	{
-		path: "/about",
-		name: "About",
-		component: About
+    {
+        path: "/editCampaign/:id",
+        component: EditCampaign,
+        props: {validation: false}
     },
     {
         path: "/admin",
