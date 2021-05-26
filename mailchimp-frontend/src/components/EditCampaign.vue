@@ -1,11 +1,13 @@
 <template>
 	<div>
-        <template v-if="validation">
-            <h1>VALIDATION</h1>
-        </template>
-        <template v-else>
-            <h1>EDITION</h1>
-        </template>
+		<template v-if="validation">
+			<!-- Div shown when the page has been opened from the list of campaigns to be validated  -->
+			<h1>VALIDATION</h1>
+		</template>
+		<template v-else>
+			<!-- Div when we open the page from the Mes MRI page  -->
+			<h1>EDITION</h1>
+		</template>
 
 		<Form v-bind:form.sync="this.form" v-bind:campaignId="this.id" v-on:submit="this.checkAuthentification"></Form>
 
@@ -49,13 +51,12 @@
 
 		data: () => ({
 			id: "",
+			form: {},
 
 			//Other variables
-			overlayText: "Votre MRI s'envoie",
+			overlayText: "Votre MRI se mets a jour",
 			loadingVisibility: true,
 			backgroundColor: "background: white",
-
-			form: {},
 		}),
 
 		async created() {
@@ -85,7 +86,7 @@
 			updateCampaign: async function() {
 				//Animation
 				this.backgroundColor = "background: #e54540"
-				this.overlayText = "MRI en cours d'envoi 📨"
+				this.overlayText = "Votre MRI se met à jour 📨"
 
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
@@ -110,7 +111,7 @@
 
 				if (success) {
 					this.loadingVisibility = false
-					this.overlayText = "MRI envoyé ! 🚀"
+					this.overlayText = "MRI mis à jour ! 🚀"
 				} else {
 					this.loadingVisibility = false
 					this.overlayText = "Une erreur s'est produite ⚠️"

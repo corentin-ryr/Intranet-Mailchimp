@@ -102,12 +102,12 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 	}
 
 	const campaigns_ref = db.collection("campaigns")
-	const campaignsRespoCom = await campaigns_ref.where("validationRespoCom", "==", false).get()
-	const campaignsSecGe = await campaigns_ref.where("validationSecGe", "==", false).get()
+	const campaignsRespoCom = await campaigns_ref.where("validationRespoCo", "==", false).get()
+	const campaignsSecGe = await campaigns_ref.where("validationSecGez", "==", false).get()
 
 	if (campaignsRespoCom.empty && campaignsSecGe.empty) {
 		console.log("No matching documents.")
-		return new functions.https.HttpsError("notFound", "No campaign to validate.")
+		throw new functions.https.HttpsError("not-found", "No campaign to validate.")
 	}
 
 	var campaignsToValidateNamesRespoCom = {}
@@ -159,7 +159,7 @@ exports.getCampaignWithId = functions.https.onCall(async (data, context) => {
 	try {
 		campaignToFetch = await campaigns_ref.doc(data).get()
 	} catch (error) {
-		return new functions.https.HttpsError("notFound", "No campaign with this id.")
+		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
 	}
 
 	var data = campaignToFetch.data()
@@ -184,13 +184,12 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 	try {
 		campaignToFetch = await campaigns_ref.doc(data.id).get()
 	} catch (error) {
-		return new functions.https.HttpsError("notFound", "No campaign with this id.")
+		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
 	}
 
 	var contactList = campaignToFetch.data().contactList
-    
-    
-    if (!hasModeratorRole(context) && !contactList.includes(context.auth.token.email)) {
+
+	if (!hasModeratorRole(context) && !contactList.includes(context.auth.token.email)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as moderator."
@@ -201,9 +200,25 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 	console.log(id)
 	delete data.id
 	try {
-		await createCampaignEntry(id, data)
+		await createCampaignEntry(id, data) //Will reinitialize the validations (intended)
 	} catch (error) {
-		return new functions.https.HttpsError("notFound", "No campaign with this id.") //TODO
+		throw new functions.https.HttpsError("not-found", "No campaign with this id.") //TODO
+	}
+
+	try {
+		// Update the campaign on mailchimp =======
+		data = await checkAndFormatData(data)
+		const htmlContent = await contentEditHTML(data)
+
+		await mailchimp.campaigns.update(id, {
+			settings: {
+				subject_line: "[Telecom Etude] " + data.contentTitle,
+			},
+		})
+		await mailchimp.campaigns.setContent(id, { html: htmlContent })
+		console.log("HTML Content set")
+	} catch (error) {
+		return error
 	}
 
 	return "Campaign updated"
@@ -219,7 +234,36 @@ exports.validateCampaign = functions.https.onCall(async (data, context) => {
 			"The function must be called while authenticated as moderator."
 		)
 	}
-	return new functions.https.HttpsError("unimplemented") //TODO
+
+	if (context.auth.token.RespoCo) {
+		validateCampaign(data.id, true)
+	}
+	if (context.auth.token.SecGez) {
+		validateCampaign(data.id, false)
+	}
+})
+
+exports.distributeCampaign = functions.https.onCall(async (data, context) => {
+	if (!hasModeratorRole(context)) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as moderator."
+		)
+	}
+
+	//Check if the campaign has been validated
+	const campaigns_ref = db.collection("campaigns")
+	var campaignToFetch
+	try {
+		campaignToFetch = await campaigns_ref.doc(data.id).get()
+	} catch (error) {
+		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
+	}
+
+	if (!campaignToFetch.data().validationRespoCo || !campaignToFetch.data().validationSecGez) {
+	}
+
+	throw new functions.https.HttpsError("unimplemented") //TODO
 })
 
 // ===================================================================================================================
@@ -391,8 +435,8 @@ async function contentEditHTML(data) {
  * @param {*} data The unformated data (data from the frontend form)
  */
 async function createCampaignEntry(campaignID, data) {
-	data.validationRespoCom = false
-	data.validationSecGe = false
+	data.validationRespoCo = false
+	data.validationSecGez = false
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	console.log(res)
 }
@@ -402,7 +446,7 @@ async function validateCampaign(campaignID, isRespoCom) {
 		db.collection("campaigns")
 			.doc(campaignID)
 			.update({
-				validationRespoCom: true,
+				validationRespoCo: true,
 			})
 			.then(function () {
 				console.log("Updated validation")
@@ -411,7 +455,7 @@ async function validateCampaign(campaignID, isRespoCom) {
 		db.collection("campaigns")
 			.doc(campaignID)
 			.update({
-				validationSecGe: true,
+				validationSecGez: true,
 			})
 			.then(function () {
 				console.log("Updated validation")
