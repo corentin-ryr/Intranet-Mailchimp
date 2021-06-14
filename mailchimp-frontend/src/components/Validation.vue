@@ -1,10 +1,10 @@
 <template>
 	<div>
 		<h1>Validation Page</h1>
-		<v-card v-for="(key, value) in campaigns" v-bind:key="key">
+		<v-card v-for="(key, value) in campaigns" v-bind:key="value.id">
 			{{ value }}
 
-			<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="editCampaign(key)">
+			<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="editCampaign(key.id)">
 				<span style="font-family: 'Avenir Next Regular'">Ouvrir campagne</span>
 			</v-btn>
 		</v-card>

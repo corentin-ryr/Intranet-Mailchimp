@@ -48,7 +48,22 @@
 			backgroundColor: "background: white",
 
 			// Name of the form data
-			form: {},
+			form: {
+				contentTitle: "",
+				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
+				contentDomain: "",
+				imageDomain: "",
+				contentPay: "",
+				imagePay: "",
+				contentDifficulty: "",
+				imageDifficulty: "",
+				contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
+				contentSchedule: "Le client désire commencer le plus tôt possible.",
+				contentDescription: "",
+				formBoolean: false,
+				formLink: "",
+				contactList: [],
+			},
 		}),
 
 		methods: {

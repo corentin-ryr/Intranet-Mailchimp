@@ -7,6 +7,7 @@ const db = admin.firestore()
 
 // Setup mailchimp =====================================================
 const mailchimp = require("@mailchimp/mailchimp_marketing")
+const { region } = require("firebase-functions")
 // Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID mailchimp.subscriberlistid="SUBSCRIBER LIST ID"  " to midify the key and server of mailchimp
 mailchimp.setConfig({
 	apiKey: functions.config().mailchimp.apikey,
@@ -18,8 +19,9 @@ const testEmails = ["responsable.commercial@telecom-etude.fr", "secretaire.gener
 //const testEmails = ["hugo.queinnec@telecom-etude.fr", "corentin.royer@telecom-etude.fr"]
 
 // ================================================================================================================================
-// Firebase functions =============================================================================================================
+//#region  Firebase functions =====================================================================================================
 // ================================================================================================================================
+
 
 /**
  * This function takes all the fields from the form as input and create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
@@ -113,10 +115,10 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 	var campaignsToValidateNamesRespoCom = {}
 	var campaignsToValidateNamesSecGe = {}
 	campaignsRespoCom.forEach((campaign) => {
-		campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = campaign.id
+        campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = { id: campaign.id, time: campaign.timeStamp }
 	})
 	campaignsSecGe.forEach((campaign) => {
-		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = campaign.id
+		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = { id: campaign.id, time: campaign.timeStamp }
 	})
 
 	campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe }
@@ -212,7 +214,8 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 
 		await mailchimp.campaigns.update(id, {
 			settings: {
-				subject_line: "[Telecom Etude] " + data.contentTitle,
+                subject_line: "[Telecom Etude] " + data.contentTitle,
+                title: "[Telecom Etude] " + data.contentTitle,
 			},
 		})
 		await mailchimp.campaigns.setContent(id, { html: htmlContent })
@@ -266,8 +269,10 @@ exports.distributeCampaign = functions.https.onCall(async (data, context) => {
 	throw new functions.https.HttpsError("unimplemented") //TODO
 })
 
+//#endregion
+
 // ===================================================================================================================
-// Helper functions to format the incomming data into the html email =================================================
+//#region  Helper functions to format the incomming data into the html email =========================================
 // ===================================================================================================================
 
 /**
@@ -436,7 +441,8 @@ async function contentEditHTML(data) {
  */
 async function createCampaignEntry(campaignID, data) {
 	data.validationRespoCo = false
-	data.validationSecGez = false
+    data.validationSecGez = false
+    data.timeStamp = Date.now()
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	console.log(res)
 }
@@ -462,9 +468,10 @@ async function validateCampaign(campaignID, isRespoCom) {
 			})
 	}
 }
+//#endregion
 
 // ===================================================================================================================
-// Admin functions to give and revoke privileges =====================================================================
+//#region Admin functions to give and revoke privileges ==============================================================
 // ===================================================================================================================
 
 exports.addUserToModerator = functions.https.onCall(async (data, context) => {
@@ -524,8 +531,10 @@ exports.revokeUsers = functions.https.onCall(async (data, context) => {
 	return usersRevoked
 })
 
+//#endregion
+
 // ==========================================================================================================
-// Helper function for handling rights ======================================================================
+//#region Helper function for handling rights ===============================================================
 // ==========================================================================================================
 
 function hasModeratorRole(context) {
@@ -534,3 +543,6 @@ function hasModeratorRole(context) {
 	}
 	return false
 }
+
+
+//#endregion
