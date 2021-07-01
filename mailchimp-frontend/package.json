@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "styleguide": "vue-cli-service styleguidist",
+    "styleguide:build": "vue-cli-service styleguidist:build "
   },
   "dependencies": {
     "core-js": "^3.12.1",
@@ -30,6 +32,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.32.12",
     "sass-loader": "^10.2.0",
+    "vue-cli-plugin-styleguidist": "~4.40.0",
     "vue-cli-plugin-vuetify": "^2.4.0",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.0"
