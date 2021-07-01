@@ -1,6 +1,6 @@
 module.exports = {
 	// set your styleguidist configuration here
-	title: 'Default Style Guide',
+	title: "Default Style Guide",
 	// components: 'src/components/**/[A-Z]*.vue',
 	// defaultExample: true,
 	// sections: [
@@ -12,5 +12,6 @@ module.exports = {
 	// webpackConfig: {
 	//   // custom config goes here
 	// },
-	exampleMode: 'expand'
+	exampleMode: "expand",
+	styleguideDir: "../docs",
 }
