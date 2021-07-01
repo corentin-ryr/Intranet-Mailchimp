@@ -12,8 +12,14 @@
 </template>
 
 <script>
+	/**
+	 * This page is only accessible by the moderators of the MRI. This is done via the Vuex plugin.
+     * This page shows all the campaigns that have not been calidated yet.
+     * Then, a moderator can open one of these campaigns to inspect and validate it.
+     * @example [none]
+	 */
 	export default {
-		name: "MailForm",
+		name: "Validation",
 
 		data: () => ({
 			campaigns: {},

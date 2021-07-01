@@ -271,25 +271,36 @@
 </template>
 
 <script>
+	/**
+	 * The Form component contains the form to create or modify a campaign. It contains all the fields necessary to do so (title of the mission, description...).
+     * This form is used in the front page of the site to create a new MRI and in the "Mes MRI" and "Validation" sections.
+     * @example [import](./Form.vue)
+	 */
 	export default {
 		name: "Form",
 		props: {
+            /**
+             * Dictionary of all the properties of the MRI (title, description...). The list of all the properties is commented in the code.
+             */
 			form: {
 				// contentTitle: "",
-				// contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
+				// contentFirstDescription: "",
 				// contentDomain: "",
 				// imageDomain: "",
 				// contentPay: "",
 				// imagePay: "",
 				// contentDifficulty: "",
 				// imageDifficulty: "",
-				// contentSkills: "Nous recherchons un·e ou plusieurs intervenant·e·s ...",
-				// contentSchedule: "Le client désire commencer le plus tôt possible.",
+				// contentSkills: "",
+				// contentSchedule: "",
 				// contentDescription: "",
 				// formBoolean: false,
 				// formLink: "",
 				// contactList: [],
 			},
+            /**
+             * Id of the campaign in the firebase database.
+             */
 			campaignId: String,
 		},
 
@@ -336,6 +347,9 @@
 
 		methods: {
 			submit: function() {
+                /**
+                 * This event is emitted when the form is submitted (on the click of the "ENVOYER" button).
+                 */
 				this.$emit("submit")
 			},
 			createPreviewHTML: async function() {
@@ -364,5 +378,16 @@
 	.v-textarea {
 		width: 100%;
 	}
-
 </style>
+
+
+<docs lang="md">
+### Example
+You can use this component and link the data of the parent component to the data of the Form component by using this code:
+
+```js
+    <Form v-bind:form.sync="this.form" v-on:submit="this.checkAuthentification"></Form>
+```
+
+
+</docs>

@@ -40,16 +40,19 @@
 </template>
 
 <script>
+	/**
+	 * This page is only accessible by the admins (via the Vuex plugin). 
+     * Here, an admin can grant the moderator role to a specific email adress or revoke the access to everyone.
+     * This shold be done every year when the new team arrives.
+     * @example [none]
+	 */
 	export default {
-		name: "MailForm",
-		props: {
-			msg: String,
-		},
+		name: "Admin",
 
 		data: () => ({
 			email: "",
 			roles: ["SecGez", "RespoCo"],
-            role: ""
+			role: "",
 		}),
 
 		methods: {

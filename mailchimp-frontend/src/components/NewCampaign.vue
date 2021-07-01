@@ -31,11 +31,15 @@
 
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
+
+    /**
+     * This component is the front page of the site. Here the user can create a new campaign by filling the form (from the Form component).
+     * This component then handles the animation when the server is processing the request.
+     * @example [none]
+     */
 	export default {
-		name: "NewForm",
-		props: {
-			msg: String,
-		},
+		name: "NewCampaign",
+
 		components: {
 			Form,
 		},
