@@ -146,7 +146,7 @@ exports.getMyCampaigns = functions.https.onCall(async (data, context) => {
 
 	var myCampaignsNames = {}
 	myCampaigns.forEach((campaign) => {
-		myCampaignsNames[campaign.data().contentTitle] = campaign.id
+		myCampaignsNames[campaign.data().contentTitle] = { id: campaign.id, time: campaign.timeStamp }
 	})
 
 	return myCampaignsNames
@@ -444,7 +444,7 @@ async function createCampaignEntry(campaignID, data) {
     data.validationSecGez = false
     data.timeStamp = Date.now()
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
-	console.log(res)
+	// console.log(res)
 }
 
 async function validateCampaign(campaignID, isRespoCom) {
