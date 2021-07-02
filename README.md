@@ -33,3 +33,7 @@ The deployed version of this website is accessible here: [MRI Website](https://m
 ### Clearance
 The ability to create campaigns with this deployed website is restricted to active members of [Telecom Etude](https://telecom-etude.fr) Junior-Entreprise.
 This is achieved with the necessity to sign in with a *@telecom-etude.fr* Google Workspace account.
+
+### Documentation
+Documentation is available at this link:
+https://corentin-ryr.github.io/Intranet-Mailchimp/
