@@ -1,6 +1,6 @@
 module.exports = {
 	// set your styleguidist configuration here
-	title: "Default Style Guide",
+	title: "Intranet Mailchimp documentation",
 	// components: 'src/components/**/[A-Z]*.vue',
 	// defaultExample: true,
 	// sections: [
