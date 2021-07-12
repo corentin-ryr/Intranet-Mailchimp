@@ -1,13 +1,33 @@
 <template>
 	<div>
 		<h1>Validation Page</h1>
-		<v-card v-for="(key, value) in campaigns" v-bind:key="value.id">
-			{{ value }}
 
-			<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="editCampaign(key.id)">
-				<span style="font-family: 'Avenir Next Regular'">Ouvrir campagne</span>
-			</v-btn>
-		</v-card>
+		<v-expand-transition>
+			<div v-if="loadingVisibility">
+				<div style="margin: 5% 10%">
+				<v-progress-linear
+					aria-label="Progress bar"
+					color="#e54540"
+					indeterminate
+					rounded
+					align="center"
+					height="10"
+					width="6"
+				></v-progress-linear>
+				</div>
+			</div>
+		</v-expand-transition>
+
+		<div v-if="!loadingVisibility">
+			<v-card v-for="(key, value) in campaigns" v-bind:key="value.id">
+				{{ value }}
+
+				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="editCampaign(key.id)">
+					<span style="font-family: 'Avenir Next Regular'">Ouvrir campagne</span>
+				</v-btn>
+			</v-card>
+		</div>
+		
 	</div>
 </template>
 
@@ -23,6 +43,7 @@
 
 		data: () => ({
 			campaigns: {},
+			loadingVisibility: true,
 		}),
 
 		created() {
@@ -35,6 +56,7 @@
 				var getCampaigns = this.$firebase.functions().httpsCallable("getCampaignsToValidate")
 				const result = await getCampaigns()
 				this.campaigns = result.data
+				this.loadingVisibility = false
 			},
 
 			editCampaign: function(id) {

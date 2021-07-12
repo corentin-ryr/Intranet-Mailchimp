@@ -215,20 +215,22 @@
 							</v-card-title>
 
 							<v-expand-transition>
-								<div v-html="previewHTML" v-show="!loadingPreviewVisibility"></div>
+								<div v-html="previewHTML" v-if="!loadingPreviewVisibility"></div>
 							</v-expand-transition>
 
 							<v-expand-transition>
-								<div style="padding: 10% 10%" v-show="loadingPreviewVisibility">
-									<v-progress-linear
-										aria-label="Progress bar"
-										color="#e54540"
-										indeterminate
-										rounded
-										align="center"
-										height="10"
-										width="6"
-									></v-progress-linear>
+								<div v-if="loadingPreviewVisibility">
+									<div style="padding: 10% 10%">
+										<v-progress-linear
+											aria-label="Progress bar"
+											color="#e54540"
+											indeterminate
+											rounded
+											align="center"
+											height="10"
+											width="6"
+										></v-progress-linear>
+									</div>
 								</div>
 							</v-expand-transition>
 

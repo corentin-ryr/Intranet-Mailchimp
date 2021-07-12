@@ -1,6 +1,23 @@
 <template>
 	<div>
 		<h1>Mes MRI</h1>
+
+		<v-expand-transition>
+			<div v-if="loadingVisibility">
+				<div style="margin: 5% 10%">
+				<v-progress-linear
+					aria-label="Progress bar"
+					color="#e54540"
+					indeterminate
+					rounded
+					align="center"
+					height="10"
+					width="6"
+				></v-progress-linear>
+				</div>
+			</div>
+		</v-expand-transition>
+
 		<v-card v-for="(key, value) in campaigns" v-bind:key="value.id">
 			{{ value }}
 
@@ -23,6 +40,7 @@
 
 		data: () => ({
 			campaigns: {},
+			loadingVisibility: true,
 		}),
 
 		created() {
@@ -35,6 +53,7 @@
 				var getCampaigns = this.$firebase.functions().httpsCallable("getMyCampaigns")
 				const result = await getCampaigns()
 				this.campaigns = result.data
+				this.loadingVisibility = false
 			},
 
 			editCampaign: function(id) {
