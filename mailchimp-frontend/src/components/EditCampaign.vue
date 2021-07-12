@@ -9,7 +9,23 @@
 			<h1>EDITION</h1>
 		</template>
 
-		<Form v-bind:form.sync="this.form" v-bind:campaignId="this.id" v-on:submit="this.checkAuthentification"></Form>
+		<v-expand-transition>
+			<div v-if="campaignLoadingVisibility">
+				<div style="margin: 5% 10%">
+				<v-progress-linear
+					aria-label="Progress bar"
+					color="#e54540"
+					indeterminate
+					rounded
+					align="center"
+					height="10"
+					width="6"
+				></v-progress-linear>
+				</div>
+			</div>
+		</v-expand-transition>
+
+		<Form v-bind:form.sync="this.form" v-bind:campaignId="this.id" v-on:submit="this.checkAuthentification" v-if="!campaignLoadingVisibility"></Form>
 
 		<div class="intro" :style="backgroundColor">
 			<!-- This div contains the elements for the animation sequence on form sending  -->
@@ -57,6 +73,7 @@
 			overlayText: "Votre MRI se mets a jour",
 			loadingVisibility: true,
 			backgroundColor: "background: white",
+			campaignLoadingVisibility: true,
 		}),
 
 		async created() {
@@ -65,8 +82,10 @@
 			var result = true
 			try {
 				result = await getCampaignWithId(this.id) //Call the firebase function
+				this.campaignLoadingVisibility = false
 			} catch (error) {
 				console.log(error)
+				this.campaignLoadingVisibility = false //better option ?
 			}
 
 			this.form = result.data
