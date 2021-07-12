@@ -1,5 +1,18 @@
 <template>
 	<div>
+		<v-card-title
+			style="font-family: 'Avenir Next Regular'; justify-content: west;"
+			class="text-wrap pt-10 pb-0"
+		>
+			<h1>ACCUEIL</h1>
+		</v-card-title>
+		<v-card-title
+			style="font-family: 'Avenir Next Regular'; justify-content: west;"
+			class="text-wrap pt-0 pb-5 pl-4"
+		>
+			<h3>Rédiger un nouveau MRI</h3>
+		</v-card-title>
+
 		<Form v-bind:form.sync="this.form" v-on:submit="this.checkAuthentification"></Form>
 
 		<div class="intro" :style="backgroundColor">

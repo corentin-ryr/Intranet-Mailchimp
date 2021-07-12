@@ -2,11 +2,35 @@
 	<div>
 		<template v-if="validation">
 			<!-- Div shown when the page has been opened from the list of campaigns to be validated  -->
-			<h1>VALIDATION</h1>
+			<div>
+			<v-card-title
+				style="font-family: 'Avenir Next Regular'; justify-content: west;"
+				class="text-wrap pt-10 pb-0"
+			>
+				<h1>VALIDATION</h1>
+			</v-card-title>
+			<v-card-title
+				style="font-family: 'Avenir Next Regular'; justify-content: west;"
+				class="text-wrap pt-0 pb-5 pl-4"
+			>
+				<h3>Modifier le MRI</h3>
+			</v-card-title>
+			</div>
 		</template>
 		<template v-else>
 			<!-- Div when we open the page from the Mes MRI page  -->
-			<h1>EDITION</h1>
+			<v-card-title
+				style="font-family: 'Avenir Next Regular'; justify-content: west;"
+				class="text-wrap pt-10 pb-0"
+			>
+				<h1>MES MRI</h1>
+			</v-card-title>
+			<v-card-title
+				style="font-family: 'Avenir Next Regular'; justify-content: west;"
+				class="text-wrap pt-0 pb-5 pl-4"
+			>
+				<h3>Modifier mon MRI</h3>
+			</v-card-title>
 		</template>
 
 		<v-expand-transition>

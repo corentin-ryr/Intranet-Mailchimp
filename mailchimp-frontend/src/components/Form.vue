@@ -3,10 +3,10 @@
 		<v-card class="card mx-auto mt-10" width="1000">
 			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="submit" v-model="isValid">
 				<v-card-title
-					style="font-family: 'Avenir Next Bold'; justify-content: center; align-items: center;"
+					style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
 					class="text-wrap py-10"
 				>
-					<h1>Edition du MRI {{ this.campaignId }}</h1>
+					<h1>Édition du MRI {{ this.campaignId }}</h1>
 				</v-card-title>
 
 				<v-text-field
@@ -248,7 +248,7 @@
 						color="secondary"
 						aria-label="Send button"
 					>
-						Envoyer
+						Soumettre
 					</v-btn>
 				</v-card-actions>
 			</v-form>

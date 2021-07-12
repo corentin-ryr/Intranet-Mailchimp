@@ -1,6 +1,17 @@
 <template>
 	<div>
-		<h1>Validation Page</h1>
+		<v-card-title
+			style="font-family: 'Avenir Next Regular'; justify-content: west;"
+			class="text-wrap pt-10 pb-0"
+		>
+			<h1>VALIDATION</h1>
+		</v-card-title>
+		<v-card-title
+			style="font-family: 'Avenir Next Regular'; justify-content: west;"
+			class="text-wrap pt-3 pb-5 pl-4"
+		>
+			<h3>Liste de toutes les études</h3>
+		</v-card-title>
 
 		<v-expand-transition>
 			<div v-if="loadingVisibility">
@@ -19,15 +30,43 @@
 		</v-expand-transition>
 
 		<div v-if="!loadingVisibility">
-			<v-card v-for="(key, value) in campaigns" v-bind:key="value.id">
-				{{ value }}
+			<v-card v-for="(key, value) in campaigns" v-bind:key="value.id" class="ma-4" outlined>
+				<div class="pa-2">
+					<p class="pa-1 ma-0">
+						{{ value }}
+					</p>
+					<div style="display: flex; justify-content: flex-end">
+						<v-btn 
+							class="mx-1 pa-1"
+							color="#707070"
+							outlined
+							depressed
+							v-on:click="editCampaign(key.id)">
+							<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Modifier</span>
+						</v-btn>
 
-				<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed v-on:click="editCampaign(key.id)">
-					<span style="font-family: 'Avenir Next Regular'">Ouvrir campagne</span>
-				</v-btn>
+						<v-btn
+							class="mx-1 pa-1"
+							color="green"
+							outlined
+							depressed
+							v-on:click="editCampaign(key.id)">
+							<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Valider</span>
+						</v-btn>
+
+						<v-btn 
+							class="mx-1 pa-1"
+							color="red"
+							outlined
+							depressed
+							v-on:click="editCampaign(key.id)">
+							<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Supprimer</span>
+						</v-btn>
+					</div>
+				</div>
 			</v-card>
 		</div>
-		
+
 	</div>
 </template>
 
