@@ -2,12 +2,31 @@
 	<div>
 		<v-card class="card mx-auto mt-10" width="1000">
 			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="submit" v-model="isValid">
-				<v-card-title
-					style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
-					class="text-wrap py-10"
-				>
-					<h1>Édition du MRI {{ this.campaignId }}</h1>
-				</v-card-title>
+
+				<div v-if="this.campaignId!=null">
+					<v-card-title
+						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
+						class="text-wrap pt-10 pb-0"
+					>
+						<h1>Édition du MRI</h1>
+					</v-card-title>
+					<v-card-title
+						v-if="this.campaignId!=null"
+						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
+						class="text-wrap pt-0 pb-7"
+					>
+						<h3>n° {{ this.campaignId }}</h3>
+					</v-card-title>
+				</div>
+
+				<div v-if="this.campaignId==null">
+					<v-card-title
+						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
+						class="text-wrap pt-10 pb-7"
+					>
+						<h1>Nouveau MRI</h1>
+					</v-card-title>
+				</div>
 
 				<v-text-field
 					type="text"
@@ -241,6 +260,7 @@
 				<v-divider></v-divider>
 				<v-card-actions>
 					<v-btn
+						v-if="this.campaignId==null"
 						type="submit"
 						form="mailForm"
 						class="mx-auto"
@@ -248,7 +268,19 @@
 						color="secondary"
 						aria-label="Send button"
 					>
-						Soumettre
+						Envoyer
+					</v-btn>
+
+					<v-btn
+						v-if="this.campaignId!=null"
+						type="submit"
+						form="mailForm"
+						class="mx-auto"
+						:disabled="!isValid"
+						color="secondary"
+						aria-label="Send button"
+					>
+						Mettre à jour
 					</v-btn>
 				</v-card-actions>
 			</v-form>
