@@ -213,7 +213,25 @@
 							<v-card-title class="headline grey lighten-2">
 								Prévisualisation du MRI
 							</v-card-title>
-							<div v-html="previewHTML"></div>
+
+							<v-expand-transition>
+								<div v-html="previewHTML" v-show="!loadingPreviewVisibility"></div>
+							</v-expand-transition>
+
+							<v-expand-transition>
+								<div style="padding: 10% 10%" v-show="loadingPreviewVisibility">
+									<v-progress-linear
+										aria-label="Progress bar"
+										color="#e54540"
+										indeterminate
+										rounded
+										align="center"
+										height="10"
+										width="6"
+									></v-progress-linear>
+								</div>
+							</v-expand-transition>
+
 						</v-card>
 					</v-dialog>
 				</div>
@@ -329,6 +347,7 @@
 			//Other variables
 			enabled: false,
 			isValid: true,
+			loadingPreviewVisibility: true,
 			// overlayText: "Votre MRI s'envoie",
 			// loadingVisibility: true,
 
@@ -357,6 +376,7 @@
 				try {
 					const response = await getPreviewEmail(this.form) //Call the firebase function
 					this.previewHTML = response.data
+					this.loadingPreviewVisibility = false
 				} catch (error) {
 					console.log(error)
 				}
