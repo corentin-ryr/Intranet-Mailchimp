@@ -167,6 +167,12 @@
 					//Set a timeout for the user to have time to read the message
 					this.closeOverlay(success)
 				}, 1500)
+				if (this.validation){
+					this.$router.push({ path: `/validation` })
+				}
+				else{
+					this.$router.push({ path: `/myCampaigns` })
+				}
 			},
 
 			closeOverlay: async function(success) {

@@ -50,7 +50,7 @@
 							<div style="display: flex; justify-content: flex-end">
 								<v-btn 
 									class="mx-1 pa-1"
-									color="#707070"
+									color="blue"
 									outlined
 									depressed
 									v-on:click="editCampaign(key)">
