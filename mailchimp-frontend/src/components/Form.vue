@@ -253,6 +253,8 @@
 
 				<v-divider></v-divider>
 				<v-card-actions>
+					<v-tooltip bottom max-width="400">
+					<template v-slot:activator="{ on, attrs }">
 					<v-btn
 						type="submit"
 						form="mailForm"
@@ -260,9 +262,14 @@
 						:disabled="!isValid"
 						color="green"
 						depressed
+						v-bind="attrs"
+						v-on="on"
 					>
 						{{sendButtonLabel}}
 					</v-btn>
+					</template>
+					<span>{{sendTooltip}}</span>
+					</v-tooltip>
 
 				</v-card-actions>
 			</v-form>
@@ -396,7 +403,15 @@
 				else {
 					return "Mettre à jour"
 				}
-			}
+			},
+			sendTooltip: function(){
+				if (this.campaignId==null){
+					return "Votre MRI sera envoyé au Responsable Commercial et au Secrétaire Général qui le reliront dès que possible. Si votre MRI n'a pas été envoyé dans les 24 heures suivant sa soumission, contactez-les pour les relancer."
+				}
+				else {
+					return "Le contenu du MRI sera mis à jour. Les Responsable Commercial et Secrétaire Général ne seront pas notifiés de la modification."
+				}
+			},
 		},
 
 		methods: {
