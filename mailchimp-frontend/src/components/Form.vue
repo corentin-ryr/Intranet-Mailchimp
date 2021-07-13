@@ -209,13 +209,14 @@
 					<v-dialog height="90%" width="90%">
 						<template v-slot:activator="{ on, attrs }">
 							<v-btn
-								color="#707070"
-								outlined
+								class="white--text"
+								color="#969696"
 								depressed
 								v-bind="attrs"
 								v-on="on"
 								v-on:click="createPreviewHTML"
 								aria-label="Preview button"
+								:disabled="!isValid"
 							>
 								Prévisualiser
 							</v-btn>
@@ -255,12 +256,10 @@
 					<v-btn
 						type="submit"
 						form="mailForm"
-						class="mx-auto my-3"
+						class="mx-auto my-3 white--text"
 						:disabled="!isValid"
 						color="green"
-						outlined
 						depressed
-						aria-label="Send button"
 					>
 						{{sendButtonLabel}}
 					</v-btn>
