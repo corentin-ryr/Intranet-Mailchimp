@@ -13,32 +13,65 @@
 
 			<v-spacer></v-spacer>
 
+			<template v-if="isUserAuth">
+				<router-link to="/">
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on, attrs }">
+					<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
+						<v-icon>mdi-plus-circle</v-icon>
+					</v-btn>
+					</template>
+					<span>Nouveau MRI</span>
+				</v-tooltip>
+				</router-link>
+			</template>
+
 			<template v-if="isUserAdmin">
 				<router-link to="/admin">
-					<v-btn id="gradient" class="ma-1 px-2 rounded-lg clickable" depressed>
-						<span style="font-family: 'Avenir Next Regular';font-size: min(2vw, 14px);">Admin</span>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on, attrs }">
+					<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
+						<v-icon>mdi-cog</v-icon>
 					</v-btn>
+					</template>
+					<span>Administrateur</span>
+				</v-tooltip>
 				</router-link>
 			</template>
 
 			<template v-if="isUserModerator || isUserAdmin">
 				<router-link to="/validation">
-					<v-btn id="gradient" class="ma-1 px-2 rounded-lg clickable" depressed>
-						<span style="font-family: 'Avenir Next Regular';font-size: min(2vw, 14px);">Validation</span>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on, attrs }">
+					<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
+						<v-icon>mdi-check-decagram</v-icon>
 					</v-btn>
+					</template>
+					<span>Validation</span>
+				</v-tooltip>
 				</router-link>
 			</template>
 
 			<template v-if="isUserAuth">
 				<router-link to="/myCampaigns">
-					<v-btn id="gradient" class="ma-1 px-2 rounded-lg clickable" depressed>
-						<span style="font-family: 'Avenir Next Regular';font-size: min(2vw, 14px);">Mes MRI</span>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on, attrs }">
+					<v-btn class="clickable mr-2" color="#e54540" icon large v-bind="attrs" v-on="on">
+						<v-icon>mdi-email</v-icon>
 					</v-btn>
+					</template>
+					<span>Mes MRI</span>
+				</v-tooltip>
 				</router-link>
+
+				<v-divider
+					inset
+					vertical
+				></v-divider>
 
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn class="clickable" icon v-bind="attrs" v-on="on">
+						<v-btn class="clickable ml-2 mr-0" icon v-bind="attrs" v-on="on" color="#e54540" large>
 							<v-icon>mdi-account-circle</v-icon>
 						</v-btn>
 					</template>
