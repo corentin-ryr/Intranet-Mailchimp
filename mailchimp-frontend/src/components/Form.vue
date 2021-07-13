@@ -3,12 +3,12 @@
 		<v-card class="card mx-auto mt-0" width="1000">
 			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="submit" v-model="isValid">
 
-				<div v-if="this.campaignId!=null">
+				<div>
 					<v-card-title
 						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
 						class="text-wrap pt-10 pb-0"
 					>
-						<h1>Édition du MRI</h1>
+						<h1>{{h1}}</h1>
 					</v-card-title>
 					<v-card-title
 						v-if="this.campaignId!=null"
@@ -17,15 +17,7 @@
 					>
 						<h3>n° {{ this.campaignId }}</h3>
 					</v-card-title>
-				</div>
-
-				<div v-if="this.campaignId==null">
-					<v-card-title
-						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
-						class="text-wrap pt-10 pb-7"
-					>
-						<h1>Nouveau MRI</h1>
-					</v-card-title>
+					<v-spacer v-if="this.campaignId==null" class="pt-0 pb-7"/>
 				</div>
 
 				<v-text-field
@@ -213,12 +205,13 @@
 					:rules="emailRules"
 				/>
 
-				<div class="text-center">
+				<div class="text-center pb-2">
 					<v-dialog height="90%" width="90%">
 						<template v-slot:activator="{ on, attrs }">
 							<v-btn
-								color="red lighten-2"
-								dark
+								color="#707070"
+								outlined
+								depressed
 								v-bind="attrs"
 								v-on="on"
 								v-on:click="createPreviewHTML"
@@ -260,28 +253,18 @@
 				<v-divider></v-divider>
 				<v-card-actions>
 					<v-btn
-						v-if="this.campaignId==null"
 						type="submit"
 						form="mailForm"
-						class="mx-auto"
+						class="mx-auto my-3"
 						:disabled="!isValid"
-						color="secondary"
+						color="green"
+						outlined
+						depressed
 						aria-label="Send button"
 					>
-						Envoyer
+						{{sendButtonLabel}}
 					</v-btn>
 
-					<v-btn
-						v-if="this.campaignId!=null"
-						type="submit"
-						form="mailForm"
-						class="mx-auto"
-						:disabled="!isValid"
-						color="secondary"
-						aria-label="Send button"
-					>
-						Mettre à jour
-					</v-btn>
 				</v-card-actions>
 			</v-form>
 		</v-card>
@@ -398,6 +381,25 @@
 			previewHTML: "",
 		}),
 
+		computed: {
+			h1: function(){
+				if (this.campaignId==null){
+					return "Nouveau MRI"
+				}
+				else {
+					return "Édition du MRI"
+				}
+			},
+			sendButtonLabel: function(){
+				if (this.campaignId==null){
+					return "Soumettre"
+				}
+				else {
+					return "Mettre à jour"
+				}
+			}
+		},
+
 		methods: {
 			submit: function() {
                 /**
@@ -413,6 +415,7 @@
 				try {
 					const response = await getPreviewEmail(this.form) //Call the firebase function
 					this.previewHTML = response.data
+					console.log(this.previewHTML)
 					this.loadingPreviewVisibility = false
 				} catch (error) {
 					console.log(error)
