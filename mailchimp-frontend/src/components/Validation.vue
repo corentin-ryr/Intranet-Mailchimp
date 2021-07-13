@@ -70,14 +70,50 @@
 							</div>
 
 							<div style="display: flex; justify-content: center">
-								<v-btn 
-									class="mx-1 pa-1"
-									color="#707070"
-									outlined
-									depressed
-									v-on:click="editCampaign(key.id)">
-									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Lire</span>
-								</v-btn>
+
+								<v-dialog height="90%" width="90%">
+									<template v-slot:activator="{ on, attrs }">
+										<v-btn
+											class="mx-1 pa-1"
+											color="#707070"
+											outlined
+											depressed
+											v-bind="attrs"
+											v-on="on"
+											v-on:click="createPreviewHTML(key.id)"
+											aria-label="Preview button"
+										>
+											<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Lire</span>
+										</v-btn>
+									</template>
+
+									<v-card>
+										<v-card-title class="headline grey lighten-2">
+											Prévisualisation du MRI
+										</v-card-title>
+
+										<v-expand-transition>
+											<div v-html="previewHTML" v-if="!loadingPreviewVisibility"></div>
+										</v-expand-transition>
+
+										<v-expand-transition>
+											<div v-if="loadingPreviewVisibility">
+												<div style="padding: 10% 10%">
+													<v-progress-linear
+														aria-label="Progress bar"
+														color="#e54540"
+														indeterminate
+														rounded
+														align="center"
+														height="10"
+														width="6"
+													></v-progress-linear>
+												</div>
+											</div>
+										</v-expand-transition>
+
+									</v-card>
+								</v-dialog>
 
 								<v-btn 
 									class="mx-1 pa-1"
@@ -121,6 +157,8 @@
 		data: () => ({
 			campaigns: {},
 			loadingVisibility: true,
+			previewHTML: "",
+			loadingPreviewVisibility: true,
 		}),
 
 		created() {
@@ -176,6 +214,29 @@
 					text="Validation en attente"
 				}
 				return text
+			},
+
+			createPreviewHTML: async function(id) {
+				this.loadingPreviewVisibility=true
+				this.previewHTML=""
+
+				var getCampaignWithId = this.$firebase.functions().httpsCallable("getCampaignWithId")
+				var result = true
+				try {
+					result = await getCampaignWithId(id) //Call the firebase function
+					//console.log(result)
+				} catch (error) {
+					console.log(error)
+				}
+
+				var getPreviewEmail = this.$firebase.functions().httpsCallable("getPreviewEmail")
+				try {
+					const response = await getPreviewEmail(result.data) //Call the firebase function
+					this.previewHTML = response.data
+					this.loadingPreviewVisibility = false
+				} catch (error) {
+					console.log(error)
+				}
 			},
 		},
 	}

@@ -406,6 +406,9 @@
 				this.$emit("submit")
 			},
 			createPreviewHTML: async function() {
+				this.loadingPreviewVisibility=true
+				this.previewHTML=""
+
 				var getPreviewEmail = this.$firebase.functions().httpsCallable("getPreviewEmail")
 				try {
 					const response = await getPreviewEmail(this.form) //Call the firebase function
