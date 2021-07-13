@@ -188,4 +188,7 @@
 		transform: translateY(100%);
 		display: inline-block;
 	}
+	.v-card__text, .v-card__title {
+	word-break: normal; /* maybe !important  */
+	}
 </style>
