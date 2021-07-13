@@ -31,21 +31,35 @@
 
 		<div v-if="!loadingVisibility">
 			<v-card v-for="(key, value) in campaigns" v-bind:key="value.id" class="ma-4" outlined>
-				<div class="pa-2">
-					<p class="pa-1 ma-0">
-						{{ value }}
-					</p>
-					<div style="display: flex; justify-content: flex-end">
-						<v-btn 
-							class="mx-1 pa-1"
-							color="#707070"
-							outlined
-							depressed
-							v-on:click="editCampaign(key.id)">
-							<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Modifier</span>
-						</v-btn>
-					</div>
-				</div>
+
+				<v-container class="ma-0 pa-2">
+					<v-row no-gutters>
+						<v-col
+							cols="12"
+							sm="8"
+						>
+							<p class="pa-1 ma-0">
+								{{ value }}
+							</p>
+						</v-col>
+						<v-col
+							cols="12"
+							sm="4"
+
+						>
+							<div style="display: flex; justify-content: flex-end">
+								<v-btn 
+									class="mx-1 pa-1"
+									color="#707070"
+									outlined
+									depressed
+									v-on:click="editCampaign(key)">
+									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Modifier</span>
+								</v-btn>
+							</div>
+						</v-col>
+					</v-row>
+				</v-container>
 			</v-card>
 		</div>
 	</div>
@@ -76,6 +90,7 @@
 				var getCampaigns = this.$firebase.functions().httpsCallable("getMyCampaigns")
 				const result = await getCampaigns()
 				this.campaigns = result.data
+				//console.log(result.data)
 				this.loadingVisibility = false
 			},
 

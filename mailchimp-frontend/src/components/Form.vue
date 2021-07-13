@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<v-card class="card mx-auto mt-10" width="1000">
+		<v-card class="card mx-auto mt-0" width="1000">
 			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="submit" v-model="isValid">
 
 				<div v-if="this.campaignId!=null">

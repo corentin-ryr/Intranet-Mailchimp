@@ -15,24 +15,24 @@
 
 			<template v-if="isUserAdmin">
 				<router-link to="/admin">
-					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
-						<span style="font-family: 'Avenir Next Regular'">Admin</span>
+					<v-btn id="gradient" class="ma-1 px-2 rounded-lg clickable" depressed>
+						<span style="font-family: 'Avenir Next Regular';font-size: min(2vw, 14px);">Admin</span>
 					</v-btn>
 				</router-link>
 			</template>
 
 			<template v-if="isUserModerator || isUserAdmin">
 				<router-link to="/validation">
-					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
-						<span style="font-family: 'Avenir Next Regular'">Validation</span>
+					<v-btn id="gradient" class="ma-1 px-2 rounded-lg clickable" depressed>
+						<span style="font-family: 'Avenir Next Regular';font-size: min(2vw, 14px);">Validation</span>
 					</v-btn>
 				</router-link>
 			</template>
 
 			<template v-if="isUserAuth">
 				<router-link to="/myCampaigns">
-					<v-btn id="gradient" class="ma-2 rounded-lg clickable" depressed>
-						<span style="font-family: 'Avenir Next Regular'">Mes MRI</span>
+					<v-btn id="gradient" class="ma-1 px-2 rounded-lg clickable" depressed>
+						<span style="font-family: 'Avenir Next Regular';font-size: min(2vw, 14px);">Mes MRI</span>
 					</v-btn>
 				</router-link>
 
