@@ -124,14 +124,59 @@
 									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Modifier</span>
 								</v-btn>
 
-								<v-btn
-									class="mx-1 pa-1"
-									color="green"
-									outlined
-									depressed
-									v-on:click="editCampaign(key.id)">
-									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Valider</span>
-								</v-btn>
+								<template>
+									<div class="text-center">
+										<v-dialog
+										width="500"
+										v-model="dialogValidation[value]"
+										>
+										<template v-slot:activator="{ on, attrs }">
+											<v-btn
+												class="mx-1 pa-1"
+												color="green"
+												outlined
+												depressed
+												v-bind="attrs"
+												v-on="on"
+											>
+												<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Valider</span>
+											</v-btn>
+										</template>
+
+										<v-card>
+											<v-card-title class="text-h5">
+											Confirmer la validation
+											</v-card-title>
+
+											<v-card-text>
+											Merci de confirmer votre choix. Le MRI sera envoyé dès qu'il aura obtenu la validation du Responsable Commercial et du Secrétaire Général. Si le MRI est modifié avant d'être envoyé, il devra être validé à nouveau par le Responsable Commercial et le Secrétaire Général.
+											</v-card-text>
+
+											<v-divider></v-divider>
+
+											<v-card-actions>
+											<v-spacer></v-spacer>
+											<v-btn
+												color="red"
+												outlined
+												depressed
+												@click="dialogValidation[value] = false"
+											>
+												Annuler
+											</v-btn>
+											<v-btn
+												color="green"
+												outlined
+												depressed
+												@click="validateMRI(key.id, value)"
+											>
+												Valider
+											</v-btn>
+											</v-card-actions>
+										</v-card>
+										</v-dialog>
+									</div>
+								</template>
 
 							</div>
 						</v-col>
@@ -159,6 +204,7 @@
 			loadingVisibility: true,
 			previewHTML: "",
 			loadingPreviewVisibility: true,
+			dialogValidation: []
 		}),
 
 		created() {
@@ -238,6 +284,10 @@
 					console.log(error)
 				}
 			},
+
+			validateMRI: async function(id, value) {
+				this.dialogValidation[value] = false //close dialog
+			}
 		},
 	}
 </script>
