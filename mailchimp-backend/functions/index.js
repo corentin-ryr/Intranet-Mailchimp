@@ -130,7 +130,7 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 		}
 	})
 
-	campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe }
+	campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe } // Union of the twe sets
 
 	return campaignsToValidateNames
 })
@@ -466,24 +466,20 @@ async function createCampaignEntry(campaignID, data) {
 }
 
 async function validateCampaign(campaignID, isRespoCom) {
+	console.log(campaignID)
 	if (isRespoCom) {
-		db.collection("campaigns")
-			.doc(campaignID)
-			.update({
-				validationRespoCo: true,
-			})
-			.then(function () {
-				console.log("Updated validation")
-			})
+		try {
+			await db.collection("campaigns").doc(campaignID).update({ validationRespoCo: true })
+		} catch (error) {
+			throw new functions.https.HttpsError("internal", "Unknown error")
+		}
 	} else {
-		db.collection("campaigns")
-			.doc(campaignID)
-			.update({
-				validationSecGez: true,
-			})
-			.then(function () {
-				console.log("Updated validation")
-			})
+		try {
+			await db.collection("campaigns").doc(campaignID).update({ validationSecGez: true })
+		} catch (error) {
+			console.log(error)
+			throw new functions.https.HttpsError("internal", "Unknown error")
+		}
 	}
 }
 //#endregion
