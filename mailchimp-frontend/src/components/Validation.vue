@@ -14,7 +14,7 @@
 		</v-card-title>
 
 		<v-expand-transition>
-			<div v-if="loadingVisibility">
+			<div v-if="loadingVisibilityStart">
 				<div style="margin: 5% 10%">
 				<v-progress-linear
 					aria-label="Progress bar"
@@ -29,7 +29,7 @@
 			</div>
 		</v-expand-transition>
 
-		<div v-if="!loadingVisibility">
+		<div v-if="!loadingVisibilityStart">
 			<v-card v-for="(key, value) in campaigns" v-bind:key="value.id" class="ma-4" outlined>
 
 				<v-container class="ma-0 pa-2">
@@ -149,7 +149,7 @@
 											</v-card-title>
 
 											<v-card-text>
-											Merci de confirmer votre choix. Le MRI sera envoyé dès qu'il aura obtenu la validation du Responsable Commercial et du Secrétaire Général. Si le MRI est modifié avant d'être envoyé, il devra être validé à nouveau par le Responsable Commercial et le Secrétaire Général.
+											Merci de confirmer votre choix. Le MRI "{{value}}" sera envoyé dès qu'il aura obtenu la validation du Responsable Commercial et du Secrétaire Général. Si le MRI est modifié avant d'être envoyé, il devra être validé à nouveau par le Responsable Commercial et le Secrétaire Général.
 											</v-card-text>
 
 											<v-divider></v-divider>
@@ -186,10 +186,32 @@
 			</v-card>
 		</div>
 
+		<div class="intro" :style="backgroundColor">
+			<!-- This div contains the elements for the animation sequence on form sending  -->
+			<div class="intro-text" style="padding: 10% 10%">
+				<h1 class="hide">
+					<span class="text" id="text">{{ overlayText }}</span>
+				</h1>
+				<v-progress-linear
+					aria-label="Progress bar"
+					v-if="loadingVisibility"
+					class="my-8"
+					color="white"
+					indeterminate
+					rounded
+					align="center"
+					height="6"
+					width="6"
+				></v-progress-linear>
+			</div>
+		</div>
+
 	</div>
 </template>
 
 <script>
+	import gsap from "gsap"
+	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 	/**
 	 * This page is only accessible by the moderators of the MRI. This is done via the Vuex plugin.
 	 * This page shows all the campaigns that have not been calidated yet.
@@ -201,10 +223,14 @@
 
 		data: () => ({
 			campaigns: {},
-			loadingVisibility: true,
+			loadingVisibilityStart: true,
 			previewHTML: "",
 			loadingPreviewVisibility: true,
-			dialogValidation: []
+			dialogValidation: [],
+
+			overlayText: "",
+			backgroundColor: "white",
+			loadingVisibility: true,
 		}),
 
 		created() {
@@ -218,7 +244,7 @@
 				const result = await getCampaigns()
 				this.campaigns = result.data
 				console.log(this.campaigns)
-				this.loadingVisibility = false
+				this.loadingVisibilityStart = false
 			},
 
 			editCampaign: function(id) {
@@ -287,13 +313,95 @@
 
 			validateMRI: async function(id, value) {
 				this.dialogValidation[value] = false //close dialog
-			}
+
+				this.backgroundColor = "background: #e54540"
+				this.overlayText = "MRI en cours de validation ⚙️"
+
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				var validate = this.$firebase.functions().httpsCallable("validateCampaign")
+				var success = true
+				try {
+					await validate(this.form) //Call the firebase function
+				} catch (error) {
+					console.log(error)
+					success = false
+				}
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+				if (success) {
+					this.loadingVisibility = false
+					this.overlayText = "MRI validé ! ✅"
+				} else {
+					this.loadingVisibility = false
+					this.overlayText = "Une erreur s'est produite ⚠️"
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
+
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
+					this.closeOverlay(success)
+				}, 1500)
+			},
+
+			closeOverlay: async function(success) {
+				tl.to(".text", { y: "-100%", duration: 1 })
+				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
+
+				if (success) {
+					for (let field in this.form) {
+						this.form[field] = ""
+					}
+					this.$refs.mailFormRef.reset()
+				} else {
+					//Add a hint message to help the user correct its mistakes
+					console.log("here is what you need to do...")
+				}
+				setTimeout(() => {
+					this.backgroundColor = "background: white"
+					this.loadingVisibility = true
+				}, 1500)
+			},
+
 		},
 	}
 </script>
 
-<style>
-.v-card__text, .v-card__title {
-  word-break: normal; /* maybe !important  */
-}
+<style scoped>
+
+	.intro {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 5;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transform: translateY(-100%);
+	}
+	.intro-text {
+		color: white;
+		font-family: "Avenir Next Regular";
+		font-size: xx-large;
+	}
+	.hide {
+		overflow: hidden;
+	}
+	.hide span {
+		transform: translateY(100%);
+		display: inline-block;
+	}
+	.v-card__text, .v-card__title {
+	word-break: normal; /* maybe !important  */
+	}
+
 </style>
+

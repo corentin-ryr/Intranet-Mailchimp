@@ -106,7 +106,7 @@
 			var result = true
 			try {
 				result = await getCampaignWithId(this.id) //Call the firebase function
-				//console.log(result)
+				console.log(result)
 				this.campaignLoadingVisibility = false
 			} catch (error) {
 				console.log(error)
