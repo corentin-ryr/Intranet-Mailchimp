@@ -27,24 +27,24 @@
 		</v-expand-transition>
 
 		<div v-if="!loadingVisibilityStart">
-			<v-card v-for="(key, value) in campaigns" v-bind:key="value.id" class="ma-4" outlined>
+			<v-card v-for="key in orderedCampaignsArray" v-bind:key="key.id" class="ma-4" outlined>
 				<v-container class="ma-0 pa-2">
 					<v-row no-gutters>
 						<v-col cols="12" sm="7" md="8">
 							<p class="pa-1 ma-0">
-								{{ value }}
+								{{ key['name'] }}
 							</p>
 						</v-col>
 						<v-col cols="12" sm="5" md="4">
 							<div style="display: flex; justify-content: center" class="pa-1 mb-0 pb-0">
-								<p style="color: grey" class="ma-0 pa-0">{{ getValidationText(true, false) }}</p>
+								<p style="color: grey" class="ma-0 pa-0">{{ getValidationText(key.validationRespoCo, key.validationSecGez) }}</p>
 							</div>
 
 							<div style="display: flex; justify-content: center">
 								<v-responsive max-width="250">
 									<div style="display: flex; justify-content: center" class="ma-0 pa-0">
 										<v-progress-linear
-											:value="getValidationPercentage(true, false)"
+											:value="getValidationPercentage(key.validationRespoCo, key.validationSecGez)"
 											class="ma-2 mb-3 mt-1"
 											color="grey"
 											rounded
@@ -114,7 +114,7 @@
 
 								<template>
 									<div class="text-center">
-										<v-dialog width="500" v-model="dialogValidation[value]">
+										<v-dialog width="500" v-model="dialogValidation[key['name']]">
 											<template v-slot:activator="{ on, attrs }">
 												<v-btn
 													class="mx-1 pa-1"
@@ -137,7 +137,7 @@
 												</v-card-title>
 
 												<v-card-text>
-													Merci de confirmer votre choix. Le MRI "{{ value }}" sera envoyé dès
+													Merci de confirmer votre choix. Le MRI "{{ key['name'] }}" sera envoyé dès
 													qu'il aura obtenu la validation du Responsable Commercial et du
 													Secrétaire Général. Si le MRI est modifié avant d'être envoyé, il
 													devra être validé à nouveau par le Responsable Commercial et le
@@ -152,7 +152,7 @@
 														color="red"
 														outlined
 														depressed
-														@click="dialogValidation[value] = false"
+														@click="dialogValidation[key['name']] = false"
 													>
 														Annuler
 													</v-btn>
@@ -160,7 +160,7 @@
 														color="green"
 														outlined
 														depressed
-														@click="validateMRI(key.id, value)"
+														@click="validateMRI(key.id, key['name'])"
 													>
 														Valider
 													</v-btn>
@@ -200,6 +200,7 @@
 
 <script>
 	import gsap from "gsap"
+	import _ from 'lodash'
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 	/**
 	 * This page is only accessible by the moderators of the MRI. This is done via the Vuex plugin.
@@ -212,6 +213,7 @@
 
 		data: () => ({
 			campaigns: {},
+			orderedCampaignsArray: [],
 			loadingVisibilityStart: true,
 			previewHTML: "",
 			loadingPreviewVisibility: true,
@@ -226,14 +228,32 @@
 			this.getCampaignsToValidate()
 		},
 
+
 		methods: {
 			getCampaignsToValidate: async function() {
 				//Get campaign to modify
 				var getCampaigns = this.$firebase.functions().httpsCallable("getCampaignsToValidate")
 				const result = await getCampaigns()
+				console.log(result.data)
 				this.campaigns = result.data
-				console.log(this.campaigns)
+				this.orderCampaigns()
+				console.log(this.orderedCampaignsArray)
 				this.loadingVisibilityStart = false
+			},
+
+			orderCampaigns: function () {
+				this.orderedCampaignsArray = _.orderBy(this.campaigns, 'time', 'desc')
+
+				for (const campaign in this.orderedCampaignsArray) {
+					const id = this.orderedCampaignsArray[campaign]['id']
+					for (const campaignName in this.campaigns) {
+						if (this.campaigns[campaignName]['id']==id){
+							this.orderedCampaignsArray[campaign]['name']=campaignName
+						}
+					}
+				}
+
+				this.orderedCampaignsArray = this.orderedCampaignsArray.filter(campaign => !(campaign['time'] == null)); //delete campaigns without time indicator (if any)
 			},
 
 			editCampaign: function(id) {
