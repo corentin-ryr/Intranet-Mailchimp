@@ -53,7 +53,7 @@
 									color="blue"
 									outlined
 									depressed
-									v-on:click="editCampaign(key)">
+									v-on:click="editCampaign(key.id)">
 									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);">Modifier</span>
 								</v-btn>
 							</div>

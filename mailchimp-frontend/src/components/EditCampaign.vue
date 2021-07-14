@@ -93,7 +93,7 @@
 			id: "",
 			form: {},
 
-			//Other variables
+			//Other variables for the animation
 			overlayText: "Votre MRI se mets a jour",
 			loadingVisibility: true,
 			backgroundColor: "background: white",

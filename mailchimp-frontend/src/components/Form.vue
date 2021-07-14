@@ -2,22 +2,23 @@
 	<div>
 		<v-card class="card mx-auto mt-0" width="1000">
 			<v-form id="mailForm" ref="mailFormRef" v-on:submit.prevent="submit" v-model="isValid">
-
 				<div>
 					<v-card-title
-						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
+						style="font-family: 'Avenir Next Regular'; justify-content: center; align-items: center;"
 						class="text-wrap pt-10 pb-0"
 					>
-						<h1>{{h1}}</h1>
+						<h1>
+							{{ h1 }}
+						</h1>
 					</v-card-title>
 					<v-card-title
-						v-if="this.campaignId!=null"
-						style="font-family: 'Avenir Next'; justify-content: center; align-items: center;"
+						v-if="this.campaignId != null"
+						style="font-family: 'Avenir Next Regular'; justify-content: center; align-items: center;"
 						class="text-wrap pt-0 pb-7"
 					>
 						<h3>n° {{ this.campaignId }}</h3>
 					</v-card-title>
-					<v-spacer v-if="this.campaignId==null" class="pt-0 pb-7"/>
+					<v-spacer v-if="this.campaignId == null" class="pt-0 pb-7" />
 				</div>
 
 				<v-text-field
@@ -246,7 +247,6 @@
 									</div>
 								</div>
 							</v-expand-transition>
-
 						</v-card>
 					</v-dialog>
 				</div>
@@ -254,23 +254,22 @@
 				<v-divider></v-divider>
 				<v-card-actions>
 					<v-tooltip bottom max-width="400">
-					<template v-slot:activator="{ on, attrs }">
-					<v-btn
-						type="submit"
-						form="mailForm"
-						class="mx-auto my-3 white--text"
-						:disabled="!isValid"
-						color="green"
-						depressed
-						v-bind="attrs"
-						v-on="on"
-					>
-						{{sendButtonLabel}}
-					</v-btn>
-					</template>
-					<span>{{sendTooltip}}</span>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn
+								type="submit"
+								form="mailForm"
+								class="mx-auto my-3 white--text"
+								:disabled="!isValid"
+								color="green"
+								depressed
+								v-bind="attrs"
+								v-on="on"
+							>
+								{{ sendButtonLabel }}
+							</v-btn>
+						</template>
+						<span>{{ sendTooltip }}</span>
 					</v-tooltip>
-
 				</v-card-actions>
 			</v-form>
 		</v-card>
@@ -314,15 +313,15 @@
 <script>
 	/**
 	 * The Form component contains the form to create or modify a campaign. It contains all the fields necessary to do so (title of the mission, description...).
-     * This form is used in the front page of the site to create a new MRI and in the "Mes MRI" and "Validation" sections.
-     * @example [import](./Form.vue)
+	 * This form is used in the front page of the site to create a new MRI and in the "Mes MRI" and "Validation" sections.
+	 * @example [import](./Form.vue)
 	 */
 	export default {
 		name: "Form",
 		props: {
-            /**
-             * Dictionary of all the properties of the MRI (title, description...). The list of all the properties is commented in the code.
-             */
+			/**
+			 * Dictionary of all the properties of the MRI (title, description...). The list of all the properties is commented in the code.
+			 */
 			form: {
 				// contentTitle: "",
 				// contentFirstDescription: "",
@@ -339,9 +338,9 @@
 				// formLink: "",
 				// contactList: [],
 			},
-            /**
-             * Id of the campaign in the firebase database.
-             */
+			/**
+			 * Id of the campaign in the firebase database.
+			 */
 			campaignId: String,
 		},
 
@@ -388,27 +387,24 @@
 		}),
 
 		computed: {
-			h1: function(){
-				if (this.campaignId==null){
+			h1: function() {
+				if (this.campaignId == null) {
 					return "Nouveau MRI"
-				}
-				else {
+				} else {
 					return "Édition du MRI"
 				}
 			},
-			sendButtonLabel: function(){
-				if (this.campaignId==null){
+			sendButtonLabel: function() {
+				if (this.campaignId == null) {
 					return "Soumettre"
-				}
-				else {
+				} else {
 					return "Mettre à jour"
 				}
 			},
-			sendTooltip: function(){
-				if (this.campaignId==null){
+			sendTooltip: function() {
+				if (this.campaignId == null) {
 					return "Votre MRI sera envoyé au Responsable Commercial et au Secrétaire Général qui le reliront dès que possible. Si votre MRI n'a pas été envoyé dans les 24 heures suivant sa soumission, contactez-les pour les relancer."
-				}
-				else {
+				} else {
 					return "Le contenu du MRI sera mis à jour. Les Responsable Commercial et Secrétaire Général ne seront pas notifiés de la modification."
 				}
 			},
@@ -416,14 +412,14 @@
 
 		methods: {
 			submit: function() {
-                /**
-                 * This event is emitted when the form is submitted (on the click of the "ENVOYER" button).
-                 */
+				/**
+				 * This event is emitted when the form is submitted (on the click of the "ENVOYER" button).
+				 */
 				this.$emit("submit")
 			},
 			createPreviewHTML: async function() {
-				this.loadingPreviewVisibility=true
-				this.previewHTML=""
+				this.loadingPreviewVisibility = true
+				this.previewHTML = ""
 
 				var getPreviewEmail = this.$firebase.functions().httpsCallable("getPreviewEmail")
 				try {
@@ -452,12 +448,11 @@
 	.v-textarea {
 		width: 100%;
 	}
-	.v-card__text, .v-card__title {
-	word-break: normal; /* maybe !important  */
+	.v-card__text,
+	.v-card__title {
+		word-break: normal; /* maybe !important  */
 	}
-
 </style>
-
 
 <docs lang="md">
 ### Example
