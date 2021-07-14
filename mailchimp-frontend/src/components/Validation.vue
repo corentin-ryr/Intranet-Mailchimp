@@ -323,7 +323,7 @@
 				var validate = this.$firebase.functions().httpsCallable("validateCampaign")
 				var success = true
 				try {
-					await validate(this.form) //Call the firebase function
+					await validate(id) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -354,12 +354,7 @@
 				tl.to(".text", { y: "-100%", duration: 1 })
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
 
-				if (success) {
-					for (let field in this.form) {
-						this.form[field] = ""
-					}
-					this.$refs.mailFormRef.reset()
-				} else {
+				if (!success) {
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
 				}
