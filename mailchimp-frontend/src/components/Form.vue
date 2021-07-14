@@ -409,7 +409,7 @@
 					return "Votre MRI sera envoyé au Responsable Commercial et au Secrétaire Général qui le reliront dès que possible. Si votre MRI n'a pas été envoyé dans les 24 heures suivant sa soumission, contactez-les pour les relancer."
 				}
 				else {
-					return "Le contenu du MRI sera mis à jour. Les Responsable Commercial et Secrétaire Général ne seront pas notifiés de la modification."
+					return "Le contenu du MRI sera mis à jour. Les Responsable Commercial et Secrétaire Général ne seront pas notifiés de la modification. La procédure de validation recommencera à zéro."
 				}
 			},
 		},

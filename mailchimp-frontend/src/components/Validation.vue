@@ -46,7 +46,8 @@
 										<v-progress-linear
 											:value="getValidationPercentage(key.validationRespoCo, key.validationSecGez)"
 											class="ma-2 mb-3 mt-1"
-											color="grey"
+											background-color="#d9d9d9"
+											color="#e54540"
 											rounded
 										>
 										</v-progress-linear>
@@ -234,10 +235,10 @@
 				//Get campaign to modify
 				var getCampaigns = this.$firebase.functions().httpsCallable("getCampaignsToValidate")
 				const result = await getCampaigns()
-				console.log(result.data)
+				//console.log(result.data)
 				this.campaigns = result.data
 				this.orderCampaigns()
-				console.log(this.orderedCampaignsArray)
+				//console.log(this.orderedCampaignsArray)
 				this.loadingVisibilityStart = false
 			},
 
@@ -270,10 +271,10 @@
 				}
 
 				if (count == 0) {
-					return 0
+					return 20
 				}
 				if (count == 1) {
-					return 50
+					return 60
 				}
 				if (count == 2) {
 					return 100
@@ -357,6 +358,8 @@
 					//Set a timeout for the user to have time to read the message
 					this.closeOverlay(success)
 				}, 1500)
+
+				this.$router.go()
 			},
 
 			closeOverlay: async function(success) {
