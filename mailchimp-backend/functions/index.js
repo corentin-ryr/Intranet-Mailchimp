@@ -22,7 +22,6 @@ const testEmails = ["responsable.commercial@telecom-etude.fr", "secretaire.gener
 //#region  Firebase functions =====================================================================================================
 // ================================================================================================================================
 
-
 /**
  * This function takes all the fields from the form as input and create a mailchimp campaign with the attributes in arguments and then send a test email to the auditors for review
  */
@@ -115,10 +114,20 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 	var campaignsToValidateNamesRespoCom = {}
 	var campaignsToValidateNamesSecGe = {}
 	campaignsRespoCom.forEach((campaign) => {
-        campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = { id: campaign.id, time: campaign.timeStamp }
+		campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = {
+			id: campaign.id,
+			time: campaign.data().timeStamp,
+			validationRespoCo: campaign.data().validationRespoCo,
+			validationSecGez: campaign.data().validationSecGez,
+		}
 	})
 	campaignsSecGe.forEach((campaign) => {
-		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = { id: campaign.id, time: campaign.timeStamp }
+		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = {
+			id: campaign.id,
+			time: campaign.data().timeStamp,
+			validationRespoCo: campaign.data().validationRespoCo,
+			validationSecGez: campaign.data().validationSecGez,
+		}
 	})
 
 	campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe }
@@ -146,7 +155,12 @@ exports.getMyCampaigns = functions.https.onCall(async (data, context) => {
 
 	var myCampaignsNames = {}
 	myCampaigns.forEach((campaign) => {
-		myCampaignsNames[campaign.data().contentTitle] = { id: campaign.id, time: campaign.timeStamp }
+		myCampaignsNames[campaign.data().contentTitle] = {
+			id: campaign.id,
+			time: campaign.data().timeStamp,
+			validationRespoCo: campaign.data().validationRespoCo,
+			validationSecGez: campaign.data().validationSecGez,
+		}
 	})
 
 	return myCampaignsNames
@@ -214,8 +228,8 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 
 		await mailchimp.campaigns.update(id, {
 			settings: {
-                subject_line: "[Telecom Etude] " + data.contentTitle,
-                title: "[Telecom Etude] " + data.contentTitle,
+				subject_line: "[Telecom Etude] " + data.contentTitle,
+				title: "[Telecom Etude] " + data.contentTitle,
 			},
 		})
 		await mailchimp.campaigns.setContent(id, { html: htmlContent })
@@ -240,9 +254,13 @@ exports.validateCampaign = functions.https.onCall(async (data, context) => {
 
 	if (context.auth.token.RespoCo) {
 		validateCampaign(data.id, true)
-	}
-	if (context.auth.token.SecGez) {
+	} else if (context.auth.token.SecGez) {
 		validateCampaign(data.id, false)
+	} else {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as RespoCo or SecGez."
+		)
 	}
 })
 
@@ -441,8 +459,8 @@ async function contentEditHTML(data) {
  */
 async function createCampaignEntry(campaignID, data) {
 	data.validationRespoCo = false
-    data.validationSecGez = false
-    data.timeStamp = Date.now()
+	data.validationSecGez = false
+	data.timeStamp = Date.now()
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	// console.log(res)
 }
@@ -543,6 +561,5 @@ function hasModeratorRole(context) {
 	}
 	return false
 }
-
 
 //#endregion
