@@ -103,34 +103,46 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 	}
 
 	const campaigns_ref = db.collection("campaigns")
-	const campaignsRespoCom = await campaigns_ref.where("validationRespoCo", "==", false).get()
-	const campaignsSecGe = await campaigns_ref.where("validationSecGez", "==", false).get()
+	// const campaignsRespoCom = await campaigns_ref.where("validationRespoCo", "==", false).get()
+	// const campaignsSecGe = await campaigns_ref.where("validationSecGez", "==", false).get()
+	const campaignsNotDistributed = await campaigns_ref.where("isDistributed", "==", false).get()
 
-	if (campaignsRespoCom.empty && campaignsSecGe.empty) {
+	if (campaignsNotDistributed.empty) {
+		//campaignsRespoCom.empty && campaignsSecGe.empty) {
 		console.log("No matching documents.")
 		throw new functions.https.HttpsError("not-found", "No campaign to validate.")
 	}
 
-	var campaignsToValidateNamesRespoCom = {}
-	var campaignsToValidateNamesSecGe = {}
-	campaignsRespoCom.forEach((campaign) => {
-		campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = {
-			id: campaign.id,
-			time: campaign.data().timeStamp,
-			validationRespoCo: campaign.data().validationRespoCo,
-			validationSecGez: campaign.data().validationSecGez,
-		}
-	})
-	campaignsSecGe.forEach((campaign) => {
-		campaignsToValidateNamesSecGe[campaign.data().contentTitle] = {
-			id: campaign.id,
-			time: campaign.data().timeStamp,
-			validationRespoCo: campaign.data().validationRespoCo,
-			validationSecGez: campaign.data().validationSecGez,
-		}
-	})
+	// var campaignsToValidateNamesRespoCom = {}
+	// var campaignsToValidateNamesSecGe = {}
+	// campaignsRespoCom.forEach((campaign) => {
+	// 	campaignsToValidateNamesRespoCom[campaign.data().contentTitle] = {
+	// 		id: campaign.id,
+	// 		time: campaign.data().timeStamp,
+	// 		validationRespoCo: campaign.data().validationRespoCo,
+	// 		validationSecGez: campaign.data().validationSecGez,
+	// 	}
+	// })
+	// campaignsSecGe.forEach((campaign) => {
+	// 	campaignsToValidateNamesSecGe[campaign.data().contentTitle] = {
+	// 		id: campaign.id,
+	// 		time: campaign.data().timeStamp,
+	// 		validationRespoCo: campaign.data().validationRespoCo,
+	// 		validationSecGez: campaign.data().validationSecGez,
+	// 	}
+	// })
 
-	campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe } // Union of the twe sets
+	// campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe } // Union of the twe sets
+
+    var campaingsNotDistributedNames = {}
+	campaignsNotDistributed.forEach((campaign) => {
+		campaingsNotDistributedNames[campaign.data().contentTitle] = {
+			id: campaign.id,
+			time: campaign.data().timeStamp,
+			validationRespoCo: campaign.data().validationRespoCo,
+			validationSecGez: campaign.data().validationSecGez,
+		}
+	})
 
 	return campaignsToValidateNames
 })
@@ -460,6 +472,7 @@ async function contentEditHTML(data) {
 async function createCampaignEntry(campaignID, data) {
 	data.validationRespoCo = false
 	data.validationSecGez = false
+	data.isDistributed = false
 	data.timeStamp = Date.now()
 	const res = await db.collection("campaigns").doc(campaignID).set(data)
 	// console.log(res)
