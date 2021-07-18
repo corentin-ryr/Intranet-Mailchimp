@@ -275,39 +275,6 @@
 			</v-form>
 		</v-card>
 
-		<div>
-			<v-card class="mx-auto" width="400">
-				<v-row align="center" justify="space-around" class="ma-10">
-					<v-btn
-						text
-						color="red accent-4"
-						class="d-flex align-center my-1"
-						href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
-						width="100"
-					>
-						Corentin
-					</v-btn>
-					<v-btn
-						text
-						color="red accent-4"
-						class="d-flex align-center my-1"
-						href="https://www.linkedin.com/in/hugo-queinnec/"
-						width="100"
-					>
-						Hugo
-					</v-btn>
-					<v-btn
-						text
-						color="blue accent-4"
-						class="d-flex align-center my-1"
-						href="https://github.com/corentin-ryr/Intranet-Mailchimp"
-						width="100"
-					>
-						Github
-					</v-btn>
-				</v-row>
-			</v-card>
-		</div>
 	</div>
 </template>
 
