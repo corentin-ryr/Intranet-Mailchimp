@@ -144,7 +144,7 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 		}
 	})
 
-	return campaignsToValidateNames
+	return campaingsNotDistributedNames
 })
 
 /**
