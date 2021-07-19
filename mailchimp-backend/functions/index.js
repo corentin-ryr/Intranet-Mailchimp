@@ -241,7 +241,7 @@ exports.updateCampaign = functions.https.onCall(async (data, context) => {
 		await mailchimp.campaigns.update(id, {
 			settings: {
 				subject_line: "[Telecom Etude] " + data.contentTitle,
-				title: "[Telecom Etude] " + data.contentTitle,
+				title: data.contentTitle,
 			},
 		})
 		await mailchimp.campaigns.setContent(id, { html: htmlContent })

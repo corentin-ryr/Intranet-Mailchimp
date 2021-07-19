@@ -139,10 +139,14 @@
 				var data = this.form
 				data.id = this.id
 
-				var updateCampaign = this.$firebase.functions().httpsCallable("updateCampaign")
+				const updateCampaign = this.$firebase.functions().httpsCallable("updateCampaign")
+				const validateCampaign = this.$firebase.functions().httpsCallable("validateCampaign")
 				var success = true
 				try {
 					await updateCampaign(data) //Call the firebase function
+                    if (this.validation) {
+                        await validateCampaign({ id: data.id })
+                    }
 				} catch (error) {
 					console.log(error)
 					success = false
