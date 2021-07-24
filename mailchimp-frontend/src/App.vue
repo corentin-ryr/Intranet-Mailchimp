@@ -150,11 +150,13 @@
 				</v-card-text>
 			</v-card>
 		</v-footer>
+        <h1>{{ isUserModerator }}</h1>
 	</v-app>
 </template>
 
 <script>
 	import { mapGetters, mapActions } from "vuex"
+
 
 	export default {
 		name: "App",

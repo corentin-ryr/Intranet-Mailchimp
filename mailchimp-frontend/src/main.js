@@ -31,14 +31,34 @@ const store = new Vuex.Store({
 	},
 
 	actions: {
-		authAction({ commit }) {
+		async authAction({ commit }) {
 			firebase.auth().onAuthStateChanged((user) => {
+				console.log("ok1")
 				if (user) {
 					commit("setUser", user)
 				} else {
 					commit("setUser", null)
 				}
+
+				if (this.state.user) {
+					console.log("ok")
+
+					firebase
+						.auth()
+						.currentUser.getIdTokenResult()
+						.then((result) => {
+							commit("setClaims", result.claims)
+						})
+				}
 			})
+
+			// firebase.auth().onAuthStateChanged((user) => {
+			// 	if (user) {
+			// 		commit("setUser", user)
+			// 	} else {
+			// 		commit("setUser", null)
+			// 	}
+			// })
 		},
 
 		async signInAction({ commit }) {
@@ -62,6 +82,7 @@ const store = new Vuex.Store({
 					commit("setError", error.message)
 				})
 		},
+
 	},
 	getters: {
 		getUser(state) {
@@ -85,7 +106,6 @@ const store = new Vuex.Store({
 			}
 			return false
 		},
-
 		isUserModerator(state) {
 			// Confirm the user is an Admin.
 			if (state.user && state.claims.moderator) {
