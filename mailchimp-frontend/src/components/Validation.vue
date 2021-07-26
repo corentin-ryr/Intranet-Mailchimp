@@ -218,7 +218,7 @@
 														color="green"
 														outlined
 														depressed
-														@click="validateMRI(key.id, key['name'])"
+														@click="distributeMRI(key.id, key['name'])"
 													>
 														Valider
 													</v-btn>
@@ -417,6 +417,47 @@
 				}, 1500)
 
 				this.$router.go()
+			},
+
+            distributeMRI: async function(id, value) {
+				this.dialogValidation[value] = false //close dialog
+
+				this.backgroundColor = "background: #e54540"
+				this.overlayText = "MRI en cours de distribution ⚙️"
+
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				const distribute = this.$firebase.functions().httpsCallable("distributeCampaign")
+				var success = true
+				try {
+					await distribute({ id: id }) //Call the firebase function
+				} catch (error) {
+					console.log(error)
+					success = false
+				}
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+				if (success) {
+					this.loadingVisibility = false
+					this.overlayText = "MRI distribué ! ✅"
+				} else {
+					this.loadingVisibility = false
+					this.overlayText = "Une erreur s'est produite ⚠️"
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
+
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
+					this.closeOverlay(success)
+				}, 1500)
+
+				// this.$router.go()
 			},
 
 			closeOverlay: async function(success) {

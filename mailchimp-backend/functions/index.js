@@ -293,9 +293,11 @@ exports.distributeCampaign = functions.https.onCall(async (data, context) => {
 		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
 	}
 
-	if (!campaignToFetch.data().validationRespoCo || !campaignToFetch.data().validationSecGez) {
-	}
-
+    if (!campaignToFetch.data().validationRespoCo || !campaignToFetch.data().validationSecGez) {
+        throw new functions.https.HttpsError("permission-denied", "The campaign has not been validated.")
+    }
+    
+    console.log("test")
 	throw new functions.https.HttpsError("unimplemented") //TODO
 })
 
@@ -322,7 +324,6 @@ async function checkAndFormatData(data) {
 		!data.imageDomain ||
 		!data.imagePay ||
 		!data.imageDifficulty ||
-		//!data.formBoolean ||
 		(data.formBoolean == true && !data.formLink)
 	) {
 		throw new functions.https.HttpsError("invalid-argument", "Not all fields are filled.")
