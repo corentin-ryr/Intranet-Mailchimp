@@ -191,15 +191,11 @@
 
 											<v-card>
 												<v-card-title class="text-h5">
-													Confirmer la validation
+													Confirmer l'envoi
 												</v-card-title>
 
 												<v-card-text>
-													Merci de confirmer votre choix. Le MRI "{{ key['name'] }}" pourra être envoyé dès
-													qu'il aura obtenu la validation du Responsable Commercial et du
-													Secrétaire Général. Si le MRI est modifié avant d'être envoyé, il
-													devra être validé à nouveau par le Responsable Commercial et le
-													Secrétaire Général.
+													Confirmez vous l'envoi final du MRI "{{ key['name'] }}" à tous les intervenants enregistrés ? L'envoi est définitif et ne peut pas être annulé.
 												</v-card-text>
 
 												<v-divider></v-divider>
@@ -220,7 +216,7 @@
 														depressed
 														@click="distributeMRI(key.id, key['name'])"
 													>
-														Valider
+														Envoyer
 													</v-btn>
 												</v-card-actions>
 											</v-card>
@@ -233,6 +229,18 @@
 					</v-row>
 				</v-container>
 			</v-card>
+
+			<div>
+				<v-alert
+				class="ma-4"
+				text
+				type="info"
+				outlined
+				@click.native="infoPopupSendAgain"
+				>
+				Comment envoyer à nouveau un MRI que j'ai déjà envoyé ?
+				</v-alert>
+			</div>
 		</div>
 
 		<div class="intro" :style="backgroundColor">
@@ -423,15 +431,15 @@
 				this.dialogValidation[value] = false //close dialog
 
 				this.backgroundColor = "background: #e54540"
-				this.overlayText = "MRI en cours de distribution ⚙️"
+				this.overlayText = "MRI en cours de distribution 🚀"
 
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				const distribute = this.$firebase.functions().httpsCallable("distributeCampaign")
+				//UNDO const distribute = this.$firebase.functions().httpsCallable("distributeCampaign")
 				var success = true
 				try {
-					await distribute({ id: id }) //Call the firebase function
+					//UNDO await distribute({ id: id }) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -444,7 +452,7 @@
 
 				if (success) {
 					this.loadingVisibility = false
-					this.overlayText = "MRI distribué ! ✅"
+					this.overlayText = "MRI envoyé ! ✅"
 				} else {
 					this.loadingVisibility = false
 					this.overlayText = "Une erreur s'est produite ⚠️"
@@ -472,6 +480,10 @@
 					this.backgroundColor = "background: white"
 					this.loadingVisibility = true
 				}, 1500)
+			},
+
+			infoPopupSendAgain () {
+				alert("Les MRI qui sont validés puis envoyés définitivements ne peuvent pas être renvoyés depuis ce site. Pour cela, il faut se connecter à mailchimp.com avec le compte admin@telecom-etude.fr. En accédant à la liste des campagnes envoyées, il est possible d'en dupliquer une et de l'envoyer à nouveau. Il n'est cependant pas possible avec cette méthode de modifier le MRI à ré-envoyer. Pour cela, il faut créer et envoyer le MRI de zéro depuis ce site.")
 			},
 		},
 	}
