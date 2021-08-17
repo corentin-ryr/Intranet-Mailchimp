@@ -26,6 +26,21 @@
 			</div>
 		</v-expand-transition>
 
+		<div v-if="nothingToShow">
+			<v-alert
+			class="ma-4"
+			text
+			type="info"
+			outlined
+			>
+			Aucun MRI à afficher <br />
+			<p class="caption ma-0 pa-0">
+				Seuls les MRI non-envoyés à la liste de distribution s'affichent
+			</p>
+			
+			</v-alert>
+		</div>
+
 		<div v-if="!loadingVisibilityStart">
 			<v-card v-for="key in orderedCampaignsArray" v-bind:key="key.id" class="ma-4" outlined>
 				<v-container class="ma-0 pa-2">
@@ -143,6 +158,7 @@
 			loadingVisibilityStart: true,
 			previewHTML: "",
 			loadingPreviewVisibility: true,
+			nothingToShow: false,
 		}),
 
 		created() {
@@ -153,12 +169,24 @@
 			getMyCampaigns: async function() {
 				//Get campaign to modify
 				var getCampaigns = this.$firebase.functions().httpsCallable("getMyCampaigns")
-				const result = await getCampaigns()
-				this.campaigns = result.data
-				//console.log(result.data)
-				this.campaigns = result.data
-				this.orderCampaigns()
-				this.loadingVisibilityStart = false
+				var result = null
+				try{
+					result = await getCampaigns()
+				}
+				catch(error) {
+					console.log("No campaign to show")
+					this.loadingVisibilityStart = false
+					this.nothingToShow = true
+				}
+				
+				if (!this.nothingToShow){
+					this.campaigns = result.data
+					//console.log(result.data)
+					this.campaigns = result.data
+					this.orderCampaigns()
+					this.loadingVisibilityStart = false
+				}
+
 			},
 
 			orderCampaigns: function() {

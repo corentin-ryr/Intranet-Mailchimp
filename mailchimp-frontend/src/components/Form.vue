@@ -393,7 +393,7 @@
 				try {
 					const response = await getPreviewEmail(this.form) //Call the firebase function
 					this.previewHTML = response.data
-					console.log(this.previewHTML)
+					//console.log(this.previewHTML)
 					this.loadingPreviewVisibility = false
 				} catch (error) {
 					console.log(error)
