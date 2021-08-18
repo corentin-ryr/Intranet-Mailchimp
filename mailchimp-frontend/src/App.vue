@@ -106,6 +106,30 @@
 				<router-view></router-view>
 			</v-container>
 
+			<v-container v-if="!isUserAuth">
+				<v-card-title
+					style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
+					class="text-wrap pt-12 pb-8"
+				>
+					<h1>Mails de <br>Recherche <br>Intervenant</h1>
+				</v-card-title>
+
+				<v-alert
+					color="red"
+					outlined
+					text
+					type="info"
+					class="mx-4 mb-10"
+					icon="mdi-account-circle"
+					@click.native="signInAction"
+				>
+					Connectez vous pour commencer <br />
+					<p class="caption ma-0 pa-0">
+						Pour cela, utilisez votre compte Google Workspace associé à votre adresse <i>@telecom-etude.fr</i>
+					</p>
+				</v-alert>
+			</v-container>
+
 			<div>
 				<v-card class="mx-auto" width="400">
 					<v-row align="center" justify="space-around" class="ma-10">
