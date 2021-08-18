@@ -109,10 +109,10 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				//var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
-					//await createCampaign(this.form) //Call the firebase function
+					await createCampaign(this.form) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false
