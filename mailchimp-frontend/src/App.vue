@@ -131,35 +131,44 @@
 			</v-container>
 
 			<div>
-				<v-card class="mx-auto" width="400">
-					<v-row align="center" justify="space-around" class="ma-10">
-						<v-btn
-							text
-							color="red accent-4"
-							class="d-flex align-center my-1"
+				<v-card class="mx-auto mt-8" width="290">
+					<v-row align="center" justify="space-around" class="ma-2">
+						<v-chip
+							class="my-2"
+							color="#144fe3"
+							outlined
+							link
 							href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
-							width="100"
-						>
+							>
+							<v-icon left>
+								mdi-shield-account
+							</v-icon>
 							Corentin
-						</v-btn>
-						<v-btn
-							text
-							color="red accent-4"
-							class="d-flex align-center my-1"
+						</v-chip>
+						<v-chip
+							class="my-2"
+							color="#144fe3"
+							outlined
+							link
 							href="https://www.linkedin.com/in/hugo-queinnec/"
-							width="100"
-						>
+							>
+							<v-icon left>
+								mdi-shield-account
+							</v-icon>
 							Hugo
-						</v-btn>
-						<v-btn
-							text
-							color="blue accent-4"
-							class="d-flex align-center my-1"
+						</v-chip>
+						<v-chip
+							class="my-2"
+							color="black"
+							outlined
+							link
 							href="https://github.com/corentin-ryr/Intranet-Mailchimp"
-							width="100"
-						>
-							Github
-						</v-btn>
+							>
+							<v-icon left>
+								mdi-github
+							</v-icon>
+							GitHub
+						</v-chip>
 					</v-row>
 				</v-card>
 			</div>
