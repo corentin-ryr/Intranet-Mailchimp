@@ -204,6 +204,7 @@
 					auto-grow
 					outlined
 					:rules="emailRules"
+					@click.native="infoPopupEmail"
 				/>
 
 				<div class="text-center pb-2">
@@ -337,6 +338,7 @@
 			enabled: false,
 			isValid: true,
 			loadingPreviewVisibility: true,
+			showPopupEmail: true,
 			// overlayText: "Votre MRI s'envoie",
 			// loadingVisibility: true,
 
@@ -347,7 +349,7 @@
 					/^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@((telecom-paris\.fr)|(telecom-etude\.fr))(,([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-paris\.fr|telecom-etude\.fr))*$/.test(
 						v
 					) ||
-					"Adresses prenom.nom@telecom-etude.fr et prenom.nom@telecom-paris.fr uniquement",
+					"Adresses prenom.nom@telecom-etude.fr (recommandé) ou prenom.nom@telecom-paris.fr uniquement",
 			],
 
 			previewHTML: "",
@@ -398,6 +400,13 @@
 				} catch (error) {
 					console.log(error)
 				}
+			},
+			infoPopupEmail () {
+				if (this.showPopupEmail){
+					this.showPopupEmail=false
+					alert("Il est fortement recommandé d'utiliser des adresses mail @telecom-etude.fr. Les MRI apparaîtront alors dans la section \"Mes MRI\" et pourront être ultérieurement modifés. Le suivi de la validation de chaque MRI sera également visible.")
+				}
+				
 			},
 		},
 	}
