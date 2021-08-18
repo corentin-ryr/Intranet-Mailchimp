@@ -84,6 +84,10 @@
 			},
 		}),
 
+		created() {
+			this.form.contactList = [this.getUser["email"]]
+		},
+
 		methods: {
 			checkAuthentification: async function() {
 				//is the user logged in ?
@@ -154,7 +158,7 @@
 			...mapActions(["authAction", "signInAction", "signOutAction"]),
 		},
 		computed: {
-			...mapGetters(["user", "moderator", "admin", "isUserAuth"]),
+			...mapGetters(["getUser", "isUserModerator", "isUserAdmin", "isUserAuth", "getDisplayName"]),
 		},
 	}
 </script>
