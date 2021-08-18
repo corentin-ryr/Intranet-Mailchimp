@@ -14,7 +14,7 @@
 			<h3>Rédiger un nouveau MRI</h3>
 		</v-card-title>
 
-		<Form v-bind:form.sync="this.form" v-on:submit="this.checkAuthentification"></Form>
+		<Form ref="globalFormRef" v-bind:form.sync="this.form" v-on:submit="this.checkAuthentification"></Form>
 
 		<div class="intro" :style="backgroundColor">
 			<!-- This div contains the elements for the animation sequence on form sending  -->
@@ -66,6 +66,8 @@
 			backgroundColor: "background: white",
 
 			// Name of the form data
+			formDefault: {},
+
 			form: {
 				contentTitle: "",
 				contentFirstDescription: "Nous vous proposons aujourd'hui une étude de ...",
@@ -86,6 +88,7 @@
 
 		created() {
 			this.form.contactList = [this.getUser["email"]]
+			Object.assign(this.formDefault, this.form);
 		},
 
 		methods: {
@@ -106,10 +109,10 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
+				//var createCampaign = this.$firebase.functions().httpsCallable("createCampaignAndSendTestEmail")
 				var success = true
 				try {
-					await createCampaign(this.form) //Call the firebase function
+					//await createCampaign(this.form) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -141,10 +144,9 @@
 				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
 
 				if (success) {
-					for (let field in this.form) {
-						this.form[field] = ""
-					}
-					this.$refs.mailFormRef.reset()
+					Object.assign(this.form, this.formDefault);
+					this.$refs.globalFormRef.$refs.mailFormRef.resetValidation()
+
 				} else {
 					//Add a hint message to help the user correct its mistakes
 					console.log("here is what you need to do...")
