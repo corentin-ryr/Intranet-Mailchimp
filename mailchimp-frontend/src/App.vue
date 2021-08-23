@@ -106,39 +106,72 @@
 				<router-view></router-view>
 			</v-container>
 
-		<div>
-			<v-card class="mx-auto" width="400">
-				<v-row align="center" justify="space-around" class="ma-10">
-					<v-btn
-						text
-						color="red accent-4"
-						class="d-flex align-center my-1"
-						href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
-						width="100"
-					>
-						Corentin
-					</v-btn>
-					<v-btn
-						text
-						color="red accent-4"
-						class="d-flex align-center my-1"
-						href="https://www.linkedin.com/in/hugo-queinnec/"
-						width="100"
-					>
-						Hugo
-					</v-btn>
-					<v-btn
-						text
-						color="blue accent-4"
-						class="d-flex align-center my-1"
-						href="https://github.com/corentin-ryr/Intranet-Mailchimp"
-						width="100"
-					>
-						Github
-					</v-btn>
-				</v-row>
-			</v-card>
-		</div>
+			<v-container v-if="!isUserAuth">
+				<v-card-title
+					style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
+					class="text-wrap pt-12 pb-8"
+				>
+					<h1>Mails de <br>Recherche <br>Intervenant</h1>
+				</v-card-title>
+
+				<v-alert
+					color="red"
+					outlined
+					text
+					type="info"
+					class="mx-4 mb-10"
+					icon="mdi-account-circle"
+					@click.native="signInAction"
+				>
+					Connectez vous pour commencer <br />
+					<p class="caption ma-0 pa-0">
+						Pour cela, utilisez votre compte Google Workspace associé à votre adresse <i>@telecom-etude.fr</i>
+					</p>
+				</v-alert>
+			</v-container>
+
+			<div>
+				<v-card class="mx-auto mt-8" width="290">
+					<v-row align="center" justify="space-around" class="ma-2">
+						<v-chip
+							class="my-2"
+							color="#144fe3"
+							outlined
+							link
+							href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
+							>
+							<v-icon left>
+								mdi-shield-account
+							</v-icon>
+							Corentin
+						</v-chip>
+						<v-chip
+							class="my-2"
+							color="#144fe3"
+							outlined
+							link
+							href="https://www.linkedin.com/in/hugo-queinnec/"
+							>
+							<v-icon left>
+								mdi-shield-account
+							</v-icon>
+							Hugo
+						</v-chip>
+						<v-chip
+							class="my-2"
+							color="black"
+							outlined
+							link
+							href="https://github.com/corentin-ryr/Intranet-Mailchimp"
+							>
+							<v-icon left>
+								mdi-github
+							</v-icon>
+							GitHub
+						</v-chip>
+					</v-row>
+				</v-card>
+			</div>
 
 		</v-main>
 		<v-footer id="UI" app>

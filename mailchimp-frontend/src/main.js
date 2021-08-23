@@ -33,7 +33,7 @@ const store = new Vuex.Store({
 	actions: {
 		async authAction({ commit }) {
 			firebase.auth().onAuthStateChanged((user) => {
-				console.log("ok1")
+				//console.log("ok1")
 				if (user) {
 					commit("setUser", user)
 				} else {
@@ -41,7 +41,7 @@ const store = new Vuex.Store({
 				}
 
 				if (this.state.user) {
-					console.log("ok")
+					//console.log("ok")
 
 					firebase
 						.auth()
