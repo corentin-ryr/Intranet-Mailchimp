@@ -298,7 +298,14 @@ exports.distributeCampaign = functions.https.onCall(async (data, context) => {
     }
     
     console.log("test")
-	throw new functions.https.HttpsError("unimplemented") //TODO
+
+    try {
+        await mailchimp.campaigns.send(data.id)
+    } catch (error) {
+        throw new functions.https.HttpsError("internal", "Error with mailchimp.")
+    }
+    
+	// throw new functions.https.HttpsError("unimplemented") //TODO
 })
 
 //#endregion
