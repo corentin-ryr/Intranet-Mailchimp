@@ -43,13 +43,71 @@
 
 		<div v-if="!loadingVisibilityStart">
 			<v-card v-for="key in orderedCampaignsArray" v-bind:key="key.id" class="ma-4" outlined>
-				<v-container class="ma-0 pa-2">
+
+				<div style="display: flex; justify-content: flex-end" class="ma-0 pa-0">
+					<template>
+						<div class="text-center">
+							<v-dialog width="500" v-model="dialogDelete[key['name']]">
+								<template v-slot:activator="{ on, attrs }">
+									<v-btn
+										class="ma-1 pa-0"
+										color="grey"
+										icon
+										x-small
+										v-bind="attrs"
+										v-on="on"
+									>
+										<v-icon
+											>mdi-window-close
+										</v-icon>
+									</v-btn>
+								</template>
+
+								<v-card>
+									<v-card-title class="text-h5">
+										Confirmer la suppression
+									</v-card-title>
+
+									<v-card-text>
+										Merci de confirmer votre choix. Le MRI "{{ key['name'] }}" sera supprimé de ce site de manière irréversible. Attention, la campagne associée sur mailchimp.com ne sera pas supprimée.
+									</v-card-text>
+
+									<v-divider></v-divider>
+
+									<v-card-actions>
+										<v-spacer></v-spacer>
+										<v-btn
+											color="red"
+											outlined
+											depressed
+											@click="dialogDelete[key['name']] = false"
+										>
+											Annuler
+										</v-btn>
+										<v-btn
+											color="green"
+											outlined
+											depressed
+											@click="deleteMRI(key.id, key['name'])"
+										>
+											Supprimer
+										</v-btn>
+									</v-card-actions>
+								</v-card>
+							</v-dialog>
+						</div>
+					</template>
+				</div>
+
+				<v-container class="ma-0 pa-2 pt-0 mt-n4">
 					<v-row no-gutters>
+
 						<v-col cols="12" sm="7" md="8">
-							<p class="pa-1 ma-0">
+							<p class="py-1 px-3 ma-0">
 								{{ key['name'] }}
 							</p>
 						</v-col>
+
 						<v-col cols="12" sm="5" md="4">
 							<div style="display: flex; justify-content: center" class="pa-1 mb-0 pb-0">
 								<p style="color: grey" class="ma-0 pa-0">{{ getValidationText(key.validationRespoCo, key.validationSecGez) }}</p>
@@ -83,7 +141,7 @@
 											v-on:click="createPreviewHTML(key.id)"
 											aria-label="Preview button"
 										>
-											<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);"
+											<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
 												>Lire</span
 											>
 										</v-btn>
@@ -123,7 +181,7 @@
 									depressed
 									v-on:click="editCampaign(key.id)"
 								>
-									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);"
+									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
 										>Modifier</span
 									>
 								</v-btn>
@@ -141,7 +199,7 @@
 													v-on="on"
 												>
 													<span
-														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);"
+														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
 														>Valider</span
 													>
 												</v-btn>
@@ -198,7 +256,7 @@
 													v-on="on"
 												>
 													<span
-														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);"
+														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
 														>Envoyer</span
 													>
 												</v-btn>
@@ -300,6 +358,7 @@
 			previewHTML: "",
 			loadingPreviewVisibility: true,
 			dialogValidation: [],
+			dialogDelete: [],
 
 			overlayText: "",
 			backgroundColor: "white",
@@ -480,6 +539,47 @@
 				if (success) {
 					this.loadingVisibility = false
 					this.overlayText = "MRI envoyé ! ✅"
+				} else {
+					this.loadingVisibility = false
+					this.overlayText = "Une erreur s'est produite ⚠️"
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
+
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
+					this.closeOverlay(success)
+				}, 1500)
+
+				this.$router.go()
+			},
+
+			deleteMRI: async function(id, value) {
+				this.dialogDelete[value] = false //close dialog
+
+				this.backgroundColor = "background: #e54540"
+				this.overlayText = "MRI en cours de suppression ♻️"
+
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				//const delete = this.$firebase.functions().httpsCallable("deleteCampaign")
+				var success = true
+				try {
+					//await delete({ id: id }) //Call the firebase function
+				} catch (error) {
+					console.log(error)
+					success = false
+				}
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+				if (success) {
+					this.loadingVisibility = false
+					this.overlayText = "MRI supprimé ! 🚮"
 				} else {
 					this.loadingVisibility = false
 					this.overlayText = "Une erreur s'est produite ⚠️"
