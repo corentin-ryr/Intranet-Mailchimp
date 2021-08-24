@@ -69,7 +69,7 @@
 									</v-card-title>
 
 									<v-card-text>
-										Merci de confirmer votre choix. Le MRI "{{ key['name'] }}" sera supprimé de ce site de manière irréversible. Attention, la campagne associée sur mailchimp.com ne sera pas supprimée.
+										Le MRI <i>"{{ key['name'] }}"</i> sera <b>supprimé</b> de ce site de manière irréversible. Attention, la campagne associée sur mailchimp.com ne sera pas supprimée.
 									</v-card-text>
 
 									<v-divider></v-divider>
@@ -77,7 +77,7 @@
 									<v-card-actions>
 										<v-spacer></v-spacer>
 										<v-btn
-											color="red"
+											color="grey"
 											outlined
 											depressed
 											@click="dialogDelete[key['name']] = false"
@@ -85,7 +85,7 @@
 											Annuler
 										</v-btn>
 										<v-btn
-											color="green"
+											color="red"
 											outlined
 											depressed
 											@click="deleteMRI(key.id, key['name'])"
@@ -211,8 +211,8 @@
 												</v-card-title>
 
 												<v-card-text>
-													Merci de confirmer votre choix. Le MRI "{{ key['name'] }}" pourra être envoyé dès
-													qu'il aura obtenu la validation du Responsable Commercial et du
+													Le MRI <i>"{{ key['name'] }}"</i> pourra être envoyé dès
+													qu'il aura obtenu la <b>validation</b> du Responsable Commercial et du
 													Secrétaire Général. Toute modification du MRI par un membre nécessitera la nouvelle validation du MRI par l'autre.
 												</v-card-text>
 
@@ -266,7 +266,7 @@
 												</v-card-title>
 
 												<v-card-text>
-													Confirmez vous l'envoi final du MRI "{{ key['name'] }}" à tous les intervenants enregistrés ? L'envoi est définitif et ne peut pas être annulé.
+													Confirmez vous l'<b>envoi final</b> du MRI <i>"{{ key['name'] }}"</i> à tous les intervenants enregistrés ? L'envoi est définitif et ne peut pas être annulé.
 												</v-card-text>
 
 												<v-divider></v-divider>
