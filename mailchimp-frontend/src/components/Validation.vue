@@ -33,7 +33,7 @@
 			type="info"
 			outlined
 			>
-			Aucun MRI à afficher <br />
+			Aucun MRI à valider <br />
 			<p class="caption ma-0 pa-0">
 				Seuls les MRI non-envoyés à la liste de distribution s'affichent
 			</p>
@@ -213,9 +213,7 @@
 												<v-card-text>
 													Merci de confirmer votre choix. Le MRI "{{ key['name'] }}" pourra être envoyé dès
 													qu'il aura obtenu la validation du Responsable Commercial et du
-													Secrétaire Général. Si le MRI est modifié avant d'être envoyé, il
-													devra être validé à nouveau par le Responsable Commercial et le
-													Secrétaire Général.
+													Secrétaire Général. Toute modification du MRI par un membre nécessitera la nouvelle validation du MRI par l'autre.
 												</v-card-text>
 
 												<v-divider></v-divider>
@@ -510,7 +508,8 @@
 					this.closeOverlay(success)
 				}, 1500)
 
-				this.$router.go()
+				this.loadingVisibilityStart = true
+				this.getCampaignsToValidate()
 			},
 
             distributeMRI: async function(id, value) {
@@ -551,7 +550,8 @@
 					this.closeOverlay(success)
 				}, 1500)
 
-				this.$router.go()
+				this.loadingVisibilityStart = true
+				this.getCampaignsToValidate()
 			},
 
 			deleteMRI: async function(id, value) {
@@ -592,7 +592,8 @@
 					this.closeOverlay(success)
 				}, 1500)
 
-				this.$router.go()
+				this.loadingVisibilityStart = true
+				this.getCampaignsToValidate()
 			},
 
 			closeOverlay: async function(success) {
