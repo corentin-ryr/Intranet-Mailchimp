@@ -463,10 +463,10 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				//UNDO const distribute = this.$firebase.functions().httpsCallable("distributeCampaign")
+				const distribute = this.$firebase.functions().httpsCallable("distributeCampaign")
 				var success = true
 				try {
-					//UNDO await distribute({ id: id }) //Call the firebase function
+					await distribute({ id: id }) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false
@@ -492,7 +492,7 @@
 					this.closeOverlay(success)
 				}, 1500)
 
-				// this.$router.go()
+				this.$router.go()
 			},
 
 			closeOverlay: async function(success) {
