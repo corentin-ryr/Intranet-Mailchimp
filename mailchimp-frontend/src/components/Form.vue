@@ -14,7 +14,7 @@
 					<v-card-title
 						v-if="this.campaignId != null"
 						style="font-family: 'Avenir Next Regular'; justify-content: center; align-items: center;"
-						class="text-wrap pt-0 pb-7"
+						class="text-wrap pt-3 pb-5 pl-4"
 					>
 						<h3>n° {{ this.campaignId }}</h3>
 					</v-card-title>
@@ -207,7 +207,7 @@
 					@click.native="infoPopupEmail"
 				/>
 
-				<div class="text-center pb-2">
+				<div class="text-center mb-5">
 					<v-dialog height="90%" width="90%">
 						<template v-slot:activator="{ on, attrs }">
 							<v-btn
@@ -414,10 +414,6 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-	div {
-		margin-bottom: 10px;
-	}
-
 	.v-text-field {
 		width: 100%;
 	}
