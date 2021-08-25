@@ -97,6 +97,28 @@
 					<span style="font-family: 'Avenir Next Regular'">Révoquer tous les accès</span>
 				</v-btn>
 		</v-card>
+
+
+		<div class="intro" :style="backgroundColor">
+			<!-- This div contains the elements for the animation sequence on form sending  -->
+			<div class="intro-text" style="padding: 10% 10%">
+				<h1 class="hide">
+					<span class="text" id="text">{{ overlayText }}</span>
+				</h1>
+				<v-progress-linear
+					aria-label="Progress bar"
+					v-if="loadingVisibility"
+					class="my-8"
+					color="white"
+					indeterminate
+					rounded
+					align="center"
+					height="6"
+					width="6"
+				></v-progress-linear>
+			</div>
+		</div>
+
 	</div>
 </template>
 
@@ -107,6 +129,10 @@
      * This shold be done every year when the new team arrives.
      * @example [none]
 	 */
+
+	import gsap from "gsap"
+	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
+
 	export default {
 		name: "Admin",
 
@@ -121,22 +147,56 @@
 				(v) =>
 					/^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)@(telecom-etude\.fr)$/.test(v) || "Adresse prenom.nom@telecom-etude.fr uniquement",
 			],
+
+			//Other variables
+			overlayText: "",
+			loadingVisibility: true,
+
+			backgroundColor: "background: white",
 		}),
 
 		methods: {
 
 			addUserToModerator: async function() {
-				//Get campaign to modify
+				this.backgroundColor = "background: #e54540"
+				this.overlayText = "Modérateur en cours d'ajout 📨"
+
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
 				//var addUserToModerator = this.$firebase.functions().httpsCallable("addUserToModerator")
+				var success = true
 				try {
 					//const result = await addUserToModerator({ email: this.email, role: this.role })
 					//console.log(result)
 				} catch (error) {
-					//console.log(error)
+					console.log(error)
+					success = false
 				}
 				console.log("user added " + this.email + this.role)
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+				if (success) {
+					this.loadingVisibility = false
+					this.overlayText = "Modérateur ajouté ! ✅"
+				} else {
+					this.loadingVisibility = false
+					this.overlayText = "Une erreur s'est produite ⚠️"
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
+
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
+					this.closeOverlay1(success)
+				}, 1500)
+
 			},
+
 			revokeUsers: async function() {
 				//Get campaign to modify
 				
@@ -145,10 +205,56 @@
 				//console.log(result)
 				console.log("revoked")
 			},
-		},
+
+			closeOverlay1: async function(success) {
+				tl.to(".text", { y: "-100%", duration: 1 })
+				tl.to(".intro", { y: "100%", duration: 1 }, "-=0.5")
+
+				if (success) {
+					this.$refs.adminFormRef.reset()
+
+				} else {
+					//Add a hint message to help the user correct its mistakes
+					console.log("here is what you need to do...")
+				}
+				setTimeout(() => {
+					this.backgroundColor = "background: white"
+					this.loadingVisibility = true
+				}, 1500)
+			},		},
 	}
 </script>
 
-<style>
+<style scoped>
+	div {
+		margin-bottom: 10px;
+	}
 
+	.intro {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 5;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transform: translateY(-100%);
+	}
+	.intro-text {
+		color: white;
+		font-family: "Avenir Next Regular";
+		font-size: xx-large;
+	}
+	.hide {
+		overflow: hidden;
+	}
+	.hide span {
+		transform: translateY(100%);
+		display: inline-block;
+	}
+	.v-card__text, .v-card__title {
+	word-break: normal; /* maybe !important  */
+	}
 </style>
