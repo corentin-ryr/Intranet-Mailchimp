@@ -15,59 +15,56 @@
 
 			<template v-if="isUserAuth">
 				<router-link to="/">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on, attrs }">
-					<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
-						<v-icon>mdi-plus-circle</v-icon>
-					</v-btn>
-					</template>
-					<span>Nouveau MRI</span>
-				</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
+								<v-icon>mdi-plus-circle</v-icon>
+							</v-btn>
+						</template>
+						<span>Nouveau MRI</span>
+					</v-tooltip>
 				</router-link>
 			</template>
 
 			<template v-if="isUserAdmin">
 				<router-link to="/admin">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on, attrs }">
-					<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
-						<v-icon>mdi-cog</v-icon>
-					</v-btn>
-					</template>
-					<span>Administrateur</span>
-				</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
+								<v-icon>mdi-cog</v-icon>
+							</v-btn>
+						</template>
+						<span>Administrateur</span>
+					</v-tooltip>
 				</router-link>
 			</template>
 
 			<template v-if="isUserModerator || isUserAdmin">
 				<router-link to="/validation">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on, attrs }">
-					<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
-						<v-icon>mdi-check-decagram</v-icon>
-					</v-btn>
-					</template>
-					<span>Validation</span>
-				</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn class="clickable" color="#e54540" icon large v-bind="attrs" v-on="on">
+								<v-icon>mdi-check-decagram</v-icon>
+							</v-btn>
+						</template>
+						<span>Validation</span>
+					</v-tooltip>
 				</router-link>
 			</template>
 
 			<template v-if="isUserAuth">
 				<router-link to="/myCampaigns">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on, attrs }">
-					<v-btn class="clickable mr-2" color="#e54540" icon large v-bind="attrs" v-on="on">
-						<v-icon>mdi-email</v-icon>
-					</v-btn>
-					</template>
-					<span>Mes MRI</span>
-				</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn class="clickable mr-2" color="#e54540" icon large v-bind="attrs" v-on="on">
+								<v-icon>mdi-email</v-icon>
+							</v-btn>
+						</template>
+						<span>Mes MRI</span>
+					</v-tooltip>
 				</router-link>
 
-				<v-divider
-					inset
-					vertical
-				></v-divider>
+				<v-divider inset vertical></v-divider>
 
 				<v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
 					<template v-slot:activator="{ on, attrs }">
@@ -104,6 +101,7 @@
 			<!-- Provides the application the proper gutter -->
 			<v-container v-if="isUserAuth">
 				<router-view></router-view>
+				<h1>{{ isUserRespoCo }}</h1>
 			</v-container>
 
 			<v-container v-if="!isUserAuth">
@@ -111,7 +109,7 @@
 					style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
 					class="text-wrap pt-12 pb-8"
 				>
-					<h1>Mails de <br>Recherche <br>Intervenant</h1>
+					<h1>Mails de <br />Recherche <br />Intervenant</h1>
 				</v-card-title>
 
 				<v-alert
@@ -125,7 +123,8 @@
 				>
 					Connectez vous pour commencer <br />
 					<p class="caption ma-0 pa-0">
-						Pour cela, utilisez votre compte Google Workspace associé à votre adresse <i>@telecom-etude.fr</i>
+						Pour cela, utilisez votre compte Google Workspace associé à votre adresse
+						<i>@telecom-etude.fr</i>
 					</p>
 				</v-alert>
 			</v-container>
@@ -139,7 +138,7 @@
 							outlined
 							link
 							href="https://www.linkedin.com/in/corentin-royer-a67a90159/"
-							>
+						>
 							<v-icon left>
 								mdi-shield-account
 							</v-icon>
@@ -151,7 +150,7 @@
 							outlined
 							link
 							href="https://www.linkedin.com/in/hugo-queinnec/"
-							>
+						>
 							<v-icon left>
 								mdi-shield-account
 							</v-icon>
@@ -163,7 +162,7 @@
 							outlined
 							link
 							href="https://github.com/corentin-ryr/Intranet-Mailchimp"
-							>
+						>
 							<v-icon left>
 								mdi-github
 							</v-icon>
@@ -172,7 +171,6 @@
 					</v-row>
 				</v-card>
 			</div>
-
 		</v-main>
 		<v-footer id="UI" app>
 			<v-card id="gradient" class="d-flex align-center ma-2 rounded-lg clickable" elevation="0" max-height="35">
@@ -189,7 +187,6 @@
 <script>
 	import { mapGetters, mapActions } from "vuex"
 
-
 	export default {
 		name: "App",
 
@@ -201,7 +198,15 @@
 			...mapActions(["authAction", "signInAction", "signOutAction"]),
 		},
 		computed: {
-			...mapGetters(["getUser", "isUserModerator", "isUserAdmin", "isUserAuth", "getDisplayName", "isUserSecGez", "isUserRespoCo"]),
+			...mapGetters([
+				"getUser",
+				"isUserModerator",
+				"isUserAdmin",
+				"isUserAuth",
+				"getDisplayName",
+				"isUserSecGez",
+				"isUserRespoCo",
+			]),
 		},
 		mounted() {
 			this.authAction()
