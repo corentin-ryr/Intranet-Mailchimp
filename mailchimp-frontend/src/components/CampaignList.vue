@@ -35,7 +35,7 @@
 			>
 			Aucun MRI à afficher <br />
 			<p class="caption ma-0 pa-0">
-				Seuls les MRI non-envoyés à la liste de distribution s'affichent
+				Seuls les MRI où votre adresse @telecom-etude.fr est mentionnée apparaissent
 			</p>
 			
 			</v-alert>
@@ -53,7 +53,7 @@
 						<v-col cols="12" sm="5" md="4">
 							<div style="display: flex; justify-content: center" class="pa-1 mb-0 pb-0">
 								<p style="color: grey" class="ma-0 pa-0">
-									{{ getValidationText(key.validationRespoCo, key.validationSecGez) }}
+									{{ getValidationText(key.validationRespoCo, key.validationSecGez, key.isDistributed) }}
 								</p>
 							</div>
 
@@ -62,7 +62,7 @@
 									<div style="display: flex; justify-content: center" class="ma-0 pa-0">
 										<v-progress-linear
 											:value="
-												getValidationPercentage(key.validationRespoCo, key.validationSecGez)
+												getValidationPercentage(key.validationRespoCo, key.validationSecGez, key.isDistributed)
 											"
 											class="ma-2 mb-3 mt-1"
 											background-color="#d9d9d9"
@@ -126,6 +126,7 @@
 									outlined
 									depressed
 									v-on:click="editCampaign(key.id)"
+									v-if="!key.isDistributed"
 								>
 									<span style="font-family: 'Avenir Next Regular';font-size: min(3vw, 14px);"
 										>Modifier</span
@@ -210,7 +211,7 @@
 				this.$router.push({ path: `/editCampaign/${id}` })
 			},
 
-			getValidationPercentage: function(boolRespoCo, boolSecGez) {
+			getValidationPercentage: function(boolRespoCo, boolSecGez, isDistributed) {
 				var count = 0
 				if (boolRespoCo) {
 					count += 1
@@ -220,20 +221,32 @@
 				}
 
 				if (count == 0) {
-					return 20
+					return 10
 				}
 				if (count == 1) {
-					return 60
+					return 40
 				}
 				if (count == 2) {
-					return 100
+					if (isDistributed){
+						return 100
+					}
+					else {
+						return 70
+					}
+					
 				}
 			},
 
-			getValidationText: function(boolRespoCo, boolSecGez) {
+			getValidationText: function(boolRespoCo, boolSecGez, isDistributed) {
 				var text = ""
 				if (boolRespoCo && boolSecGez) {
-					text = "Validé !"
+					if (isDistributed){
+						text = "Envoyé ✅"
+					}
+					else{
+						text = "Validé, en attente d'envoi"
+					}
+					
 				}
 				if (boolRespoCo && !boolSecGez) {
 					text = "Validation en attente du SG"
