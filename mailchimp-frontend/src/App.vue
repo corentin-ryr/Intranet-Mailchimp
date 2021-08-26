@@ -201,7 +201,7 @@
 			...mapActions(["authAction", "signInAction", "signOutAction"]),
 		},
 		computed: {
-			...mapGetters(["getUser", "isUserModerator", "isUserAdmin", "isUserAuth", "getDisplayName"]),
+			...mapGetters(["getUser", "isUserModerator", "isUserAdmin", "isUserAuth", "getDisplayName", "isUserSecGez", "isUserRespoCo"]),
 		},
 		mounted() {
 			this.authAction()

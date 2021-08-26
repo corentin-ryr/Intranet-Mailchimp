@@ -51,14 +51,6 @@ const store = new Vuex.Store({
 						})
 				}
 			})
-
-			// firebase.auth().onAuthStateChanged((user) => {
-			// 	if (user) {
-			// 		commit("setUser", user)
-			// 	} else {
-			// 		commit("setUser", null)
-			// 	}
-			// })
 		},
 
 		async signInAction({ commit }) {
@@ -114,6 +106,20 @@ const store = new Vuex.Store({
 				return false
 			}
 		},
+        isUserSecGez(state) {
+            if (state.user && state.claims.SecGez) {
+				return true
+			} else {
+				return false
+			}
+        },
+        isUserRespoCo(state) {
+            if (state.user && state.claims.RespoCo) {
+				return true
+			} else {
+				return false
+			}
+        },
 	},
 	mutations: {
 		setUser(state, payload) {
