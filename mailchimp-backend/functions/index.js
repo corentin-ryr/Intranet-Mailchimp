@@ -134,13 +134,14 @@ exports.getCampaignsToValidate = functions.https.onCall(async (data, context) =>
 
 	// campaignsToValidateNames = { ...campaignsToValidateNamesRespoCom, ...campaignsToValidateNamesSecGe } // Union of the twe sets
 
-    var campaingsNotDistributedNames = {}
+	var campaingsNotDistributedNames = {}
 	campaignsNotDistributed.forEach((campaign) => {
 		campaingsNotDistributedNames[campaign.data().contentTitle] = {
 			id: campaign.id,
 			time: campaign.data().timeStamp,
 			validationRespoCo: campaign.data().validationRespoCo,
 			validationSecGez: campaign.data().validationSecGez,
+			isDistributed: campaign.data().isDistributed,
 		}
 	})
 
@@ -172,6 +173,7 @@ exports.getMyCampaigns = functions.https.onCall(async (data, context) => {
 			time: campaign.data().timeStamp,
 			validationRespoCo: campaign.data().validationRespoCo,
 			validationSecGez: campaign.data().validationSecGez,
+			isDistributed: campaign.data().isDistributed,
 		}
 	})
 
@@ -293,19 +295,42 @@ exports.distributeCampaign = functions.https.onCall(async (data, context) => {
 		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
 	}
 
-    if (!campaignToFetch.data().validationRespoCo || !campaignToFetch.data().validationSecGez) {
-        throw new functions.https.HttpsError("permission-denied", "The campaign has not been validated.")
-    }
-    
-    console.log("test")
+	if (!campaignToFetch.data().validationRespoCo || !campaignToFetch.data().validationSecGez) {
+		throw new functions.https.HttpsError("permission-denied", "The campaign has not been validated.")
+	}
 
-    try {
-        await mailchimp.campaigns.send(data.id)
-    } catch (error) {
-        throw new functions.https.HttpsError("internal", "Error with mailchimp.")
-    }
-    
-	// throw new functions.https.HttpsError("unimplemented") //TODO
+	try {
+		const result = await mailchimp.campaigns.send(data.id)
+	} catch (error) {
+		throw new functions.https.HttpsError("internal", "Error with mailchimp.")
+	}
+
+	await db.collection("campaigns").doc(data.id).update({ isDistributed: true })
+})
+
+exports.deleteCampaign = functions.https.onCall(async (data, context) => {
+	const campaigns_ref = db.collection("campaigns")
+	var campaignToFetch
+	try {
+		campaignToFetch = await campaigns_ref.doc(data).get()
+	} catch (error) {
+		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
+	}
+
+	var data = campaignToFetch.data()
+
+	if (!hasModeratorRole(context) && !data.contactList.includes(context.auth.token.email)) {
+		throw new functions.https.HttpsError(
+			"unauthenticated",
+			"The function must be called while authenticated as someone who has access to the campaign."
+		)
+	}
+
+	throw new functions.https.HttpsError(
+		"unimplemented",
+		"If you receive this error, it means that your campaign would have been correctly deleted if the function was implemented"
+	)
+	// await campaigns_ref.doc(data).delete()
 })
 
 //#endregion
