@@ -212,6 +212,7 @@
 													depressed
 													v-bind="attrs"
 													v-on="on"
+													:disabled="disableValidationButton(key.validationRespoCo, key.validationSecGez)"
 												>
 													<span
 														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
@@ -409,10 +410,29 @@
 
 				return text
 			},
+
 		},
 
 		methods: {
 			...mapActions(["authAction", "signInAction", "signOutAction"]),
+
+			disableValidationButton: function(validationRespoCo, validationSecGez) {
+				var validation = false
+				if (this.isUserRespoCo) {
+					if (validationRespoCo){
+						validation = true
+					}
+				}
+				else if (this.isUserSecGez) {
+					if(validationSecGez){
+						validation = true
+					}
+				}
+				else {
+					validation = true
+				}
+				return validation
+			},
 
 			getCampaignsToValidate: async function() {
 				//Get campaign to modify
