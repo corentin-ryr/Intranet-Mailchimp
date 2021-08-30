@@ -56,13 +56,13 @@
 					</v-row>
 				</v-container>
 
-				<v-card-actions>
-					<v-tooltip bottom max-width="400">
+				<v-card-actions ma-0 pa-0>
+					<v-tooltip bottom max-width="400" ma-0 pa-0>
 						<template v-slot:activator="{ on, attrs }">
 							<v-btn
 								type="submit"
 								form="adminForm"
-								class="mx-auto my-0 white--text"
+								class="mx-auto mt-0 mb-5 white--text"
 								:disabled="!isValid"
 								color="green"
 								depressed
@@ -86,6 +86,71 @@
 			>
 				<h4>Supprimer les modérateurs</h4>
 			</v-card-title>
+
+			<v-alert
+				outlined
+				text
+				type="error"
+				class="mx-4 mt-3 mb-6"
+				@click.native="signInAction"
+			>
+				Connectez vous pour commencer <br />
+				<p class="caption ma-0 pa-0">
+					Pour cela, utilisez votre compte Google Workspace associé à votre adresse
+					<i>@telecom-etude.fr</i>
+				</p>
+			</v-alert>
+
+									<div class="text-center">
+										<v-dialog width="500" v-model="dialogValidationBool">
+											<template v-slot:activator="{ on, attrs }">
+												<v-btn
+													class="mx-1 pa-1 white--text"
+													color="red"
+													depressed
+													v-bind="attrs"
+													v-on="on"
+												>
+													<span
+														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
+														>Révoquer tous les accès</span
+													>
+												</v-btn>
+											</template>
+
+											<v-card>
+												<v-card-title class="text-h5">
+													Confirmer la suppression
+												</v-card-title>
+
+												<v-card-text>
+													Confirmez vous vouloir supprimer tous les accès aux fonctions de validation sur ce site ? Pour revenir en arrière, il faudra ajouter un par un chacune des adresses email @telecom-etude.fr des modérateurs dans la partie <i>Ajouter un modérateur</i>.
+												</v-card-text>
+
+												<v-divider></v-divider>
+
+												<v-card-actions>
+													<v-spacer></v-spacer>
+													<v-btn
+														color="grey"
+														outlined
+														depressed
+														@click="dialogValidationBool = false"
+													>
+														Annuler
+													</v-btn>
+													<v-btn
+														color="red"
+														outlined
+														depressed
+														@click="distributeMRI(key.id, key['name'])"
+													>
+														Tout révoquer
+													</v-btn>
+												</v-card-actions>
+											</v-card>
+										</v-dialog>
+									</div>
 
 				<v-btn
 					id="gradient-outline"
@@ -151,6 +216,7 @@
 			//Other variables
 			overlayText: "",
 			loadingVisibility: true,
+			dialogValidationBool: false,
 
 			backgroundColor: "background: white",
 		}),
