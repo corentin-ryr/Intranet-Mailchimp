@@ -10,6 +10,21 @@
 			<h3>Liste de toutes les études</h3>
 		</v-card-title>
 
+		<v-alert
+			color="green"
+			outlined
+			text
+			type="info"
+			class="mx-auto mb-10"
+			icon="mdi-check-decagram"
+			max-width="270"
+		>
+			Bienvenue {{this.getUser["displayName"].replace(/ .*/,'')}} <br />
+			<p class="caption ma-0 pa-0">
+				{{this.welcomeText}}
+			</p>
+		</v-alert>
+
 		<v-expand-transition>
 			<div v-if="loadingVisibilityStart">
 				<div style="margin: 5% 10%">
@@ -338,6 +353,7 @@
 
 <script>
 	import gsap from "gsap"
+	import { mapGetters, mapActions } from "vuex"
 	import _ from 'lodash'
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 	/**
@@ -368,7 +384,36 @@
 			this.getCampaignsToValidate()
 		},
 
+		computed: {
+			...mapGetters([
+				"getUser",
+				"isUserSecGez",
+				"isUserRespoCo",
+				"isUserAdmin",
+			]),
+
+			welcomeText: function() {
+				var text = ""
+				if (this.isUserRespoCo) {
+					text = "Reponsable Commercial"
+				}
+				else if (this.isUserSecGez) {
+					text = "Secrétaire Général"
+				}
+				else if (this.isUserAdmin) {
+					text = "Vous n'êtes pas autorisé à modifier les campagnes"
+				}
+				else {
+					text = "Accès non autorisé à cette page"
+				}
+
+				return text
+			},
+		},
+
 		methods: {
+			...mapActions(["authAction", "signInAction", "signOutAction"]),
+
 			getCampaignsToValidate: async function() {
 				//Get campaign to modify
 				var getCampaigns = this.$firebase.functions().httpsCallable("getCampaignsToValidate")
@@ -563,10 +608,10 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				//const delete = this.$firebase.functions().httpsCallable("deleteCampaign")
+				const deleteCampaign = this.$firebase.functions().httpsCallable("deleteCampaign")
 				var success = true
 				try {
-					//await delete({ id: id }) //Call the firebase function
+					await deleteCampaign({ id: id }) //Call the firebase function
 				} catch (error) {
 					console.log(error)
 					success = false

@@ -8,7 +8,7 @@
 		</v-card-title>
 		<v-card-title
 			style="font-family: 'Avenir Next Regular'; justify-content: west;"
-			class="text-wrap pt-5 pb-5 pl-4"
+			class="text-wrap pt-3 pb-5 pl-4"
 		>
 			<h3>Gérer les modérateurs</h3>
 		</v-card-title>
@@ -226,35 +226,4 @@
 </script>
 
 <style scoped>
-	div {
-		margin-bottom: 10px;
-	}
-
-	.intro {
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: 5;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		transform: translateY(-100%);
-	}
-	.intro-text {
-		color: white;
-		font-family: "Avenir Next Regular";
-		font-size: xx-large;
-	}
-	.hide {
-		overflow: hidden;
-	}
-	.hide span {
-		transform: translateY(100%);
-		display: inline-block;
-	}
-	.v-card__text, .v-card__title {
-	word-break: normal; /* maybe !important  */
-	}
 </style>

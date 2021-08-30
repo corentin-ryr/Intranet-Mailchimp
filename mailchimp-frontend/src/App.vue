@@ -101,7 +101,6 @@
 			<!-- Provides the application the proper gutter -->
 			<v-container v-if="isUserAuth">
 				<router-view></router-view>
-				<h1>{{ isUserRespoCo }}</h1>
 			</v-container>
 
 			<v-container v-if="!isUserAuth">
