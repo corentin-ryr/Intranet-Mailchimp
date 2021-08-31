@@ -1,5 +1,9 @@
 <template>
 	<div v-if="isUserModerator||isUserAdmin">
+
+		<v-row no-gutters class="mx-4">
+
+		<v-col cols="12" sm="8" md="8">
 		<v-card-title style="font-family: 'Avenir Next Regular'; justify-content: west;" class="text-wrap pt-10 pb-0">
 			<h1>VALIDATION</h1>
 		</v-card-title>
@@ -9,13 +13,15 @@
 		>
 			<h3>Liste des études non envoyées</h3>
 		</v-card-title>
+		</v-col>
 
+		<v-col cols="12" sm="4" md="4">
 		<v-alert
 			color="green"
 			outlined
 			text
 			type="info"
-			class="mx-auto mb-10"
+			class="mx-auto mt-xs-0 pa-3 mt-sm-9"
 			icon="mdi-check-decagram"
 			max-width="270"
 		>
@@ -24,6 +30,9 @@
 				{{this.welcomeText}}
 			</p>
 		</v-alert>
+		</v-col>
+
+		</v-row>
 
 		<v-expand-transition>
 			<div v-if="loadingVisibilityStart">
