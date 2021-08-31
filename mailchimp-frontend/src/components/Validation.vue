@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="isUserModerator||isUserAdmin">
 		<v-card-title style="font-family: 'Avenir Next Regular'; justify-content: west;" class="text-wrap pt-10 pb-0">
 			<h1>VALIDATION</h1>
 		</v-card-title>
@@ -7,7 +7,7 @@
 			style="font-family: 'Avenir Next Regular'; justify-content: west;"
 			class="text-wrap pt-3 pb-5 pl-4"
 		>
-			<h3>Liste de toutes les études</h3>
+			<h3>Liste des études non envoyées</h3>
 		</v-card-title>
 
 		<v-alert
@@ -388,6 +388,7 @@
 		computed: {
 			...mapGetters([
 				"getUser",
+				"isUserModerator",
 				"isUserSecGez",
 				"isUserRespoCo",
 				"isUserAdmin",
@@ -402,7 +403,7 @@
 					text = "Secrétaire Général"
 				}
 				else if (this.isUserAdmin) {
-					text = "Vous n'êtes pas autorisé à modifier les campagnes"
+					text = "Vous n'êtes pas autorisé à modifier, valider ou envoyer les campagnes"
 				}
 				else {
 					text = "Accès non autorisé à cette page"

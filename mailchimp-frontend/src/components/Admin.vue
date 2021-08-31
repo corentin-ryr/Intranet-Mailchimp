@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="isUserAdmin">
 		<v-card-title
 			style="font-family: 'Avenir Next Regular'; justify-content: west;"
 			class="text-wrap pt-10 pb-0"
@@ -189,6 +189,7 @@
 	 */
 
 	import gsap from "gsap"
+	import { mapGetters, mapActions } from "vuex"
 	const tl = gsap.timeline({ defaults: { ease: "power1.out" } })
 
 	export default {
@@ -218,7 +219,18 @@
 			backgroundColor: "background: white",
 		}),
 
+		computed: {
+			...mapGetters([
+				"getUser",
+				"isUserModerator",
+				"isUserSecGez",
+				"isUserRespoCo",
+				"isUserAdmin",
+			]),
+		},
+
 		methods: {
+			...mapActions(["authAction", "signInAction", "signOutAction"]),
 
 			addUserToModerator: async function() {
 				this.backgroundColor = "background: #e54540"
@@ -264,7 +276,7 @@
 				this.dialogValidationBool = false //close popup
 
 				this.backgroundColor = "background: #e54540"
-				this.overlayText = "Révocation des accès ❌"
+				this.overlayText = "Révocation des accès en cours ❌"
 
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
