@@ -172,7 +172,7 @@
 			</div>
 		</v-main>
 		<v-footer id="UI" app>
-			<v-card id="gradient" class="d-flex align-center ma-2 rounded-lg clickable" elevation="0" max-height="35">
+			<v-card id="gradient" class="d-flex align-center ma-1 rounded-lg clickable" elevation="10" max-height="35">
 				<v-card-text>
 					<span style="font-family: 'Avenir Next Regular'; color: white"
 						>&copy; {{ new Date().getFullYear() }}</span
@@ -223,7 +223,7 @@
 		src: url("./fonts/avenir-bold.otf") format("opentype"); /*File to be stored at your site */
 	}
 	#UI {
-		background-color: rgba(255, 255, 255, 0.15);
+		background-color: rgba(255, 255, 255, 0);
 		color: black;
 		pointer-events: none;
 	}

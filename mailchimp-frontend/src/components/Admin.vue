@@ -8,7 +8,7 @@
 		</v-card-title>
 		<v-card-title
 			style="font-family: 'Avenir Next Regular'; justify-content: west;"
-			class="text-wrap pt-3 pb-5 pl-4"
+			class="text-wrap pt-3 pb-6 pl-4"
 		>
 			<h3>Gérer les modérateurs</h3>
 		</v-card-title>
@@ -45,7 +45,9 @@
 							<v-select
 								class="mb-0 pb-0"
 								:items="roles"
-								name="imageDomain"
+								item-text="role"
+								item-value="abbr"
+								name="role"
 								v-model="role"
 								label="Rôle"
 								required
@@ -72,7 +74,7 @@
 								Ajouter le modérateur
 							</v-btn>
 						</template>
-						<span>blabla</span>
+						<span>Le modérateur aura accès à la validation des MRI. Attention, ce nouveau modérateur ne pourra pas être supprimé individuellement : il faudra révoquer tous les accès pour pouvoir l'enlever.</span>
 					</v-tooltip>
 				</v-card-actions>
 
@@ -90,77 +92,68 @@
 			<v-alert
 				outlined
 				text
-				type="error"
-				class="mx-4 mt-3 mb-6"
-				@click.native="signInAction"
+				type="warning"
+				class="mx-4 mt-5 mb-7"
 			>
-				Connectez vous pour commencer <br />
+				À utiliser lors du changement de mandat <br />
 				<p class="caption ma-0 pa-0">
-					Pour cela, utilisez votre compte Google Workspace associé à votre adresse
-					<i>@telecom-etude.fr</i>
+					Lors de l'entrée en fonction du nouveau mandat de Telecom Etude, il faut révoquer tous les accès modérateur précédents avec le bouton ci-dessous.
+					Une fois cela fait, il faut ajouter les nouveaux modérateurs (Responsable Commercial et Secrétaire Général) avec le formulaire ci-dessus.
+					Cela permet de supprimer les accès de l'ancien mandat, et donc de limiter la modération au nouveau mandat.
 				</p>
 			</v-alert>
 
-									<div class="text-center">
-										<v-dialog width="500" v-model="dialogValidationBool">
-											<template v-slot:activator="{ on, attrs }">
-												<v-btn
-													class="mx-1 pa-1 white--text"
-													color="red"
-													depressed
-													v-bind="attrs"
-													v-on="on"
-												>
-													<span
-														style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
-														>Révoquer tous les accès</span
-													>
-												</v-btn>
-											</template>
+			<div class="text-center">
+				<v-dialog width="500" v-model="dialogValidationBool">
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn
+							class="mx-auto mb-7 white--text"
+							color="red"
+							depressed
+							v-bind="attrs"
+							v-on="on"
+						>
+							<span
+								style="font-family: 'Avenir Next Regular';font-size: min(3vw, 13px);"
+								>Révoquer tous les accès</span
+							>
+						</v-btn>
+					</template>
 
-											<v-card>
-												<v-card-title class="text-h5">
-													Confirmer la suppression
-												</v-card-title>
+					<v-card>
+						<v-card-title class="text-h5">
+							Confirmer la suppression
+						</v-card-title>
 
-												<v-card-text>
-													Confirmez vous vouloir supprimer tous les accès aux fonctions de validation sur ce site ? Pour revenir en arrière, il faudra ajouter un par un chacune des adresses email @telecom-etude.fr des modérateurs dans la partie <i>Ajouter un modérateur</i>.
-												</v-card-text>
+						<v-card-text>
+							Confirmez vous vouloir supprimer tous les accès aux fonctions de validation sur ce site ? Pour revenir en arrière, il faudra ajouter un par un chacune des adresses email @telecom-etude.fr des modérateurs dans la partie <i>Ajouter un modérateur</i>.
+						</v-card-text>
 
-												<v-divider></v-divider>
+						<v-divider></v-divider>
 
-												<v-card-actions>
-													<v-spacer></v-spacer>
-													<v-btn
-														color="grey"
-														outlined
-														depressed
-														@click="dialogValidationBool = false"
-													>
-														Annuler
-													</v-btn>
-													<v-btn
-														color="red"
-														outlined
-														depressed
-														@click="distributeMRI(key.id, key['name'])"
-													>
-														Tout révoquer
-													</v-btn>
-												</v-card-actions>
-											</v-card>
-										</v-dialog>
-									</div>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn
+								color="grey"
+								outlined
+								depressed
+								@click="dialogValidationBool = false"
+							>
+								Annuler
+							</v-btn>
+							<v-btn
+								color="red"
+								outlined
+								depressed
+								@click="revokeUsers"
+							>
+								Tout révoquer
+							</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+			</div>
 
-				<v-btn
-					id="gradient-outline"
-					outlined
-					class="ma-2 rounded-lg clickable"
-					depressed
-					v-on:click="revokeUsers"
-				>
-					<span style="font-family: 'Avenir Next Regular'">Révoquer tous les accès</span>
-				</v-btn>
 		</v-card>
 
 
@@ -203,7 +196,11 @@
 
 		data: () => ({
 			email: "",
-			roles: ["SecGez", "RespoCo"],
+			roles: [
+				{ role: "Responsable Commercial", abbr: "RespoCo" },
+				{ role: "Secrétaire Général", abbr: "SecGez" },
+			],
+
 			role: "",
 
 			isValid: false,
@@ -230,16 +227,16 @@
 				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
 				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
 
-				//var addUserToModerator = this.$firebase.functions().httpsCallable("addUserToModerator")
+				var addUserToModerator = this.$firebase.functions().httpsCallable("addUserToModerator")
 				var success = true
 				try {
-					//const result = await addUserToModerator({ email: this.email, role: this.role })
-					//console.log(result)
+					const result = await addUserToModerator({ email: this.email, role: this.role })
+					console.log(result)
 				} catch (error) {
 					console.log(error)
 					success = false
 				}
-				console.log("user added " + this.email + this.role)
+				//console.log("user added " + this.email + this.role)
 
 				await tl.to(".text", {
 					y: "-100%",
@@ -264,12 +261,46 @@
 			},
 
 			revokeUsers: async function() {
-				//Get campaign to modify
+				this.dialogValidationBool = false //close popup
+
+				this.backgroundColor = "background: #e54540"
+				this.overlayText = "Révocation des accès ❌"
+
+				tl.fromTo(".intro", { y: "-100%" }, { y: "0%", duration: 0.75 })
+				tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1 })
+
+				var revokeUsers = this.$firebase.functions().httpsCallable("revokeUsers")
+				var success = true
+				try {
+					const result = await revokeUsers()
+					console.log(result)
+				} catch (error) {
+					console.log(error)
+					success = false
+				}
+				//console.log("revoked")
+
+				await tl.to(".text", {
+					y: "-100%",
+					duration: 1,
+				})
+
+				if (success) {
+					this.loadingVisibility = false
+					this.overlayText = "Accès supprimés ! ✅"
+				} else {
+					this.loadingVisibility = false
+					this.overlayText = "Une erreur s'est produite ⚠️"
+				}
+
+				await tl.fromTo(".text", { y: "100%" }, { y: "0%", duration: 1.5 })
+
+				setTimeout(() => {
+					//Set a timeout for the user to have time to read the message
+					this.closeOverlay1(success)
+				}, 1500)
 				
-				//var revokeUsers = this.$firebase.functions().httpsCallable("revokeUsers")
-				//const result = await revokeUsers()
-				//console.log(result)
-				console.log("revoked")
+				
 			},
 
 			closeOverlay1: async function(success) {
@@ -292,4 +323,32 @@
 </script>
 
 <style scoped>
+	.intro {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 5;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transform: translateY(-100%);
+	}
+	.intro-text {
+		color: white;
+		font-family: "Avenir Next Regular";
+		font-size: xx-large;
+	}
+	.hide {
+		overflow: hidden;
+	}
+	.hide span {
+		transform: translateY(100%);
+		display: inline-block;
+	}
+	.v-card__text,
+	.v-card__title {
+		word-break: normal; /* maybe !important  */
+	}
 </style>
