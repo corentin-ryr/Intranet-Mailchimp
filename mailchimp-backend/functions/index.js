@@ -312,25 +312,25 @@ exports.deleteCampaign = functions.https.onCall(async (data, context) => {
 	const campaigns_ref = db.collection("campaigns")
 	var campaignToFetch
 	try {
-		campaignToFetch = await campaigns_ref.doc(data).get()
+		campaignToFetch = await campaigns_ref.doc(data.id).get()
 	} catch (error) {
 		throw new functions.https.HttpsError("not-found", "No campaign with this id.")
 	}
 
-	var data = campaignToFetch.data()
+	var campaignData = campaignToFetch.data()
 
-	if (!hasModeratorRole(context) && !data.contactList.includes(context.auth.token.email)) {
+	if (!hasModeratorRole(context) && !campaignData.contactList.includes(context.auth.token.email)) {
 		throw new functions.https.HttpsError(
 			"unauthenticated",
 			"The function must be called while authenticated as someone who has access to the campaign."
 		)
 	}
 
-	throw new functions.https.HttpsError(
-		"unimplemented",
-		"If you receive this error, it means that your campaign would have been correctly deleted if the function was implemented"
-	)
-	// await campaigns_ref.doc(data).delete()
+	// throw new functions.https.HttpsError(
+	// 	"unimplemented",
+	// 	"If you receive this error, it means that your campaign would have been correctly deleted if the function was implemented"
+	// )
+	await campaigns_ref.doc(data.id).delete()
 })
 
 //#endregion
