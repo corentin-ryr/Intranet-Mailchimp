@@ -135,7 +135,7 @@
 					icon="mdi-account-circle"
 					@click.native="signInAction"
 				>
-					Connectez vous pour commencer <br />
+					Connectez-vous pour commencer <br />
 					<p class="caption ma-0 pa-0">
 						Pour cela, utilisez votre compte Google Workspace associé à votre adresse
 						<i>@telecom-etude.fr</i>
@@ -144,8 +144,59 @@
 			</v-container>
 
 			<div>
-				<v-card class="mx-auto mt-8" width="290">
-					<v-row align="center" justify="space-around" class="ma-2">
+				<v-card class="mx-auto mt-8 pt-1" width="290" align="center">
+
+					<div>
+						<v-alert
+							class="ma-1"
+							dense
+							text
+							type="warning"
+							icon="mdi-alert"
+							max-width="180"
+							@click="sheet = !sheet"
+						>
+							<p class="ma-0 pa-0">
+								Un problème ?
+							</p>
+						</v-alert>
+						<v-bottom-sheet v-model="sheet">
+							<v-sheet
+								class="text-center"
+								:height="helpHeight"
+							>
+								<v-btn
+									x-small
+									class="my-2"
+									text
+									color="grey"
+									@click="sheet = !sheet"
+									icon
+									>
+									<v-icon>
+										mdi-window-close
+									</v-icon>
+								</v-btn>
+								<div style="width: 80%; margin: 0 auto; text-align: left;">
+									<span>
+										En cas de problème technique ou de comportement anormal du site, signale le nous sur GitHub en ouvrant un nouveau problème.
+										Tu peux également nous contacter directement.
+									</span>
+								</div>
+								<v-btn
+									class="my-3"
+									color="red"
+									outlined
+									depressed
+									href="https://github.com/corentin-ryr/Intranet-Mailchimp/issues"
+								>
+									Signaler un problème
+								</v-btn>
+							</v-sheet>
+						</v-bottom-sheet>
+					</div>
+
+					<v-row align="center" justify="space-around" class="ma-2 mt-0">
 						<v-chip
 							class="my-2"
 							color="#144fe3"
@@ -206,6 +257,7 @@
 
 		data: () => ({
 			menu: false,
+			sheet: false,
 		}),
 
 		methods: {
@@ -221,6 +273,16 @@
 				"isUserSecGez",
 				"isUserRespoCo",
 			]),
+
+			helpHeight () {
+				switch (this.$vuetify.breakpoint.name) {
+					case 'xs': return 260
+					case 'sm': return 200
+					case 'md': return 180
+					case 'lg': return 180
+					case 'xl': return 180
+				}
+			},
 		},
 		mounted() {
 			this.authAction()
