@@ -73,6 +73,7 @@
 								:rules="[(v) => !!v || 'Champ requis']"
 								prepend-icon="mdi-"
 								outlined
+								:menu-props="{maxHeight: 355}"
 							/>
 						</v-col>
 					</v-row>
@@ -319,6 +320,7 @@
 				{ domain: "Développement Web, Logiciel, Mobile", abbr: "dev" },
 				{ domain: "Cybersécurité, Cryptographie", abbr: "cyber" },
 				{ domain: "Systèmes Embarqués, IoT", abbr: "se" },
+				{ domain: "Réseaux, Télécoms, Internet", abbr: "network" },
 				{ domain: "Image, Computer Graphics, 3D", abbr: "image" },
 				{ domain: "Étude de marché, État de l'Art, Audit", abbr: "etude" },
 			],

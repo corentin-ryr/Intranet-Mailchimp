@@ -687,7 +687,7 @@
 			},
 
 			infoPopupSendAgain () {
-				alert("Les MRI qui sont validés puis envoyés définitivements ne peuvent pas être renvoyés depuis ce site. Pour cela, il faut se connecter à mailchimp.com avec le compte admin@telecom-etude.fr. En accédant à la liste des campagnes envoyées, il est possible d'en dupliquer une et de l'envoyer à nouveau. Il n'est cependant pas possible avec cette méthode de modifier le MRI à ré-envoyer. Pour cela, il faut créer et envoyer le MRI de zéro depuis ce site.")
+				alert("Les MRI qui sont validés puis envoyés définitivements ne peuvent pas être renvoyés depuis ce site. Pour cela, il faut se connecter à mailchimp.com avec le compte mri@telecom-etude.fr. En accédant à la liste des campagnes envoyées, il est possible d'en dupliquer une et de l'envoyer à nouveau. Il n'est cependant pas possible avec cette méthode de modifier le MRI à ré-envoyer. Pour cela, il faut créer et envoyer le MRI de zéro depuis ce site.")
 			},
 		},
 	}

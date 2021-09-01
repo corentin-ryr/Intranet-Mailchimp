@@ -393,6 +393,9 @@ async function contentTransformations(data) {
 			data.imageDomainLink =
 				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/0104e278-2e89-44d0-823f-86e2e92a1e70.png"
 			break
+		case "network":
+			data.imageDomainLink =
+				"https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/14507c52-c18e-338a-1272-4d4e76b83571.png"
 		default:
 			console.log("ERROR: the domain name is incorrect")
 			throw new functions.https.HttpsError("invalid-argument", "The domain image name is incorrect.")
