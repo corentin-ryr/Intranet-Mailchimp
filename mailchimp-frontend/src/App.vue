@@ -104,19 +104,34 @@
 			</v-container>
 
 			<v-container v-if="!isUserAuth">
-				<v-card-title
-					style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
-					class="text-wrap pt-12 pb-8"
-				>
-					<h1>Mails de <br />Recherche <br />Intervenant</h1>
-				</v-card-title>
+
+			<v-row no-gutters class="mx-xs-0 mx-sm-8">
+				<v-col cols="12" sm="6" md="7" lg="8">
+					<v-card-title
+						style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
+						class="text-wrap pt-12 pb-xs-4 pb-sm-8"
+					>
+						<h1>Mails de <br />Recherche <br />Intervenant</h1>
+					</v-card-title>
+				</v-col>
+
+				<v-col cols="12" sm="6" md="5" lg="4">
+					<v-img
+						contain
+						class="mt-xs-0 mt-sm-10 mb-6"
+						max-height="180"
+						src="https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/2c1f241d-fb4d-dfe9-5893-7e6492f8e453.png"
+					>
+					</v-img>
+				</v-col>
+			</v-row>
 
 				<v-alert
 					color="red"
 					outlined
 					text
 					type="info"
-					class="mx-4 mb-10"
+					class="mx-4 mx-sm-10 mb-10"
 					icon="mdi-account-circle"
 					@click.native="signInAction"
 				>
