@@ -18,7 +18,7 @@
 		<v-col cols="12" sm="4" md="4">
 		<v-alert
 			color="green"
-			outlined
+			dense
 			text
 			type="info"
 			class="mx-auto mt-xs-0 pa-3 mt-sm-9"
