@@ -463,6 +463,10 @@ async function contentTransformations(data) {
 	for (var i = 0; i < data.contactList.length; i++) {
 		var mail = data.contactList[i]
 		var name = mail.charAt(0).toUpperCase() + mail.substring(1, mail.indexOf("."))
+		if (name.includes("-")){
+			var nameDash = name.substring(0, mail.indexOf("-")+1) + name.substring(mail.indexOf("-")+1, mail.indexOf("-")+2).toUpperCase() + name.substring(mail.indexOf("-")+2)
+			name = nameDash
+		}
 		if (data.contactList.length == 1) {
 			contentMailContact += name + " (" + mail + ")."
 		} else if (i != data.contactList.length - 1) {
