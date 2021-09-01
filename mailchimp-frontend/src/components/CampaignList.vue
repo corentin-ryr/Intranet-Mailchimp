@@ -99,7 +99,8 @@
 										</v-card-title>
 
 										<v-expand-transition>
-											<div v-html="previewHTML" v-if="!loadingPreviewVisibility"></div>
+											<iframe ref="iframe" :srcdoc="previewHTML" v-if="!loadingPreviewVisibility" style="height: 70vh; width: 100%" frameborder="0" scrolling="yes"></iframe>
+											<!--div v-html="previewHTML" v-if="!loadingPreviewVisibility"></div-->
 										</v-expand-transition>
 
 										<v-expand-transition>
