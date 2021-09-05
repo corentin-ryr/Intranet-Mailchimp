@@ -104,27 +104,26 @@
 			</v-container>
 
 			<v-container v-if="!isUserAuth">
+				<v-row no-gutters class="mx-xs-0 mx-sm-8">
+					<v-col cols="12" sm="6" md="7" lg="8">
+						<v-card-title
+							style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
+							class="text-wrap pt-12 pb-xs-4 pb-sm-8"
+						>
+							<h1>Mails de <br />Recherche <br />Intervenant</h1>
+						</v-card-title>
+					</v-col>
 
-			<v-row no-gutters class="mx-xs-0 mx-sm-8">
-				<v-col cols="12" sm="6" md="7" lg="8">
-					<v-card-title
-						style="font-family: 'Avenir Next Bold'; justify-content: west; line-height: 230%; color: #e54540; font-size:x-large"
-						class="text-wrap pt-12 pb-xs-4 pb-sm-8"
-					>
-						<h1>Mails de <br />Recherche <br />Intervenant</h1>
-					</v-card-title>
-				</v-col>
-
-				<v-col cols="12" sm="6" md="5" lg="4">
-					<v-img
-						contain
-						class="mt-xs-0 mt-sm-10 mb-6"
-						max-height="180"
-						src="https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/2c1f241d-fb4d-dfe9-5893-7e6492f8e453.png"
-					>
-					</v-img>
-				</v-col>
-			</v-row>
+					<v-col cols="12" sm="6" md="5" lg="4">
+						<v-img
+							contain
+							class="mt-xs-0 mt-sm-10 mb-6"
+							max-height="180"
+							src="https://mcusercontent.com/d64b9431d63c83512b8b612ee/images/2c1f241d-fb4d-dfe9-5893-7e6492f8e453.png"
+						>
+						</v-img>
+					</v-col>
+				</v-row>
 
 				<v-alert
 					color="red"
@@ -145,7 +144,6 @@
 
 			<div>
 				<v-card class="mx-auto mt-8 pt-1" width="290" align="center">
-
 					<div>
 						<v-alert
 							class="ma-1"
@@ -161,26 +159,17 @@
 							</p>
 						</v-alert>
 						<v-bottom-sheet v-model="sheet">
-							<v-sheet
-								class="text-center"
-								:height="helpHeight"
-							>
-								<v-btn
-									x-small
-									class="my-2"
-									text
-									color="grey"
-									@click="sheet = !sheet"
-									icon
-									>
+							<v-sheet class="text-center" :height="helpHeight">
+								<v-btn x-small class="my-2" text color="grey" @click="sheet = !sheet" icon>
 									<v-icon>
 										mdi-window-close
 									</v-icon>
 								</v-btn>
 								<div style="width: 80%; margin: 0 auto; text-align: left;">
 									<span>
-										En cas de problème technique ou de comportement anormal du site, signale le nous sur GitHub en ouvrant un nouveau problème.
-										Tu peux également nous contacter directement.
+										En cas de problème technique ou de comportement anormal du site, signale le nous
+										sur GitHub en ouvrant un nouveau problème. Tu peux également nous contacter
+										directement.
 									</span>
 								</div>
 								<v-btn
@@ -274,14 +263,20 @@
 				"isUserRespoCo",
 			]),
 
-			helpHeight () {
+			helpHeight() {
 				switch (this.$vuetify.breakpoint.name) {
-					case 'xs': return 260
-					case 'sm': return 200
-					case 'md': return 180
-					case 'lg': return 180
-					case 'xl': return 180
+					case "xs":
+						return 260
+					case "sm":
+						return 200
+					case "md":
+						return 180
+					case "lg":
+						return 180
+					case "xl":
+						return 180
 				}
+                return 180
 			},
 		},
 		mounted() {
