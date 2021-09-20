@@ -8,7 +8,7 @@ const db = admin.firestore()
 // Setup mailchimp =====================================================
 const mailchimp = require("@mailchimp/mailchimp_marketing")
 const { region } = require("firebase-functions")
-// Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID mailchimp.subscriberlistid="SUBSCRIBER LIST ID"  " to midify the key and server of mailchimp
+// Use "  firebase functions:config:set mailchimp.apikey="THE API KEY" mailchimp.server="THE CLIENT ID" mailchimp.subscriberlistid="SUBSCRIBER LIST ID"  " to modify the key and server of mailchimp
 mailchimp.setConfig({
 	apiKey: functions.config().mailchimp.apikey,
 	server: functions.config().mailchimp.server,
@@ -41,17 +41,19 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 	const mailObject = "[Telecom Etude] " + formatedData.contentTitle
 	const mailFromName = "Telecom Etude"
 	const mailReplyTo = "noreply@telecom-etude.fr" //formatedData.contactList[0] //Or set it to candidature@telecom-etude.fr ?
-
+    const listId = functions.config().mailchimp.subscriberlistid
 	console.log("Creating the campaign...")
 
 	const result = await mailchimp.campaigns.create({
 		type: "regular",
-		recipents: { list_id: functions.config().mailchimp.subscriberlistid },
+		recipents: { list_id: listId },
 		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
 	})
 	const campaignID = result["id"]
 
-	console.log("New campaign created with ID: " + campaignID)
+    console.log("New campaign created with ID: " + campaignID)
+    // const result2 = await mailchimp.campaigns.get(campaignID)
+    // functions.logger.info(result2)
 
 	// We add the unformated data to the database (because the html can be generated from these data).
 	// The data have been checked earlier so we know it is complete.
@@ -299,9 +301,13 @@ exports.distributeCampaign = functions.https.onCall(async (data, context) => {
 		throw new functions.https.HttpsError("permission-denied", "The campaign has not been validated.")
 	}
 
-	try {
-		const result = await mailchimp.campaigns.send(data.id)
-	} catch (error) {
+    var checkListResponse
+    try {
+        checkListResponse = await mailchimp.campaigns.getSendChecklist(data.id); 
+		await mailchimp.campaigns.send(data.id)
+    } catch (error) {
+        functions.logger.info(checkListResponse)
+        functions.logger.error(error)
 		throw new functions.https.HttpsError("internal", "Error with mailchimp.")
 	}
 
