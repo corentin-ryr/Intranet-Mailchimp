@@ -46,7 +46,7 @@ exports.createCampaignAndSendTestEmail = functions.https.onCall(async (data, con
 
 	const result = await mailchimp.campaigns.create({
 		type: "regular",
-		recipents: { list_id: listId },
+		recipients: { list_id: listId },
 		settings: { title: campaignName, subject_line: mailObject, from_name: mailFromName, reply_to: mailReplyTo },
 	})
 	const campaignID = result["id"]
